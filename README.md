@@ -44,3 +44,10 @@ To see which attributes were loaded for a ticket:
 >>> ticket._keys
 set([u'status', u'source_name', u'ticket_type', u'updated_at', ...])
 ```
+
+Attributes are automatically converted to native Python objects where appropriate:
+
+```python
+>>> a.list_open_tickets()[0].created_at
+datetime.datetime(2014, 12, 5, 14, 7, 44)
+```
