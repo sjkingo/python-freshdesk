@@ -40,7 +40,7 @@ To see which attributes were loaded for a ticket:
 ```python
 >>> ticket = a.get_ticket(4)
 >>> repr(ticket)
-<Ticket 'I keep typing Freskdesk instead of Freshdesk!>
->>> t._keys
+"<Ticket 'I keep typing Freskdesk instead of Freshdesk!>"
+>>> ticket._keys
 set([u'status', u'source_name', u'ticket_type', u'updated_at', ...])
 ```
