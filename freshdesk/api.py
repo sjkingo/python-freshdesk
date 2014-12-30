@@ -42,7 +42,17 @@ class API(object):
             kwargs['filter_name'] = 'all_tickets'
 
         url = 'tickets/filter/%s?format=json' % kwargs['filter_name']
-        tickets = self._get(url, kwargs)
+        page = 1
+        tickets = []
+
+        # Skip pagination by looping over each page and adding tickets
+        while True:
+            this_page = self._get(url + '&page=%d' % page, kwargs)
+            if len(this_page) == 0:
+                break
+            tickets += this_page
+            page += 1
+
         return [Ticket(**t) for t in tickets]
 
     def list_all_tickets(self):
