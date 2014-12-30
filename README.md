@@ -15,7 +15,9 @@ The easiest way to install is from PyPi inside a virtualenv:
 
 2. Install from PyPi:
 
-   `$ pip install python-freshdesk`
+   ```
+   $ pip install python-freshdesk
+   ```
 
 ## Usage
 
