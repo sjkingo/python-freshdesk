@@ -1,6 +1,8 @@
-# freshdesk-api
+# python-freshdesk
 
 A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 3.
+
+It is written in pure Python and only requires 1 external dependency: `python-requests`.
 
 ## Installation
 
@@ -31,4 +33,14 @@ without changing these.
 [<Ticket 'New ticket'>, <Ticket 'Some tests should be created'>, <Ticket 'Library needs to be uploaded to PyPi'>]
 >>> a.list_deleted_tickets()
 [<Ticket 'This is a sample ticket'>]
+```
+
+To see which attributes were loaded for a ticket:
+
+```python
+>>> ticket = a.get_ticket(4)
+>>> repr(ticket)
+<Ticket 'I keep typing Freskdesk instead of Freshdesk!>
+>>> t._keys
+set([u'status', u'source_name', u'ticket_type', u'updated_at', ...])
 ```
