@@ -6,9 +6,16 @@ A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 
 
 The easiest way to install is from PyPi inside a virtualenv:
 
-1. `virtualenv -p python3 cool_app`
-2. `cd cool_app && source bin/activate`
-3. `pip install python-freshdesk`
+1. Create the virtualenv (Python 3!) and activate it:
+
+   ```
+   $ virtualenv -p python3 cool_app
+   $ cd cool_app && source bin/activate
+   ```
+
+2. Install from PyPi:
+
+   `$ pip install python-freshdesk`
 
 ## Usage
 
