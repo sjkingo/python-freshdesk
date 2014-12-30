@@ -1,8 +1,8 @@
 # python-freshdesk
 
-A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 3.
+A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 2.7 and 3.
 
-It is written in pure Python and only requires 1 external dependency: `python-requests`.
+It is written in Python and only requires 1 external dependency: `python-requests`.
 
 ## Installation
 
