@@ -65,6 +65,17 @@ Attributes are automatically converted to native Python objects where appropriat
 datetime.datetime(2014, 12, 5, 14, 7, 44)
 ```
 
+Or converted from indexes to their descriptions:
+
+```python
+>>> ticket.priority
+'medium'
+>>> ticket.status
+'closed'
+>>> ticket.source
+'phone'
+```
+
 Viewing comments on a ticket are as simple as looking at the `Ticket.comments` list:
 
 ```python

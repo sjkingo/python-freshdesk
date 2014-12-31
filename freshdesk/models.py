@@ -4,7 +4,9 @@ class FreshdeskModel(object):
     _keys = set()
 
     def __init__(self, **kwargs):
-        for k,v  in kwargs.items():
+        for k, v in kwargs.items():
+            if hasattr(Ticket, k):
+                k = '_' + k
             setattr(self, k, v)
             self._keys.add(k)
         self.created_at = self._to_timestamp(self.created_at)
@@ -25,6 +27,21 @@ class Ticket(FreshdeskModel):
     @property
     def comments(self):
         return [Comment(ticket=self, **c['note']) for c in self.notes]
+
+    @property
+    def priority(self):
+        _p = {1: 'low', 2: 'medium', 3: 'high', 4: 'urgent'}
+        return _p[self._priority]
+
+    @property
+    def status(self):
+        _s = {2: 'open', 3: 'pending', 4: 'resolved', 5: 'closed'}
+        return _s[self._status]
+
+    @property
+    def source(self):
+        _s = {1: 'email', 2: 'portal', 3: 'phone', 4: 'forum', 5: 'twitter', 6: 'facebook', 7: 'chat'}
+        return _s[self._source]
 
 class Comment(FreshdeskModel):
     def __str__(self):
