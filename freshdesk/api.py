@@ -53,7 +53,7 @@ class API(object):
             tickets += this_page
             page += 1
 
-        return [Ticket(**t) for t in tickets]
+        return [self.get_ticket(t['display_id']) for t in tickets]
 
     def list_all_tickets(self):
         """List all tickets, closed or open."""

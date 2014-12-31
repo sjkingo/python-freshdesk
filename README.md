@@ -51,3 +51,19 @@ Attributes are automatically converted to native Python objects where appropriat
 >>> a.list_open_tickets()[0].created_at
 datetime.datetime(2014, 12, 5, 14, 7, 44)
 ```
+
+Viewing comments on a ticket are as simple as looking at the `Ticket.comments` list:
+
+```python
+>>> ticket.comments
+[<Comment for <Ticket 'Some tests should be created'>>]
+>>> ticket.comments[0]
+'We could use Travis CI'
+```
+
+The original comment (called "description" in Freshdesk) is available as on the `Ticket` instance:
+
+```python
+>>> ticket.description
+'nose is a good suite'
+```
