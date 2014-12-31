@@ -8,7 +8,7 @@ Currently it only supports the [Ticket API](http://freshdesk.com/api#view_a_tick
 
 ## Installation
 
-The easiest way to install is from PyPi inside a virtualenv:
+The easiest way to install is from [PyPi](https://pypi.python.org/pypi/python-freshdesk) inside a virtualenv:
 
 1. Create the virtualenv (Python 3!) and activate it:
 
