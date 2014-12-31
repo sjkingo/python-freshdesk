@@ -4,6 +4,8 @@ A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 
 
 It is written in Python and only requires 1 external dependency: `python-requests`.
 
+Currently it only supports the [Ticket API](http://freshdesk.com/api#view_a_ticket).
+
 ## Installation
 
 The easiest way to install is from PyPi inside a virtualenv:
@@ -29,6 +31,16 @@ without changing these.
 ```python
 >>> from freshdesk.api import API
 >>> a = API('company.freshdesk.com', 'q8dnkjaS554Aol21dmnas9d92')
+```
+
+The `API` class provides access to all the methods exposed by the Freshdesk API.
+
+### Tickets
+
+Tickets are loaded as instances of the `freshdesk.models.Ticket` class, and can be iterated
+over:
+
+```python
 >>> a.list_open_tickets()
 [<Ticket 'New ticket'>, <Ticket 'Some tests should be created'>, <Ticket 'Library needs to be uploaded to PyPi'>]
 >>> a.list_deleted_tickets()
