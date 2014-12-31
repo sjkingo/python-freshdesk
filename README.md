@@ -37,20 +37,21 @@ The `API` class provides access to all the methods exposed by the Freshdesk API.
 
 ### Tickets
 
-Tickets are loaded as instances of the `freshdesk.models.Ticket` class, and can be iterated
-over:
+The Ticket API is accessed by using the methods assigned to the `a.tickets`
+instance. Tickets are loaded as instances of the `freshdesk.models.Ticket`
+class, and can be iterated over:
 
 ```python
->>> a.list_open_tickets()
+>>> a.tickets.list_open_tickets()
 [<Ticket 'New ticket'>, <Ticket 'Some tests should be created'>, <Ticket 'Library needs to be uploaded to PyPi'>]
->>> a.list_deleted_tickets()
+>>> a.tickets.list_deleted_tickets()
 [<Ticket 'This is a sample ticket'>]
 ```
 
 To see which attributes were loaded for a ticket:
 
 ```python
->>> ticket = a.get_ticket(4)
+>>> ticket = a.tickets.get_ticket(4)
 >>> repr(ticket)
 "<Ticket 'I keep typing Freskdesk instead of Freshdesk!>"
 >>> ticket._keys
@@ -60,7 +61,7 @@ set([u'status', u'source_name', u'ticket_type', u'updated_at', ...])
 Attributes are automatically converted to native Python objects where appropriate:
 
 ```python
->>> a.list_open_tickets()[0].created_at
+>>> a.tickets.list_open_tickets()[0].created_at
 datetime.datetime(2014, 12, 5, 14, 7, 44)
 ```
 
