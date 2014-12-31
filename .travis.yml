@@ -8,4 +8,4 @@ branches:
         - master
 install: pip install requests coveralls
 script: nosetests --with-coverage --cover-package=freshdesk
-after_success: coverage
+after_success: coveralls
