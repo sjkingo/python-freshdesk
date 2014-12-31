@@ -23,6 +23,13 @@ The easiest way to install is from [PyPi](https://pypi.python.org/pypi/python-fr
    $ pip install python-freshdesk
    ```
 
+3. Optionally, run the test suite:
+
+   ```
+   $ pip install nose
+   $ nosetests
+   ```
+
 ## Usage
 
 Please note the domain and API key are not real and the example will not work
