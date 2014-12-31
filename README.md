@@ -6,6 +6,8 @@ It is written in Python and only requires 1 external dependency: `python-request
 
 Currently it only supports the [Ticket API](http://freshdesk.com/api#view_a_ticket).
 
+[![Build Status](https://travis-ci.org/sjkingo/python-freshdesk.svg)](https://travis-ci.org/sjkingo/python-freshdesk)
+
 ## Installation
 
 The easiest way to install is from [PyPi](https://pypi.python.org/pypi/python-freshdesk) inside a virtualenv:
