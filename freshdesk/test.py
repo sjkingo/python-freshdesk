@@ -14,9 +14,6 @@ from unittest import TestCase
 from freshdesk.api import API
 from freshdesk.models import Ticket
 
-priority = {1: 'Low'}
-status = {2: 'Open'}
-
 class TestTicketAPI(TestCase):
     @classmethod
     def setUpClass(cls):
