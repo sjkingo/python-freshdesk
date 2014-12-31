@@ -61,7 +61,7 @@ Viewing comments on a ticket are as simple as looking at the `Ticket.comments` l
 'We could use Travis CI'
 ```
 
-The original comment (called "description" in Freshdesk) is available as on the `Ticket` instance:
+The original comment (called "description" in Freshdesk) is available on the `Ticket` instance:
 
 ```python
 >>> ticket.description
