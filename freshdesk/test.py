@@ -38,6 +38,14 @@ class TestTicketAPI(TestCase):
     def setUpClass(cls):
         cls.api = API(DOMAIN, API_KEY)
 
+    def test_str(self):
+        ticket = self.api.tickets.get_ticket(1)
+        self.assertEqual(str(ticket), 'This is a sample ticket')
+
+    def test_repr(self):
+        ticket = self.api.tickets.get_ticket(1)
+        self.assertEqual(repr(ticket), '<Ticket \'This is a sample ticket\'>')
+
     def test_get_ticket(self):
         ticket = self.api.tickets.get_ticket(1)
         self.assertIsInstance(ticket, Ticket)
