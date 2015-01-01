@@ -62,10 +62,7 @@ class API(object):
           .tickets:  the Ticket API
         """
 
-        if domain[-1] == '/':
-            domain[-1] = ''
-        self._api_prefix = 'http://{}/helpdesk/'.format(domain)
-
+        self._api_prefix = 'http://{}/helpdesk/'.format(domain.rstrip('/'))
         self._session = requests.Session()
         self._session.auth = (api_key, 'unused_with_api_key')
         self._session.headers = {'Content-Type': 'application/json'}
