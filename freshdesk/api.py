@@ -22,10 +22,12 @@ class TicketAPI(object):
         Multiple filters are AND'd together.
         """
 
-        if 'filter_name' not in kwargs:
-            kwargs['filter_name'] = 'all_tickets'
+        filter_name = 'all_tickets'
+        if 'filter_name' in kwargs:
+            filter_name = kwargs['filter_name']
+            del kwargs['filter_name']
 
-        url = 'tickets/filter/%s?format=json' % kwargs['filter_name']
+        url = 'tickets/filter/%s?format=json' % filter_name
         page = 1
         tickets = []
 
