@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import HTTPError
 
 from freshdesk.models import Ticket
 
@@ -73,8 +74,10 @@ class API(object):
         """Wrapper around request.get() to use the API prefix. Returns a JSON response."""
         r = self._session.get(self._api_prefix + url, params=params)
         r.raise_for_status()
+        if 'Retry-After' in r.headers:
+            raise HTTPError('403 Forbidden: API rate-limit has been reached until {}.' \
+                    'See http://freshdesk.com/api#ratelimit'.format(r.headers['Retry-After']))
         j = r.json()
         if 'require_login' in j:
-            from requests.exceptions import HTTPError
             raise HTTPError('403 Forbidden: API key is incorrect for this domain')
         return r.json()
