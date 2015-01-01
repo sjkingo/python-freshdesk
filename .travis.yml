@@ -7,6 +7,6 @@ sudo: false
 branches:
     only:
         - master
-install: pip install requests coveralls
+install: pip install -r test-requirements.txt
 script: ./test.sh
 after_success: coveralls

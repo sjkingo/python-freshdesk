@@ -9,10 +9,38 @@ DOMAIN = 'pythonfreshdesk.freshdesk.com'
 API_KEY = 'MX4CEAw4FogInimEdRW2'
 
 import datetime
+import json
+import re
+import os.path
 from unittest import TestCase
 
 from freshdesk.api import API
 from freshdesk.models import Ticket, Comment
+
+class MockedAPI(API):
+    def __init__(self, *args):
+        self.resolver = {
+            re.compile(r'tickets/filter/all_tickets\?format=json&page=1'): self.read_test_file('all_tickets.json'),
+            re.compile(r'tickets/filter/new_my_open\?format=json&page=1'): self.read_test_file('all_tickets.json'),
+            re.compile(r'tickets/filter/spam\?format=json&page=1'): [],
+            re.compile(r'tickets/filter/deleted\?format=json&page=1'): [],
+            re.compile(r'tickets/1.json'): self.read_test_file('ticket_1.json'),
+            re.compile(r'.*&page=2'): [],
+        }
+        super(MockedAPI, self).__init__(*args)
+
+    def read_test_file(self, filename):
+        path = os.path.join(os.path.dirname(__file__), 'sample_json_data', filename)
+        return json.loads(open(path, 'r').read())
+
+    def _get(self, url, *args, **kwargs):
+        for pattern, json in self.resolver.items():
+            if pattern.match(url):
+                return json
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_get() has no pattern for \'{}\''.format(url))
 
 class TestAPIClass(TestCase):
     def test_api_prefix(self):
@@ -36,7 +64,7 @@ class TestAPIClass(TestCase):
 class TestTicket(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.api = API(DOMAIN, API_KEY)
+        cls.api = MockedAPI(DOMAIN, API_KEY)
         cls.ticket = cls.api.tickets.get_ticket(1)
 
     def test_str(self):
@@ -98,7 +126,7 @@ class TestTicket(TestCase):
 class TestComment(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.api = API(DOMAIN, API_KEY)
+        cls.api = MockedAPI(DOMAIN, API_KEY)
         cls.ticket = cls.api.tickets.get_ticket(1)
 
     def test_comments_list(self):
