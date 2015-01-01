@@ -33,59 +33,51 @@ class TestAPIClass(TestCase):
         with self.assertRaises(HTTPError):
             api.tickets.get_ticket(1)
 
-class TestTicketAPI(TestCase):
+class TestTicket(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.api = API(DOMAIN, API_KEY)
+        cls.ticket = cls.api.tickets.get_ticket(1)
 
     def test_str(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertEqual(str(ticket), 'This is a sample ticket')
+        self.assertEqual(str(self.ticket), 'This is a sample ticket')
 
     def test_repr(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertEqual(repr(ticket), '<Ticket \'This is a sample ticket\'>')
+        self.assertEqual(repr(self.ticket), '<Ticket \'This is a sample ticket\'>')
 
     def test_get_ticket(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertIsInstance(ticket, Ticket)
-        self.assertEqual(ticket.display_id, 1)
-        self.assertEqual(ticket.subject, 'This is a sample ticket')
-        self.assertEqual(ticket.description, 'This is a sample ticket, feel free to delete it.')
+        self.assertIsInstance(self.ticket, Ticket)
+        self.assertEqual(self.ticket.display_id, 1)
+        self.assertEqual(self.ticket.subject, 'This is a sample ticket')
+        self.assertEqual(self.ticket.description, 'This is a sample ticket, feel free to delete it.')
 
     def test_ticket_priority(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertEqual(ticket._priority, 1)
-        self.assertEqual(ticket.priority, 'low')
+        self.assertEqual(self.ticket._priority, 1)
+        self.assertEqual(self.ticket.priority, 'low')
 
     def test_ticket_status(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertEqual(ticket._status, 2)
-        self.assertEqual(ticket.status, 'open')
+        self.assertEqual(self.ticket._status, 2)
+        self.assertEqual(self.ticket.status, 'open')
 
     def test_ticket_source(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertEqual(ticket._source, 2)
-        self.assertEqual(ticket.source, 'portal')
+        self.assertEqual(self.ticket._source, 2)
+        self.assertEqual(self.ticket.source, 'portal')
 
     def test_ticket_datetime(self):
-        ticket = self.api.tickets.get_ticket(1)
-        self.assertIsInstance(ticket.created_at, datetime.datetime)
-        self.assertIsInstance(ticket.updated_at, datetime.datetime)
+        self.assertIsInstance(self.ticket.created_at, datetime.datetime)
+        self.assertIsInstance(self.ticket.updated_at, datetime.datetime)
 
     def test_all_tickets(self):
         tickets = self.api.tickets.list_all_tickets()
-        ticket1 = self.api.tickets.get_ticket(1)
         self.assertIsInstance(tickets, list)
         self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].display_id, ticket1.display_id)
+        self.assertEqual(tickets[0].display_id, self.ticket.display_id)
 
     def test_open_tickets(self):
         tickets = self.api.tickets.list_open_tickets()
-        ticket1 = self.api.tickets.get_ticket(1)
         self.assertIsInstance(tickets, list)
         self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].display_id, ticket1.display_id)
+        self.assertEqual(tickets[0].display_id, self.ticket.display_id)
 
     def test_deleted_tickets(self):
         tickets = self.api.tickets.list_deleted_tickets()
@@ -99,10 +91,9 @@ class TestTicketAPI(TestCase):
 
     def test_default_filter_name(self):
         tickets = self.api.tickets.list_tickets()
-        ticket1 = self.api.tickets.get_ticket(1)
         self.assertIsInstance(tickets, list)
         self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].display_id, ticket1.display_id)
+        self.assertEqual(tickets[0].display_id, self.ticket.display_id)
 
 class TestComment(TestCase):
     @classmethod
