@@ -14,6 +14,25 @@ from unittest import TestCase
 from freshdesk.api import API
 from freshdesk.models import Ticket
 
+class TestAPIClass(TestCase):
+    def test_api_prefix(self):
+        api = API('test_domain', 'test_key')
+        self.assertEqual(api._api_prefix, 'http://test_domain/helpdesk/')
+        api = API('test_domain/', 'test_key')
+        self.assertEqual(api._api_prefix, 'http://test_domain/helpdesk/')
+
+    def test_403_error(self):
+        api = API(DOMAIN, 'invalid_api_key')
+        from requests.exceptions import HTTPError
+        with self.assertRaises(HTTPError):
+            api.tickets.get_ticket(1)
+
+    def test_404_error(self):
+        api = API('ticketus.org', 'invalid_api_key')
+        from requests.exceptions import HTTPError
+        with self.assertRaises(HTTPError):
+            api.tickets.get_ticket(1)
+
 class TestTicketAPI(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -69,3 +88,10 @@ class TestTicketAPI(TestCase):
         tickets = self.api.tickets.list_tickets(filter_name='spam')
         self.assertIsInstance(tickets, list)
         self.assertEqual(len(tickets), 0)
+
+    def test_default_filter_name(self):
+        tickets = self.api.tickets.list_tickets()
+        ticket1 = self.api.tickets.get_ticket(1)
+        self.assertIsInstance(tickets, list)
+        self.assertEqual(len(tickets), 1)
+        self.assertEqual(tickets[0].display_id, ticket1.display_id)
