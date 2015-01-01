@@ -12,7 +12,7 @@ import datetime
 from unittest import TestCase
 
 from freshdesk.api import API
-from freshdesk.models import Ticket
+from freshdesk.models import Ticket, Comment
 
 class TestAPIClass(TestCase):
     def test_api_prefix(self):
@@ -95,3 +95,20 @@ class TestTicketAPI(TestCase):
         self.assertIsInstance(tickets, list)
         self.assertEqual(len(tickets), 1)
         self.assertEqual(tickets[0].display_id, ticket1.display_id)
+
+class TestComment(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.api = API(DOMAIN, API_KEY)
+        cls.ticket = cls.api.tickets.get_ticket(1)
+
+    def test_comments_list(self):
+        self.assertIsInstance(self.ticket.comments, list)
+        self.assertEqual(len(self.ticket.comments), 1)
+        self.assertIsInstance(self.ticket.comments[0], Comment)
+
+    def test_comment_str(self):
+        self.assertEqual(str(self.ticket.comments[0]), 'This is a reply.')
+
+    def test_comment_repr(self):
+        self.assertEqual(repr(self.ticket.comments[0]), '<Comment for <Ticket \'This is a sample ticket\'>>')
