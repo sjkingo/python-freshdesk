@@ -26,6 +26,7 @@ class MockedAPI(API):
             re.compile(r'helpdesk/tickets/filter/deleted\?format=json&page=1'): [],
             re.compile(r'helpdesk/tickets/1.json'): self.read_test_file('ticket_1.json'),
             re.compile(r'.*&page=2'): [],
+            re.compile(r'contacts/5004272351.json'): self.read_test_file('contact.json'),
         }
         super(MockedAPI, self).__init__(*args)
 
@@ -139,3 +140,25 @@ class TestComment(TestCase):
 
     def test_comment_repr(self):
         self.assertEqual(repr(self.ticket.comments[0]), '<Comment for <Ticket \'This is a sample ticket\'>>')
+
+class TestContact(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.api = MockedAPI(DOMAIN, API_KEY)
+        cls.contact = cls.api.contacts.get_contact('5004272351')
+
+    def test_get_contact(self):
+        self.assertIsInstance(self.contact, Contact)
+        self.assertEqual(self.contact.name, 'Rachel')
+        self.assertEqual(self.contact.email, 'rachel@freshdesk.com')
+        self.assertEqual(self.contact.helpdesk_agent, False)
+
+    def test_contact_datetime(self):
+        self.assertIsInstance(self.contact.created_at, datetime.datetime)
+        self.assertIsInstance(self.contact.updated_at, datetime.datetime)
+
+    def test_contact_str(self):
+        self.assertEqual(str(self.contact), 'Rachel')
+
+    def test_contact_repr(self):
+        self.assertEqual(repr(self.contact), '<Contact \'Rachel\'>')

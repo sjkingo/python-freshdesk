@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 
-from freshdesk.models import Ticket
+from freshdesk.models import *
 
 class TicketAPI(object):
     def __init__(self, api):
@@ -53,6 +53,14 @@ class TicketAPI(object):
         """Lists all deleted tickets."""
         return self.list_tickets(filter_name='deleted')
 
+class ContactAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_contact(self, contact_id):
+        url = 'contacts/%s.json' % contact_id
+        return Contact(**self._api._get(url)['user'])
+
 class API(object):
     def __init__(self, domain, api_key):
         """Creates a wrapper to perform API actions.
@@ -71,6 +79,7 @@ class API(object):
         self._session.headers = {'Content-Type': 'application/json'}
 
         self.tickets = TicketAPI(self)
+        self.contacts = ContactAPI(self)
 
     def _get(self, url, params={}):
         """Wrapper around request.get() to use the API prefix. Returns a JSON response."""

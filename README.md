@@ -4,7 +4,10 @@ A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 
 
 It is written in Python and only requires 1 external dependency: `python-requests`.
 
-Currently it only supports the [Ticket API](http://freshdesk.com/api#view_a_ticket).
+Currently it only supports the following API features:
+
+* Getting a [Ticket](http://freshdesk.com/api#view_a_ticket) and filtering ticket lists
+* Getting a [Contact/User](http://freshdesk.com/api#view_user)
 
 [![Build Status](https://travis-ci.org/sjkingo/python-freshdesk.svg)](https://travis-ci.org/sjkingo/python-freshdesk) [![Coverage Status](https://img.shields.io/coveralls/sjkingo/python-freshdesk.svg)](https://coveralls.io/r/sjkingo/python-freshdesk)
 
@@ -99,4 +102,14 @@ The original comment (called "description" in Freshdesk) is available on the `Ti
 ```python
 >>> ticket.description
 'nose is a good suite'
+```
+
+### Contacts/Users
+
+Freshdesk mixes up the naming of contacts and users, depending on whether they are an agent or not.
+`python-freshdesk` simply calls them all contacts and are represented as `Contact` instances:
+
+```python
+>>> repr(a.contacts.get_contact('1234'))
+"<Contact 'Rachel'>"
 ```
