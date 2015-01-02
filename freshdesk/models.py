@@ -36,7 +36,10 @@ class Ticket(FreshdeskModel):
     @property
     def status(self):
         _s = {2: 'open', 3: 'pending', 4: 'resolved', 5: 'closed'}
-        return _s[self._status]
+        try:
+            return _s[self._status]
+        except KeyError:
+            return 'status_{}'.format(self._status)
 
     @property
     def source(self):
