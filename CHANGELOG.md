@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v0.9.2 - 2015-01-02
+
+  * Mocked out test suite API for performance
+  * Added support for getting a Contact/User from the API
+
 v0.9.1 - 2015-01-01
 
   * Added full test suite for Ticket API

@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='python-freshdesk',
-    version='0.9.1',
+    version='0.9.2',
     license='BSD',
     author='Sam Kingston',
     author_email='sam@sjkwi.com.au',
