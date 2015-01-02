@@ -15,16 +15,16 @@ import os.path
 from unittest import TestCase
 
 from freshdesk.api import API
-from freshdesk.models import Ticket, Comment
+from freshdesk.models import Ticket, Comment, Contact
 
 class MockedAPI(API):
     def __init__(self, *args):
         self.resolver = {
-            re.compile(r'tickets/filter/all_tickets\?format=json&page=1'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets/filter/new_my_open\?format=json&page=1'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets/filter/spam\?format=json&page=1'): [],
-            re.compile(r'tickets/filter/deleted\?format=json&page=1'): [],
-            re.compile(r'tickets/1.json'): self.read_test_file('ticket_1.json'),
+            re.compile(r'helpdesk/tickets/filter/all_tickets\?format=json&page=1'): self.read_test_file('all_tickets.json'),
+            re.compile(r'helpdesk/tickets/filter/new_my_open\?format=json&page=1'): self.read_test_file('all_tickets.json'),
+            re.compile(r'helpdesk/tickets/filter/spam\?format=json&page=1'): [],
+            re.compile(r'helpdesk/tickets/filter/deleted\?format=json&page=1'): [],
+            re.compile(r'helpdesk/tickets/1.json'): self.read_test_file('ticket_1.json'),
             re.compile(r'.*&page=2'): [],
         }
         super(MockedAPI, self).__init__(*args)
@@ -45,9 +45,9 @@ class MockedAPI(API):
 class TestAPIClass(TestCase):
     def test_api_prefix(self):
         api = API('test_domain', 'test_key')
-        self.assertEqual(api._api_prefix, 'http://test_domain/helpdesk/')
+        self.assertEqual(api._api_prefix, 'http://test_domain/')
         api = API('test_domain/', 'test_key')
-        self.assertEqual(api._api_prefix, 'http://test_domain/helpdesk/')
+        self.assertEqual(api._api_prefix, 'http://test_domain/')
 
     def test_403_error(self):
         api = API(DOMAIN, 'invalid_api_key')

@@ -9,7 +9,7 @@ class TicketAPI(object):
 
     def get_ticket(self, ticket_id):
         """Fetches the ticket for the given ticket ID"""
-        url = 'tickets/%d.json' % ticket_id
+        url = 'helpdesk/tickets/%d.json' % ticket_id
         return Ticket(**self._api._get(url)['helpdesk_ticket'])
 
     def list_tickets(self, **kwargs):
@@ -27,7 +27,7 @@ class TicketAPI(object):
             filter_name = kwargs['filter_name']
             del kwargs['filter_name']
 
-        url = 'tickets/filter/%s?format=json' % filter_name
+        url = 'helpdesk/tickets/filter/%s?format=json' % filter_name
         page = 1
         tickets = []
 
@@ -65,7 +65,7 @@ class API(object):
           .tickets:  the Ticket API
         """
 
-        self._api_prefix = 'http://{}/helpdesk/'.format(domain.rstrip('/'))
+        self._api_prefix = 'http://{}/'.format(domain.rstrip('/'))
         self._session = requests.Session()
         self._session.auth = (api_key, 'unused_with_api_key')
         self._session.headers = {'Content-Type': 'application/json'}
