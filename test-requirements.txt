@@ -1,3 +1,4 @@
 coveralls
 nose
+python-dateutil
 requests

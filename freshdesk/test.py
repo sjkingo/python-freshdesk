@@ -8,7 +8,7 @@ http://pythonfreshdesk.freshdesk.com/
 DOMAIN = 'pythonfreshdesk.freshdesk.com'
 API_KEY = 'MX4CEAw4FogInimEdRW2'
 
-import datetime
+import dateutil
 import json
 import re
 import os.path
@@ -93,8 +93,8 @@ class TestTicket(TestCase):
         self.assertEqual(self.ticket.source, 'portal')
 
     def test_ticket_datetime(self):
-        self.assertIsInstance(self.ticket.created_at, datetime.datetime)
-        self.assertIsInstance(self.ticket.updated_at, datetime.datetime)
+        self.assertIsInstance(self.ticket.created_at, dateutil.parser.parser)
+        self.assertIsInstance(self.ticket.updated_at, dateutil.parser.parser)
 
     def test_all_tickets(self):
         tickets = self.api.tickets.list_all_tickets()
@@ -154,8 +154,8 @@ class TestContact(TestCase):
         self.assertEqual(self.contact.helpdesk_agent, False)
 
     def test_contact_datetime(self):
-        self.assertIsInstance(self.contact.created_at, datetime.datetime)
-        self.assertIsInstance(self.contact.updated_at, datetime.datetime)
+        self.assertIsInstance(self.contact.created_at, dateutil.parser.parser)
+        self.assertIsInstance(self.contact.updated_at, dateutil.parser.parser)
 
     def test_contact_str(self):
         self.assertEqual(str(self.contact), 'Rachel')
