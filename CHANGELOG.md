@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v0.9.3 - 2015-01-09
+
+  * Implement proper timezone handling instead of hardcoding
+
 v0.9.2 - 2015-01-02
 
   * Mocked out test suite API for performance
