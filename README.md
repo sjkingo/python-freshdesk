@@ -2,8 +2,6 @@
 
 A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 2.7 and 3.
 
-It is written in Python and only requires 1 external dependency: `python-requests`.
-
 Currently it only supports the following API features:
 
 * Getting a [Ticket](http://freshdesk.com/api#view_a_ticket) and filtering ticket lists
