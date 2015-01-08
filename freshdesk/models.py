@@ -15,7 +15,9 @@ class FreshdeskModel(object):
     def _to_timestamp(self, timestamp_str):
         """Converts a timestamp string as returned by the API to
         a native datetime object and return it."""
-        return datetime.datetime.strptime(timestamp_str, '%Y-%m-%dT%H:%M:%S+10:00')
+        dt, tz = tuple(timestamp_str.split('+'))
+        timestamp_str = dt + '+' + tz.replace(':', '')
+        return datetime.datetime.strptime(timestamp_str, '%Y-%m-%dT%H:%M:%S%z')
 
 class Ticket(FreshdeskModel):
     def __str__(self):
