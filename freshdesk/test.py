@@ -13,11 +13,12 @@ import json
 import re
 import os.path
 from unittest import TestCase
-
 from freshdesk.api import API
 from freshdesk.models import Ticket, Comment, Contact
 
+
 class MockedAPI(API):
+
     def __init__(self, *args):
         self.resolver = {
             re.compile(r'helpdesk/tickets/filter/all_tickets\?format=json&page=1'): self.read_test_file('all_tickets.json'),
@@ -31,7 +32,8 @@ class MockedAPI(API):
         super(MockedAPI, self).__init__(*args)
 
     def read_test_file(self, filename):
-        path = os.path.join(os.path.dirname(__file__), 'sample_json_data', filename)
+        path = os.path.join(
+            os.path.dirname(__file__), 'sample_json_data', filename)
         return json.loads(open(path, 'r').read())
 
     def _get(self, url, *args, **kwargs):
@@ -41,14 +43,17 @@ class MockedAPI(API):
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
-        raise HTTPError('404: mocked_api_get() has no pattern for \'{}\''.format(url))
+        raise HTTPError(
+            '404: mocked_api_get() has no pattern for \'{}\''.format(url))
+
 
 class TestAPIClass(TestCase):
+
     def test_api_prefix(self):
         api = API('test_domain', 'test_key')
-        self.assertEqual(api._api_prefix, 'http://test_domain/')
+        self.assertEqual(api._api_prefix, 'https://test_domain/')
         api = API('test_domain/', 'test_key')
-        self.assertEqual(api._api_prefix, 'http://test_domain/')
+        self.assertEqual(api._api_prefix, 'https://test_domain/')
 
     def test_403_error(self):
         api = API(DOMAIN, 'invalid_api_key')
@@ -57,12 +62,14 @@ class TestAPIClass(TestCase):
             api.tickets.get_ticket(1)
 
     def test_404_error(self):
-        api = API('ticketus.org', 'invalid_api_key')
+        api = API('google.com', 'invalid_api_key')
         from requests.exceptions import HTTPError
         with self.assertRaises(HTTPError):
             api.tickets.get_ticket(1)
 
+
 class TestTicket(TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
@@ -72,13 +79,18 @@ class TestTicket(TestCase):
         self.assertEqual(str(self.ticket), 'This is a sample ticket')
 
     def test_repr(self):
-        self.assertEqual(repr(self.ticket), '<Ticket \'This is a sample ticket\'>')
+        self.assertEqual(
+            repr(self.ticket), '<Ticket \'This is a sample ticket\'>')
 
     def test_get_ticket(self):
         self.assertIsInstance(self.ticket, Ticket)
         self.assertEqual(self.ticket.display_id, 1)
         self.assertEqual(self.ticket.subject, 'This is a sample ticket')
-        self.assertEqual(self.ticket.description, 'This is a sample ticket, feel free to delete it.')
+        self.assertEqual(
+            self.ticket.description, 'This is a sample ticket, feel free to delete it.')
+
+    def test_create_ticket(self):
+        pass
 
     def test_ticket_priority(self):
         self.assertEqual(self.ticket._priority, 1)
@@ -124,7 +136,9 @@ class TestTicket(TestCase):
         self.assertEqual(len(tickets), 1)
         self.assertEqual(tickets[0].display_id, self.ticket.display_id)
 
+
 class TestComment(TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
@@ -139,9 +153,12 @@ class TestComment(TestCase):
         self.assertEqual(str(self.ticket.comments[0]), 'This is a reply.')
 
     def test_comment_repr(self):
-        self.assertEqual(repr(self.ticket.comments[0]), '<Comment for <Ticket \'This is a sample ticket\'>>')
+        self.assertEqual(repr(
+            self.ticket.comments[0]), '<Comment for <Ticket \'This is a sample ticket\'>>')
+
 
 class TestContact(TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
