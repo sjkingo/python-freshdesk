@@ -1,6 +1,5 @@
 import requests
 from requests.exceptions import HTTPError
-
 from freshdesk.models import *
 
 class TicketAPI(object):
@@ -61,6 +60,44 @@ class ContactAPI(object):
         url = 'contacts/%s.json' % contact_id
         return Contact(**self._api._get(url)['user'])
 
+class CustomerAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_customer(self, company_id):
+        url = '/customers/%s.json' % company_id
+        return Customer(**self._api._get(url)['customer'])
+
+    def get_customer_from_contact(self, contact_id):
+        return self.get_customer(self._api.contacts.get_contact(contact_id).company_id)
+
+
+class TimeAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_timesheets(self, **kwargs):
+        url = 'helpdesk/time_sheets.json'
+        if "filter_name" in kwargs.keys() and "filter_value" in kwargs.keys():
+            url = url + "?{}={}".format(kwargs["filter_name"], kwargs["filter_value"])
+        l = []
+        timesheet_data = self._api._get(url)
+        i = 0
+        while ( i < len(timesheet_data) ):
+            l.append(TimeEntry(**timesheet_data[i]['time_entry']))
+            i = i + 1
+        return l
+
+    def get_timesheet_by_ticket(self, ticket_id):
+        url = 'helpdesk/tickets/%s/time_sheets.json' % ticket_id
+        l = []
+        timesheet_data = self._api._get(url)
+        i = 0
+        while ( i < len(timesheet_data) ):
+            l.append(TimeEntry(**timesheet_data[i]['time_entry']))
+            i = i + 1
+        return l
+
 class API(object):
     def __init__(self, domain, api_key):
         """Creates a wrapper to perform API actions.
@@ -80,6 +117,8 @@ class API(object):
 
         self.tickets = TicketAPI(self)
         self.contacts = ContactAPI(self)
+        self.timesheets = TimeAPI(self)
+        self.customers = CustomerAPI(self)
 
     def _get(self, url, params={}):
         """Wrapper around request.get() to use the API prefix. Returns a JSON response."""
