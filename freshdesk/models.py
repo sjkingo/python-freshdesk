@@ -1,4 +1,4 @@
-import datetime
+from dateutil.parser import parser as datetime_parser
 
 class FreshdeskModel(object):
     _keys = set()
@@ -17,7 +17,7 @@ class FreshdeskModel(object):
     def _to_timestamp(self, timestamp_str):
         """Converts a timestamp string as returned by the API to
         a native datetime object and return it."""
-        return datetime.datetime.strptime(timestamp_str.replace(":",""), '%Y-%m-%dT%H%M%S%z')
+        return datetime_parser.parse(timestamp_str)
 
 class Ticket(FreshdeskModel):
     def __str__(self):
