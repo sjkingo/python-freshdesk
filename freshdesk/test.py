@@ -8,14 +8,14 @@ http://pythonfreshdesk.freshdesk.com/
 DOMAIN = 'pythonfreshdesk.freshdesk.com'
 API_KEY = 'MX4CEAw4FogInimEdRW2'
 
-import dateutil
+import datetime
 import json
 import re
 import os.path
 from unittest import TestCase
 
 from freshdesk.api import API
-from freshdesk.models import Ticket, Comment, Contact
+from freshdesk.models import Ticket, Comment, Contact, Customer, TimeEntry
 
 class MockedAPI(API):
     def __init__(self, *args):
@@ -24,9 +24,15 @@ class MockedAPI(API):
             re.compile(r'helpdesk/tickets/filter/new_my_open\?format=json&page=1'): self.read_test_file('all_tickets.json'),
             re.compile(r'helpdesk/tickets/filter/spam\?format=json&page=1'): [],
             re.compile(r'helpdesk/tickets/filter/deleted\?format=json&page=1'): [],
+            re.compile(r'helpdesk/tickets/1/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
             re.compile(r'helpdesk/tickets/1.json'): self.read_test_file('ticket_1.json'),
             re.compile(r'.*&page=2'): [],
             re.compile(r'contacts/5004272351.json'): self.read_test_file('contact.json'),
+            re.compile(r'contacts/5004272350.json'): self.read_test_file('contact5004272350.json'),
+            re.compile(r'customers/1.json'): self.read_test_file('customer.json'),
+            re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
+            re.compile(r'helpdesk/time_sheets.json\?agent_id='): self.read_test_file('timeentries_ticket_1.json'),
+            re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
         }
         super(MockedAPI, self).__init__(*args)
 
@@ -93,8 +99,8 @@ class TestTicket(TestCase):
         self.assertEqual(self.ticket.source, 'portal')
 
     def test_ticket_datetime(self):
-        self.assertIsInstance(self.ticket.created_at, dateutil.parser.parser)
-        self.assertIsInstance(self.ticket.updated_at, dateutil.parser.parser)
+        self.assertIsInstance(self.ticket.created_at, datetime.datetime)
+        self.assertIsInstance(self.ticket.updated_at, datetime.datetime)
 
     def test_all_tickets(self):
         tickets = self.api.tickets.list_all_tickets()
@@ -152,13 +158,67 @@ class TestContact(TestCase):
         self.assertEqual(self.contact.name, 'Rachel')
         self.assertEqual(self.contact.email, 'rachel@freshdesk.com')
         self.assertEqual(self.contact.helpdesk_agent, False)
+        self.assertEqual(self.contact.customer_id, 1)
 
     def test_contact_datetime(self):
-        self.assertIsInstance(self.contact.created_at, dateutil.parser.parser)
-        self.assertIsInstance(self.contact.updated_at, dateutil.parser.parser)
+        self.assertIsInstance(self.contact.created_at, datetime.datetime)
+        self.assertIsInstance(self.contact.updated_at, datetime.datetime)
 
     def test_contact_str(self):
         self.assertEqual(str(self.contact), 'Rachel')
 
     def test_contact_repr(self):
         self.assertEqual(repr(self.contact), '<Contact \'Rachel\'>')
+
+class TestCustomer(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.api = MockedAPI(DOMAIN, API_KEY)
+        cls.customer = cls.api.customers.get_customer('1')
+        cls.contact = cls.api.contacts.get_contact('5004272351')
+
+    def test_customer(self):
+        self.assertIsInstance(self.customer, Customer)
+        self.assertEqual(self.customer.name, 'ACME Corp.')
+        self.assertEqual(self.customer.domains, 'acme.com')
+        self.assertEqual(self.customer.cf_custom_key, 'custom_value')
+
+    def test_contact_datetime(self):
+        self.assertIsInstance(self.customer.created_at, datetime.datetime)
+        self.assertIsInstance(self.customer.updated_at, datetime.datetime)
+
+    def test_contact_str(self):
+        self.assertEqual(str(self.customer), 'ACME Corp.')
+
+    def test_contact_repr(self):
+        self.assertEqual(repr(self.customer), '<Customer \'ACME Corp.\'>')
+
+    def test_get_customer_from_contact(self):
+        self.customer = self.api.customers.get_customer_from_contact(self.contact)
+        self.test_customer()
+
+class TestTimesheets(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.api = MockedAPI(DOMAIN, API_KEY)
+        cls.timesheet = cls.api.timesheets.get_timesheet_by_ticket(1)
+
+    def test_timesheet(self):
+        self.assertIsInstance(self.timesheet, type([]))
+        self.assertEqual(len(self.timesheet), 3)
+        self.assertIsInstance(self.timesheet[1], TimeEntry)
+        self.assertEqual(self.timesheet[1].id, 6000041896)
+        self.assertEqual(self.timesheet[1].note, "Foo")
+        self.assertEqual(self.timesheet[1].timespent, "0.33")
+
+    def test_timesheet_str(self):
+        self.assertEqual(str(self.timesheet[1]), "6000041896")
+
+    def test_timesheet_repr(self):
+        self.assertEqual(repr(self.timesheet[1]), '<Timesheet Entry 6000041896>')
+
+    def test_get_all_timesheets(self):
+        self.timesheet = self.api.timesheets.get_all_timesheets()
+        self.test_timesheet()
+        self.timesheet = self.api.timesheets.get_all_timesheets(filter_name="agent_id", filter_value="5004272350")
+        self.test_timesheet()
