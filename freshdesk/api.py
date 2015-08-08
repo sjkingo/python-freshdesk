@@ -65,18 +65,18 @@ class CustomerAPI(object):
         self._api = api
 
     def get_customer(self, company_id):
-        url = '/customers/%s.json' % company_id
+        url = 'customers/%s.json' % company_id
         return Customer(**self._api._get(url)['customer'])
 
-    def get_customer_from_contact(self, contact_id):
-        return self.get_customer(self._api.contacts.get_contact(contact_id).company_id)
+    def get_customer_from_contact(self, contact):
+        return self.get_customer(contact.customer_id)
 
 
 class TimeAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def get_timesheets(self, **kwargs):
+    def get_all_timesheets(self, **kwargs):
         url = 'helpdesk/time_sheets.json'
         if "filter_name" in kwargs.keys() and "filter_value" in kwargs.keys():
             url = url + "?{}={}".format(kwargs["filter_name"], kwargs["filter_value"])

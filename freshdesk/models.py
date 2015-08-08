@@ -5,7 +5,8 @@ class FreshdeskModel(object):
 
     def __init__(self, **kwargs):
         if "custom_field" in kwargs.keys() and len(kwargs["custom_field"]) > 0:
-            kwargs.update(kwargs["custom_field"])
+            custom_fields = kwargs.pop("custom_field")
+            kwargs.update(custom_fields)
         for k, v in kwargs.items():
             if hasattr(Ticket, k):
                 k = '_' + k
@@ -64,11 +65,15 @@ class Contact(FreshdeskModel):
 
 class TimeEntry(FreshdeskModel):
     def __str__(self):
-        return self.body
+        return str(self.id)
+
+    def __repr__(self):
+        return '<Timesheet Entry {}>'.format(self.id)
+
 
 class Customer(FreshdeskModel):
     def __str__(self):
         return self.name
 
     def __repr__(self):
-        return '<Customer \'{}\'>'.format(self.id)
+        return '<Customer \'{}\'>'.format(self.name)
