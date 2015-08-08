@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v0.9.4 - 2015-08-09
+
+  * Added support for timesheets (@fstolba)
+
 v0.9.3 - 2015-01-09
 
   * Implement proper timezone handling instead of hardcoding
