@@ -5,7 +5,8 @@ A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 
 Currently it only supports the following API features:
 
 * Getting a [Ticket](http://freshdesk.com/api#view_a_ticket) and filtering ticket lists
-* Getting a [Contact/User](http://freshdesk.com/api#view_user)
+* Getting a [Contact/User/Customer](http://freshdesk.com/api#view_user)
+* Viewing [timesheets](http://freshdesk.com/api#view_all_time_entry)
 
 [![Build Status](https://travis-ci.org/sjkingo/python-freshdesk.svg)](https://travis-ci.org/sjkingo/python-freshdesk) [![Coverage Status](https://img.shields.io/coveralls/sjkingo/python-freshdesk.svg)](https://coveralls.io/r/sjkingo/python-freshdesk)
 
@@ -110,4 +111,20 @@ Freshdesk mixes up the naming of contacts and users, depending on whether they a
 ```python
 >>> repr(a.contacts.get_contact('1234'))
 "<Contact 'Rachel'>"
+```
+
+### Timesheets
+
+You can view all timesheets:
+
+```python
+>>> a.timesheets.get_all_timesheets()
+[<TimeEntry>, <TimeEntry, ...]
+```
+
+Or filter by ticket number:
+
+```python
+>>> a.timesheets.get_timesheet_by_ticket(4)
+[<TimeEntry]
 ```
