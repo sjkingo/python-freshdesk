@@ -126,5 +126,5 @@ Or filter by ticket number:
 
 ```python
 >>> a.timesheets.get_timesheet_by_ticket(4)
-[<TimeEntry]
+[<TimeEntry>]
 ```
