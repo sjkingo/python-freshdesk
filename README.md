@@ -119,12 +119,12 @@ You can view all timesheets:
 
 ```python
 >>> a.timesheets.get_all_timesheets()
-[<TimeEntry>, <TimeEntry, ...]
+[<Timesheet Entry 1>, <Timesheet Entry 2, ...]
 ```
 
 Or filter by ticket number:
 
 ```python
 >>> a.timesheets.get_timesheet_by_ticket(4)
-[<TimeEntry>]
+[<Timesheet Entry 7>]
 ```
