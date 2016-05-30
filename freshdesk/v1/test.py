@@ -1,3 +1,14 @@
+import datetime
+import json
+import re
+import os.path
+import responses
+from unittest import TestCase
+
+from freshdesk.v1.api import API
+from freshdesk.v1.models import Ticket, Comment, Contact, Customer, TimeEntry
+
+
 """
 Test suite for python-freshdesk.
 
@@ -8,14 +19,6 @@ http://pythonfreshdesk.freshdesk.com/
 DOMAIN = 'pythonfreshdesk.freshdesk.com'
 API_KEY = 'MX4CEAw4FogInimEdRW2'
 
-import datetime
-import json
-import re
-import os.path
-from unittest import TestCase
-
-from freshdesk.api import API
-from freshdesk.models import Ticket, Comment, Contact, Customer, TimeEntry
 
 class MockedAPI(API):
     def __init__(self, *args):
@@ -41,13 +44,14 @@ class MockedAPI(API):
         return json.loads(open(path, 'r').read())
 
     def _get(self, url, *args, **kwargs):
-        for pattern, json in self.resolver.items():
+        for pattern, j in self.resolver.items():
             if pattern.match(url):
-                return json
+                return j
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
         raise HTTPError('404: mocked_api_get() has no pattern for \'{}\''.format(url))
+
 
 class TestAPIClass(TestCase):
     def test_api_prefix(self):
@@ -56,17 +60,29 @@ class TestAPIClass(TestCase):
         api = API('test_domain/', 'test_key')
         self.assertEqual(api._api_prefix, 'http://test_domain/')
 
+    @responses.activate
     def test_403_error(self):
+        responses.add(responses.GET,
+                      'http://{}/helpdesk/tickets/1.json'.format(DOMAIN),
+                      status=403)
+
         api = API(DOMAIN, 'invalid_api_key')
         from requests.exceptions import HTTPError
         with self.assertRaises(HTTPError):
             api.tickets.get_ticket(1)
 
+    @responses.activate
     def test_404_error(self):
-        api = API('ticketus.org', 'invalid_api_key')
+        DOMAIN_404 = 'google.com'
+        responses.add(responses.GET,
+                      'http://{}/helpdesk/tickets/1.json'.format(DOMAIN_404),
+                      status=404)
+
+        api = API(DOMAIN_404, 'invalid_api_key')
         from requests.exceptions import HTTPError
         with self.assertRaises(HTTPError):
             api.tickets.get_ticket(1)
+
 
 class TestTicket(TestCase):
     @classmethod
@@ -130,6 +146,7 @@ class TestTicket(TestCase):
         self.assertEqual(len(tickets), 1)
         self.assertEqual(tickets[0].display_id, self.ticket.display_id)
 
+
 class TestComment(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -146,6 +163,7 @@ class TestComment(TestCase):
 
     def test_comment_repr(self):
         self.assertEqual(repr(self.ticket.comments[0]), '<Comment for <Ticket \'This is a sample ticket\'>>')
+
 
 class TestContact(TestCase):
     @classmethod
@@ -169,6 +187,7 @@ class TestContact(TestCase):
 
     def test_contact_repr(self):
         self.assertEqual(repr(self.contact), '<Contact \'Rachel\'>')
+
 
 class TestCustomer(TestCase):
     @classmethod
@@ -196,6 +215,7 @@ class TestCustomer(TestCase):
     def test_get_customer_from_contact(self):
         self.customer = self.api.customers.get_customer_from_contact(self.contact)
         self.test_customer()
+
 
 class TestTimesheets(TestCase):
     @classmethod
