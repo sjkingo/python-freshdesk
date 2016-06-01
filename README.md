@@ -2,11 +2,27 @@
 
 A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 2.7 and 3.
 
-Currently it only supports the following API features:
+There is support for a limited subset of features, using either Freshdesk API v1 or v2.
 
+Support for the v1 API includes the following features:
 * Getting a [Ticket](http://freshdesk.com/api#view_a_ticket) and filtering ticket lists
 * Getting a [Contact/User/Customer](http://freshdesk.com/api#view_user)
 * Viewing [timesheets](http://freshdesk.com/api#view_all_time_entry)
+
+Support for the v2 API includes the following features:
+* [Tickets](http://developer.freshdesk.com/api/#tickets)
+  - [List](http://developer.freshdesk.com/api/#list_all_tickets)
+  - [Get](http://developer.freshdesk.com/api/#view_a_ticket)
+  - [Create](http://developer.freshdesk.com/api/#create_ticket)
+  - [Update](http://developer.freshdesk.com/api/#update_ticket)
+  - [Delete](http://developer.freshdesk.com/api/#delete_a_ticket)
+* [Comments](http://developer.freshdesk.com/api/#conversations) (known as Conversations in Freshdesk)
+  - [List](http://developer.freshdesk.com/api/#list_all_ticket_notes)
+  - [Create note](http://developer.freshdesk.com/api/#add_note_to_a_ticket)
+  - [Create reply](http://developer.freshdesk.com/api/#reply_ticket)
+* [Groups](http://developer.freshdesk.com/api/#groups)
+  - [List](http://developer.freshdesk.com/api/#list_all_groups)
+  - [Get](http://developer.freshdesk.com/api/#view_group)
 
 [![Build Status](https://travis-ci.org/sjkingo/python-freshdesk.svg)](https://travis-ci.org/sjkingo/python-freshdesk) [![Coverage Status](https://img.shields.io/coveralls/sjkingo/python-freshdesk.svg)](https://coveralls.io/r/sjkingo/python-freshdesk)
 
@@ -44,12 +60,22 @@ without changing these.
 >>> a = API('company.freshdesk.com', 'q8dnkjaS554Aol21dmnas9d92')
 ```
 
+To find your API key, follow Freshdesk's step-by-step solution article
+[How to find your API key](https://support.freshdesk.com/support/solutions/articles/215517).
+
+By default, API v1 is used for backwards compatibility. To specify v1 or v2
+explicitly:
+
+```python
+>>> a = API('company.freshdesk.com', 'q8dnkjaS554Aol21dmnas9d92', version=2)
+```
+
 The `API` class provides access to all the methods exposed by the Freshdesk API.
 
-### Tickets
+### Tickets (API v2)
 
 The Ticket API is accessed by using the methods assigned to the `a.tickets`
-instance. Tickets are loaded as instances of the `freshdesk.models.Ticket`
+instance. Tickets are loaded as instances of the `freshdesk.v2.models.Ticket`
 class, and can be iterated over:
 
 ```python
@@ -87,10 +113,54 @@ Or converted from indexes to their descriptions:
 'phone'
 ```
 
-Viewing comments on a ticket are as simple as looking at the `Ticket.comments` list:
+Creating a ticket in Freshdesk can be done with the `create_ticket` method.
+For example, we can create a new ticket like this:
 
 ```python
->>> ticket.comments
+ticket = a.tickets.create_ticket('This is a sample ticket',
+                                 email='example@example.com',
+                                 description='This is the description of the ticket',
+                                 tags=['example'])
+```
+
+The only positional argument is the subject, which is always required.
+
+All other values are optional named arguments, which you can find in the
+Freshdesk API documentation for [creating a ticket](http://developer.freshdesk.com/api/#create_ticket).
+
+While all but subject are optional, you will need to specify at least one of:
+`requester_id`, `email`, `facebook_id`, `phone` or `twitter_id` as the
+requester of the ticket, or the request will fail.
+
+Updating a ticket is similar to creating a ticket. The only differences are
+that the ticket ID becomes the first positional argument, and subject becomes
+an optional named argument.
+
+In this example, we update the subject and set the priority of the ticket
+as urgent.
+
+```python
+ticket = a.tickets.update_ticket(4,
+                                 subject='This is an urgent ticket',
+                                 priority=4)
+```
+
+The full list of named arguments you can pass can be found in the Freshdesk
+API documentation for [updating a ticket](http://developer.freshdesk.com/api/#update_ticket).
+
+To delete a ticket, just pass the ticket ID value to the `delete_ticket` method:
+
+```python
+a.tickets.delete_ticket(4)
+```
+
+### Comments (API v2)
+
+To view comments on a ticket (note or reply), use the `list_comments` method, from
+the comments module, and pass it the ticket number:
+
+```python
+>>> a.comments.list_comments(4)
 [<Comment for <Ticket 'Some tests should be created'>>]
 >>> ticket.comments[0]
 'We could use Travis CI'
@@ -103,7 +173,36 @@ The original comment (called "description" in Freshdesk) is available on the `Ti
 'nose is a good suite'
 ```
 
-### Contacts/Users
+If you want to add a comment to an existing ticket, you can do it via a note
+or a reply.
+
+The differences between notes and replies are that notes can be private
+(only visible to the agents, default). Replies are intended to be comments
+that are sent to the user (e.g. as an email).
+
+To create a note:
+```python
+>>> comment = a.comments.create_note(4,
+                                     'This is a public note',
+                                     private=False)
+'<Comment for Ticket #4>'
+```
+
+To create a reply:
+```python
+>>> a.comments.create_reply(4, 'This is the body of a reply')
+'<Comment for Ticket #4>'
+```
+
+The documentaion for [creating a reply](http://developer.freshdesk.com/api/#reply_ticket)
+and [creating a note](http://developer.freshdesk.com/api/#add_note_to_a_ticket)
+will provide details of the fields available, which you can pass as named
+arguments.
+
+In both methods, the ticket ID and body must be given as positional arguments.
+
+
+### Contacts/Users (API v1)
 
 Freshdesk mixes up the naming of contacts and users, depending on whether they are an agent or not.
 `python-freshdesk` simply calls them all contacts and are represented as `Contact` instances:
@@ -113,7 +212,7 @@ Freshdesk mixes up the naming of contacts and users, depending on whether they a
 "<Contact 'Rachel'>"
 ```
 
-### Timesheets
+### Timesheets (API v1)
 
 You can view all timesheets:
 
