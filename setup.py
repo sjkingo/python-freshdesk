@@ -1,8 +1,10 @@
 from setuptools import find_packages, setup
 
+from freshdesk import __version__
+
 setup(
     name='python-freshdesk',
-    version='0.9.4',
+    version=__version__,
     license='BSD',
     author='Sam Kingston',
     author_email='sam@sjkwi.com.au',

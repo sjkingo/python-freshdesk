@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.0.0 - 2016-06-16
+
+  * Add support for version 2 of the Freskdesk API while maintaining support for
+    the older version 1 (@andybotting)
+
 v0.9.4 - 2015-08-09
 
   * Added support for timesheets (@fstolba)
