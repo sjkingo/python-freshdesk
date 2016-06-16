@@ -1,5 +1,6 @@
 import dateutil.parser
 
+
 class FreshdeskModel(object):
     _keys = set()
 
@@ -19,6 +20,7 @@ class FreshdeskModel(object):
         """Converts a timestamp string as returned by the API to
         a native datetime object and return it."""
         return dateutil.parser.parse(timestamp_str)
+
 
 class Ticket(FreshdeskModel):
     def __str__(self):
@@ -49,6 +51,7 @@ class Ticket(FreshdeskModel):
         _s = {1: 'email', 2: 'portal', 3: 'phone', 4: 'forum', 5: 'twitter', 6: 'facebook', 7: 'chat'}
         return _s[self._source]
 
+
 class Comment(FreshdeskModel):
     def __str__(self):
         return self.body
@@ -56,12 +59,14 @@ class Comment(FreshdeskModel):
     def __repr__(self):
         return '<Comment for {}>'.format(repr(self.ticket))
 
+
 class Contact(FreshdeskModel):
     def __str__(self):
         return self.name
 
     def __repr__(self):
         return '<Contact \'{}\'>'.format(self.name)
+
 
 class TimeEntry(FreshdeskModel):
     def __str__(self):

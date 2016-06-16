@@ -2,3 +2,4 @@ coveralls
 nose
 python-dateutil
 requests
+responses
