@@ -43,8 +43,12 @@ class TicketAPI(object):
         """List all tickets, optionally filtered by a view. Specify filters as
         keyword arguments, such as:
 
-        filter_name = one of ['new_and_my_open', 'watching', 'spam', 'deleted']
+        filter_name = one of ['new_and_my_open', 'watching', 'spam', 'deleted',
+                              None]
             (defaults to 'new_and_my_open')
+            Passing None means that no named filter will be passed to
+            Freshdesk, which mimics the behavior of the 'all_tickets' filter
+            in v1 of the API.
 
         Multiple filters are AND'd together.
         """
@@ -54,14 +58,18 @@ class TicketAPI(object):
             filter_name = kwargs['filter_name']
             del kwargs['filter_name']
 
-        url = 'tickets?filter=%s' % filter_name
+        url = 'tickets'
+        if filter_name is not None:
+            url += '?filter=%s&' % filter_name
+        else:
+            url += '?'
         page = 1
         per_page = 100
         tickets = []
 
         # Skip pagination by looping over each page and adding tickets
         while True:
-            this_page = self._api._get(url + '&page=%d&per_page=%d'
+            this_page = self._api._get(url + 'page=%d&per_page=%d'
                                        % (page, per_page), kwargs)
             tickets += this_page
             if len(this_page) < per_page:
