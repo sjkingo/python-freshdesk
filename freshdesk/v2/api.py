@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group
+from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company
 
 
 class TicketAPI(object):
@@ -45,16 +45,30 @@ class TicketAPI(object):
 
         filter_name = one of ['new_and_my_open', 'watching', 'spam', 'deleted']
             (defaults to 'new_and_my_open')
-
+        updated_since (Datetime ISO 8601 FORMAT like 2016-09-17)
+        company_id = id of company to search ticket for
+        
         Multiple filters are AND'd together.
         """
-
+        queryString = "?"
         filter_name = 'new_and_my_open'
         if 'filter_name' in kwargs:
             filter_name = kwargs['filter_name']
             del kwargs['filter_name']
+        if filter_name != '':
+            queryString += 'filter=' + filter_name
 
-        url = 'tickets?filter=%s' % filter_name
+        if 'company_id' in kwargs:
+            queryString += '&' if queryString != '?' else ''
+            queryString += "company_id=" + str(kwargs['company_id'])
+            del kwargs['company_id']
+
+        if 'updated_since' in kwargs:
+            queryString += '&' if queryString != '?' else ''
+            queryString += "updated_since=" + str(kwargs['updated_since'])
+            del kwargs['updated_since']
+
+        url = 'tickets%s' % (queryString)
         page = 1
         per_page = 100
         tickets = []
@@ -140,8 +154,20 @@ class CustomerAPI(object):
         url = 'customers/%s' % company_id
         return Customer(**self._api._get(url))
 
-    def get_customer_from_contact(self, contact):
-        return self.get_customer(contact.customer_id)
+
+class CompanyAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_companies(self):
+        # NOTIMPL pagination
+        url = 'companies/'
+        companies = self._api._get(url)
+        return [Company(**c) for c in companies]
+
+    def get_company(self, company_id):
+        url = 'companies/%s' % company_id
+        return Company(**self._api._get(url))
 
 
 class API(object):
@@ -166,6 +192,7 @@ class API(object):
         self.contacts = ContactAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
+        self.companies = CompanyAPI(self)
 
         if domain.find('freshdesk.com') < 0:
             raise AttributeError('Freshdesk v2 API works only via Freshdesk'

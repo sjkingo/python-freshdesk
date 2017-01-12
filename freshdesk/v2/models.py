@@ -1,5 +1,7 @@
 import dateutil.parser
-
+import logging
+logging.basicConfig(format='%(asctime)s %(message)s')
+logger = logging.getLogger(__name__)
 
 class FreshdeskModel(object):
     _keys = set()
@@ -20,6 +22,11 @@ class FreshdeskModel(object):
         """Converts a timestamp string as returned by the API to
         a native datetime object and return it."""
         return dateutil.parser.parse(timestamp_str)
+
+    def show(self):
+        print(str(self))
+        for key in sorted(self.__dict__.keys()):
+            print('    %s :\t%s' % (key, self.__dict__[key]))
 
 
 class Ticket(FreshdeskModel):
@@ -93,3 +100,26 @@ class Customer(FreshdeskModel):
 
     def __repr__(self):
         return '<Customer \'{}\'>'.format(self.name)
+
+
+class Company(FreshdeskModel):
+
+    def __init__(self, **kwargs):
+        self._tickets = []
+        super(Company, self).__init__(**kwargs)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<Company \'{}\'>'.format(self.name)
+
+    def tickets(self, APIobj, force=False, **kwargs):
+        """ 
+        Args
+            APIobj : requires an API object to fetch tickets associated with this Company
+            force <bool> Force fetching Tickets again. (caching feature) 
+        """
+        if force or self._tickets == []:
+            self._tickets = APIobj.tickets.list_tickets(filter_name='', company_id=self.id, **kwargs)
+        return self._tickets

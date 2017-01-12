@@ -27,6 +27,10 @@ Support for the v2 API includes the following features:
 * [Groups](http://developer.freshdesk.com/api/#groups)
   - [List](http://developer.freshdesk.com/api/#list_all_groups)
   - [Get](http://developer.freshdesk.com/api/#view_group)
+* [Companies](http://developer.freshdesk.com/api/#companies)
+  - [List](http://developer.freshdesk.com/api/#list_all_companies)
+  - [Get](http://developer.freshdesk.com/api/#view_company)
+  - [Get Tickets for Company](http://developer.freshdesk.com/api/#list_all_tickets)
 
 ## Installation
 
@@ -228,4 +232,14 @@ Or filter by ticket number:
 ```python
 >>> a.timesheets.get_timesheet_by_ticket(4)
 [<Timesheet Entry 7>]
+```
+
+
+### Company (API v2)
+```python
+>>> c = a.companies.get(40000)
+>>> c
+<Company id 40000>
+>>> c.tickets(apiOBJ=a, force=True)
+[<Ticket 1>, <Ticket 2>]
 ```
