@@ -123,6 +123,37 @@ class TestTicket(TestCase):
         self.assertIn('bar', ticket.tags)
 
     @responses.activate
+    def test_create_outbound_email(self):
+        j = self.ticket_json.copy()
+        values = {
+            'subject': 'This is a sample outbound_email',
+            'description_text': 'This is a sample outbound, feel free to delete it.',
+            'status': 5,
+            'email_config_id': 5000054536,
+        }
+        j.update(values)
+        responses.add(responses.POST,
+                      'https://{}/api/v2/tickets/outbound_email'.format(DOMAIN),
+                      status=200, content_type='application/json',
+                      json=j)
+
+        ticket = self.api.tickets.create_outbound_email('This is a sample outbound_email',
+                                                        description='This is a sample outbound, feel free to delete it.',
+                                                        email='test@example.com',
+                                                        email_config_id=5000054536,
+                                                        priority=1,
+                                                        tags=['foo', 'bar'],
+                                                        cc_emails=['test2@example.com'])
+        self.assertIsInstance(ticket, Ticket)
+        self.assertEqual(ticket.subject, 'This is a sample outbound_email')
+        self.assertEqual(ticket.description_text, 'This is a sample outbound, feel free to delete it.')
+        self.assertEqual(ticket.priority, 'low')
+        self.assertEqual(ticket.status, 'closed')
+        self.assertEqual(ticket.cc_emails, ['test2@example.com'])
+        self.assertIn('foo', ticket.tags)
+        self.assertIn('bar', ticket.tags)
+
+    @responses.activate
     def test_update_ticket(self):
         j = self.ticket_json.copy()
         values = {
