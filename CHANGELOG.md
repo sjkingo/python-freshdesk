@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.0.1 - 2017-08-26
+
+  * Allow clients to specify empty filter name (@brephophagist)
+
 v1.0.0 - 2016-06-16
 
   * Add support for version 2 of the Freskdesk API while maintaining support for
