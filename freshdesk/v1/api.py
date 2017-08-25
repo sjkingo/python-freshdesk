@@ -16,14 +16,15 @@ class TicketAPI(object):
         """List all tickets, optionally filtered by a view. Specify filters as
         keyword arguments, such as:
 
-        filter_name = one of ['all_tickets', 'new_my_open', 'spam', 'deleted']
-            (defaults to 'all_tickets')
+        filter_name = one of ['all_tickets', 'new_my_open', 'spam', 'deleted',
+                               None]
+            (defaults to 'all_tickets'; passing None uses the default)
 
         Multiple filters are AND'd together.
         """
 
         filter_name = 'all_tickets'
-        if 'filter_name' in kwargs:
+        if 'filter_name' in kwargs and kwargs['filter_name'] is not None:
             filter_name = kwargs['filter_name']
             del kwargs['filter_name']
 

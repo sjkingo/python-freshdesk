@@ -26,6 +26,7 @@ class MockedAPI(API):
             re.compile(r'tickets\?filter=deleted&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
             re.compile(r'tickets\?filter=spam&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
             re.compile(r'tickets\?filter=watching&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
+            re.compile(r'tickets\?page=1&per_page=100'): self.read_test_file('all_tickets.json'),
             re.compile(r'tickets/1$'): self.read_test_file('ticket_1.json'),
             re.compile(r'tickets/1/conversations'): self.read_test_file('conversations.json'),
             re.compile(r'contacts/1$'): self.read_test_file('contact.json'),
@@ -195,6 +196,12 @@ class TestTicket(TestCase):
 
     def test_default_filter_name(self):
         tickets = self.api.tickets.list_tickets()
+        self.assertIsInstance(tickets, list)
+        self.assertEqual(len(tickets), 1)
+        self.assertEqual(tickets[0].id, self.ticket.id)
+
+    def test_none_filter_name(self):
+        tickets = self.api.tickets.list_tickets(filter_name=None)
         self.assertIsInstance(tickets, list)
         self.assertEqual(len(tickets), 1)
         self.assertEqual(tickets[0].id, self.ticket.id)

@@ -146,6 +146,12 @@ class TestTicket(TestCase):
         self.assertEqual(len(tickets), 1)
         self.assertEqual(tickets[0].display_id, self.ticket.display_id)
 
+    def test_none_filter_name(self):
+        tickets = self.api.tickets.list_tickets(filter_name=None)
+        self.assertIsInstance(tickets, list)
+        self.assertEqual(len(tickets), 1)
+        self.assertEqual(tickets[0].display_id, self.ticket.display_id)
+
 
 class TestComment(TestCase):
     @classmethod
