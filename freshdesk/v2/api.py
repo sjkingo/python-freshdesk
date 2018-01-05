@@ -156,8 +156,8 @@ class CompanyAPI(object):
         self._api = api
 
     def get_company(self, company_id):
-        url = 'company/%s' % company_id
-        return self.get_company(company.company_id)
+        url = 'companies/%s' % company_id
+        return Company(**self._api._get(url))
 
 class API(object):
     def __init__(self, domain, api_key):
@@ -179,7 +179,7 @@ class API(object):
         self.tickets = TicketAPI(self)
         self.comments = CommentAPI(self)
         self.contacts = ContactAPI(self)
-        self.company = CompanyAPI(self)
+        self.companies = CompanyAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
 
