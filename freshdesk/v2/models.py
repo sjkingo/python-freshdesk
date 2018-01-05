@@ -51,7 +51,7 @@ class Ticket(FreshdeskModel):
 
 class Group(FreshdeskModel):
     def __str__(self):
-        return self.body
+        return self.name
 
     def __repr__(self):
         return '<Group \'{}\'>'.format(self.name)
