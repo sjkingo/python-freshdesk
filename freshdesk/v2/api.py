@@ -151,6 +151,13 @@ class CustomerAPI(object):
     def get_customer_from_contact(self, contact):
         return self.get_customer(contact.customer_id)
 
+class CompanyAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_company(self, company_id):
+        url = 'company/%s' % company_id
+        return self.get_company(company.company_id)
 
 class API(object):
     def __init__(self, domain, api_key):
