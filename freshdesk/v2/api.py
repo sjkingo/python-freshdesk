@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group
+from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company
 
 
 class TicketAPI(object):
@@ -179,6 +179,7 @@ class API(object):
         self.tickets = TicketAPI(self)
         self.comments = CommentAPI(self)
         self.contacts = ContactAPI(self)
+        self.company = CompanyAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
 
