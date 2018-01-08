@@ -28,6 +28,22 @@ class TicketAPI(object):
         ticket = self._api._post(url, data=json.dumps(data))
         return Ticket(**ticket)
 
+    def create_outbound_email(self, subject, description, email,
+                              email_config_id, **kwargs):
+        """Creates an outbound email"""
+        url = 'tickets/outbound_email'
+        priority = kwargs.get('priority', 1)
+        data = {
+            'subject': subject,
+            'description': description,
+            'priority': priority,
+            'email': email,
+            'email_config_id': email_config_id,
+        }
+        data.update(kwargs)
+        ticket = self._api._post(url, data=json.dumps(data))
+        return Ticket(**ticket)
+
     def update_ticket(self, ticket_id, **kwargs):
         """Updates a ticket from a given ticket ID"""
         url = 'tickets/%d' % ticket_id
