@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v1.1.0 - 2018-01-08
+
+  * #13: Fixed group representation (@helix90)
+  * #14: Add support for Company API (@helix90)
+  * #11: Add support for creating outbound emails (@sorrison)
+
 v1.0.1 - 2017-08-26
 
   * Allow clients to specify empty filter name (@brephophagist)

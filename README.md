@@ -27,6 +27,7 @@ Support for the v2 API includes the following features:
 * [Groups](http://developer.freshdesk.com/api/#groups)
   - [List](http://developer.freshdesk.com/api/#list_all_groups)
   - [Get](http://developer.freshdesk.com/api/#view_group)
+* [Company](https://developers.freshdesk.com/api/#companies)
 
 ## Installation
 
