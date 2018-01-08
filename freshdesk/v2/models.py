@@ -93,3 +93,11 @@ class Customer(FreshdeskModel):
 
     def __repr__(self):
         return '<Customer \'{}\'>'.format(self.name)
+
+class Company(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<Company \'{}\>'.format(self.name)
+
