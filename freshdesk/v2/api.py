@@ -59,7 +59,7 @@ class TicketAPI(object):
         """List all tickets, optionally filtered by a view. Specify filters as
         keyword arguments, such as:
 
-        filter_name = one of ['new_and_my_open', 'watching', 'spam', 'deleted',, Agent
+        filter_name = one of ['new_and_my_open', 'watching', 'spam', 'deleted',
                               None]
             (defaults to 'new_and_my_open')
             Passing None means that no named filter will be passed to
