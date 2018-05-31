@@ -1,0 +1,11 @@
+{
+    "id": 1,
+    "name": "Agent",
+    "description": "Can log, view, reply, update and resolve tickets and manage contacts.",
+    "business_hour_id": null,
+    "escalate_to": 1,
+    "unassigned_for": "30m",
+    "auto_ticket_assign": true,
+    "created_at": "2014-01-08T07:53:41+05:30",
+    "updated_at": "2014-01-08T07:53:41+05:30"
+}

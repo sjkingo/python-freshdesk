@@ -103,10 +103,10 @@ class Company(FreshdeskModel):
 
 class Agent(FreshdeskModel):
     def __str__(self):
-        return self.contact.name
+        return self.contact['name']
 
     def __repr__(self):
-        return '<Agent \'{}\'>'.format(self.contact.name)    
+        return '<Agent #{} \'{}\'>'.format(self.id, self.contact['name'])
 
 
 class Role(FreshdeskModel):
@@ -114,5 +114,5 @@ class Role(FreshdeskModel):
         return self.name
 
     def __repr__(self):
-        return '<Role\'{}\'>'.format(self.name)    
+        return '<Role \'{}\'>'.format(self.name)    
 
