@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company
+from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company, Agent, Role
 
 
 class TicketAPI(object):
@@ -175,6 +175,87 @@ class CompanyAPI(object):
         url = 'companies/%s' % company_id
         return Company(**self._api._get(url))
 
+
+class RoleAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def list_roles(self):
+        url = 'roles'
+        roles = []
+        for r in self._api._get(url):
+            roles.append(Role(**r))
+        return roles
+
+    def get_role(self, role_id):
+        url = 'roles/%s' % role_id
+        return Role(**self._api._get(url))
+
+
+class AgentAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def list_agents(self, **kwargs):
+        """List all agents, optionally filtered by a view. Specify filters as
+        keyword arguments, such as:
+    
+        {
+            email='abc@xyz.com',
+            phone=873902,
+            mobile=56523,
+            state='fulltime'
+        }
+
+        Passing None means that no named filter will be passed to
+        Freshdesk, which returns list of all agents 
+
+        Multiple filters are AND'd together.
+        """
+
+        url = 'agents?'
+        if kwargs:
+            for filter_name, filter_value in kwargs.items():
+                url = url + "{}={}&".format(filter_name, filter_value)
+                del kwargs[filter_name]
+
+        page = 1
+        per_page = 100
+        agents = []
+
+        # Skip pagination by looping over each page and adding tickets
+        while True:
+            this_page = self._api._get(url + 'page=%d&per_page=%d'
+                                       % (page, per_page), kwargs)
+            agents += this_page
+            if len(this_page) < per_page:
+                break
+            page += 1
+
+        return [Agent(**a) for a in agents]
+    
+    def get_agent(self, agent_id):
+        """Fetches the agent for the given agent ID"""    
+        url = 'agents/%s' % agent_id
+        return Agent(**self._api._get(url))   
+            
+    def update_agent(self, agent_id, **kwargs):
+        """Updates an agent"""
+        url = 'agents/%s' % agent_id
+        agent = self._api._put(url, data=json.dumps(kwargs))
+        return Agent(**agent)
+
+    def delete_agent(self, agent_id):
+        """Delete the agent for the given agent ID"""
+        url = 'agents/%d' % agent_id
+        self._api._delete(url)
+
+    def currently_authenticated_agent(self):
+        """Fetches currently logged in agent"""
+        url = 'agents/me'
+        return Agent(**self._api._get(url))
+    
+
 class API(object):
     def __init__(self, domain, api_key):
         """Creates a wrapper to perform API actions.
@@ -198,6 +279,8 @@ class API(object):
         self.companies = CompanyAPI(self)
         self.groups = GroupAPI(self)
         self.customers = CustomerAPI(self)
+        self.agents = AgentAPI(self)
+        self.roles = RoleAPI(self)
 
         if domain.find('freshdesk.com') < 0:
             raise AttributeError('Freshdesk v2 API works only via Freshdesk'
