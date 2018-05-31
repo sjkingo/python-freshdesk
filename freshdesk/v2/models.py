@@ -107,3 +107,12 @@ class Agent(FreshdeskModel):
 
     def __repr__(self):
         return '<Agent \'{}\'>'.format(self.contact.name)    
+
+
+class Role(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<Role\'{}\'>'.format(self.name)    
+
