@@ -196,9 +196,13 @@ class TicketFieldAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def list_ticket_fields(self, ):
+    def list_ticket_fields(self, type=None):
         url = 'ticket_fields'
-        ticket_fields = [] 
+        ticket_fields = []
+
+        if type:
+            url = "{}?type={}".format(url, type)
+            
         for tt in self._api._get(url):
             ticket_fields.append(TicketField(**tt))
         return ticket_fields
