@@ -20,6 +20,7 @@ Support for the v2 API includes the following features:
   - [Create](http://developer.freshdesk.com/api/#create_ticket)
   - [Update](http://developer.freshdesk.com/api/#update_ticket)
   - [Delete](http://developer.freshdesk.com/api/#delete_a_ticket)
+  - Custom ticket fields (as of 1.1.1)
 * [Comments](http://developer.freshdesk.com/api/#conversations) (known as Conversations in Freshdesk)
   - [List](http://developer.freshdesk.com/api/#list_all_ticket_notes)
   - [Create note](http://developer.freshdesk.com/api/#add_note_to_a_ticket)
@@ -28,6 +29,8 @@ Support for the v2 API includes the following features:
   - [List](http://developer.freshdesk.com/api/#list_all_groups)
   - [Get](http://developer.freshdesk.com/api/#view_group)
 * [Company](https://developers.freshdesk.com/api/#companies)
+* [Roles](https://developers.freshdesk.com/api/#roles) - from 1.1.1
+* [Agents](https://developers.freshdesk.com/api/#agents) - from 1.1.1
 
 ## Installation
 
