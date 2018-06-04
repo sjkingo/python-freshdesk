@@ -1,0 +1,23 @@
+{
+   "available":true,
+   "occasional":false,
+   "signature":null,
+   "id":1,
+   "ticket_scope":1,
+   "created_at":"2015-08-18T16:18:05Z",
+   "updated_at":"2015-08-18T16:18:05Z",
+   "available_since":null,
+   "contact":{
+      "active":true,
+      "email":"abc@xyz.com",
+      "job_title":null,
+      "language":"en",
+      "last_login_at":"2015-08-21T14:54:46+05:30",
+      "mobile":1234,
+      "name":"Support",
+      "phone":5678,
+      "time_zone":"Chennai",
+      "created_at":"2015-08-18T16:18:05Z",
+      "updated_at":"2015-08-25T08:50:20Z"
+   }
+}

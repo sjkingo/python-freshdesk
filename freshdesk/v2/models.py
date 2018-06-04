@@ -22,6 +22,13 @@ class FreshdeskModel(object):
         return dateutil.parser.parse(timestamp_str)
 
 
+class TicketField(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<TicketField \'{}\' \'{}\'>'.format(self.name, self.description)
+
 class Ticket(FreshdeskModel):
     def __str__(self):
         return self.subject
@@ -100,4 +107,19 @@ class Company(FreshdeskModel):
 
     def __repr__(self):
         return '<Company \'{}\>'.format(self.name)
+
+class Agent(FreshdeskModel):
+    def __str__(self):
+        return self.contact['name']
+
+    def __repr__(self):
+        return '<Agent #{} \'{}\'>'.format(self.id, self.contact['name'])
+
+
+class Role(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<Role \'{}\'>'.format(self.name)    
 

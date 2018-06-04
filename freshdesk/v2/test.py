@@ -6,7 +6,7 @@ import responses
 from unittest import TestCase
 
 from freshdesk.v2.api import API
-from freshdesk.v2.models import Ticket, Comment, Contact, Customer, Group
+from freshdesk.v2.models import Ticket, Comment, Contact, Customer, Group, Agent, Role
 
 """
 Test suite for python-freshdesk.
@@ -33,6 +33,14 @@ class MockedAPI(API):
             re.compile(r'customers/1$'): self.read_test_file('customer.json'),
             re.compile(r'groups$'): self.read_test_file('groups.json'),
             re.compile(r'groups/1$'): self.read_test_file('group_1.json'),
+            re.compile(r'roles$'): self.read_test_file('roles.json'),
+            re.compile(r'roles/1$'): self.read_test_file('role_1.json'),
+            re.compile(r'agents\?email=abc@xyz.com&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+            re.compile(r'agents\?mobile=1234&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+            re.compile(r'agents\?phone=5678&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+            re.compile(r'agents\?state=fulltime&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+            re.compile(r'agents\?page=1&per_page=100'): self.read_test_file('agents.json'),
+            re.compile(r'agents/1$'): self.read_test_file('agent_1.json'),
         }
         super(MockedAPI, self).__init__(*args)
 
@@ -359,3 +367,107 @@ class TestGroup(TestCase):
 
     def test_group_repr(self):
         self.assertEqual(repr(self.group), '<Group \'Entertainers\'>')
+
+class TestRole(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.api = MockedAPI(DOMAIN, API_KEY)
+        cls.role = cls.api.roles.get_role(1)
+
+    def test_list_roles(self):
+        roles = self.api.roles.list_roles()
+        self.assertIsInstance(roles, list)
+        self.assertEqual(len(roles), 2)
+        self.assertEqual(roles[0].id, self.role.id)
+
+    def test_role(self):
+        self.assertIsInstance(self.role, Role)
+        self.assertEqual(self.role.name, 'Agent')
+        self.assertEqual(self.role.description, 'Can log, view, reply, update and resolve tickets and manage contacts.')
+
+    def test_group_datetime(self):
+        self.assertIsInstance(self.role.created_at, datetime.datetime)
+        self.assertIsInstance(self.role.updated_at, datetime.datetime)
+
+    def test_group_repr(self):
+        self.assertEqual(repr(self.role), '<Role \'Agent\'>')
+
+
+class TestAgent(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.api = MockedAPI(DOMAIN, API_KEY)
+        cls.agent = cls.api.agents.get_agent(1)
+        cls.agent_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+                                                       'sample_json_data',
+                                                       'agent_1.json')).read())
+
+    def test_str(self):
+        self.assertEqual(str(self.agent), 'Support')
+
+    def test_repr(self):
+        self.assertEqual(repr(self.agent), '<Agent #1 \'Support\'>')
+
+    def test_get_agent(self):
+        self.assertIsInstance(self.agent, Agent)
+        self.assertEqual(self.agent.id, 1)
+        self.assertEqual(self.agent.contact['name'], 'Support')
+        self.assertEqual(self.agent.contact['email'], 'abc@xyz.com')
+        self.assertEqual(self.agent.contact['mobile'], 1234)
+        self.assertEqual(self.agent.contact['phone'], 5678)
+        self.assertEqual(self.agent.occasional, False)
+
+    @responses.activate
+    def test_update_agent(self):
+        a = self.agent_json.copy()
+        
+        responses.add(responses.GET,
+                      'https://{}/api/v2/agents/1'.format(DOMAIN),
+                      status=200, content_type='application/json', json=a)
+
+        values = {
+            'occasional': True,
+            'contact': {
+                'name': 'Updated Name' 
+            }
+        }
+
+        b = a.copy()
+        b.update(values)
+        
+        responses.add(responses.PUT,
+                      'https://{}/api/v2/agents/1'.format(DOMAIN),
+                      status=200, content_type='application/json', json=b)
+
+        agent = self.api.agents.update_agent(a['id'], **values)
+        
+        self.assertEqual(agent.occasional, True)
+        self.assertEqual(agent.contact['name'], 'Updated Name')
+    
+    @responses.activate
+    def test_delete_agent(self):
+        responses.add(responses.DELETE,
+                      'https://{}/api/v2/agents/1'.format(DOMAIN),
+                      status=204)
+        self.api.agents.delete_agent(1)
+
+    def test_agent_name(self):
+        self.assertEqual(self.agent.contact['name'], 'Support')
+        
+    def test_agent_mobile(self):
+        self.assertEqual(self.agent.contact['mobile'], 1234)
+    
+    def test_agent_state(self):
+        self.assertEqual(self.agent.available, True)
+        self.assertEqual(self.agent.occasional, False)
+
+    def test_agent_datetime(self):
+        self.assertIsInstance(self.agent.created_at, datetime.datetime)
+        self.assertIsInstance(self.agent.updated_at, datetime.datetime)
+
+    def test_none_filter_name(self):
+        agents = self.api.agents.list_agents()
+        self.assertIsInstance(agents, list)
+        self.assertEqual(len(agents), 2)
+        self.assertEqual(agents[0].id, self.agent.id)
