@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company, Agent, Role
+from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company, Agent, Role, TicketField
 
 
 class TicketAPI(object):
@@ -192,6 +192,18 @@ class RoleAPI(object):
         return Role(**self._api._get(url))
 
 
+class TicketFieldAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def list_ticket_fields(self, ):
+        url = 'ticket_fields'
+        ticket_fields = [] 
+        for tt in self._api._get(url):
+            ticket_fields.append(TicketField(**tt))
+        return ticket_fields
+
+
 class AgentAPI(object):
     def __init__(self, api):
         self._api = api
@@ -281,6 +293,7 @@ class API(object):
         self.customers = CustomerAPI(self)
         self.agents = AgentAPI(self)
         self.roles = RoleAPI(self)
+        self.ticket_fields = TicketFieldAPI(self)
 
         if domain.find('freshdesk.com') < 0:
             raise AttributeError('Freshdesk v2 API works only via Freshdesk'
