@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v1.1.2 - 2018-06-04
+
+  * No code changes: fix release stuff up (@sjkingo)
+
+v1.1.1 - 2018-06-04
+
+  * #16: Add support for Role, Ticket fields and Agent API (@prenit-coverfox)
+
 v1.1.0 - 2018-01-08
 
   * #13: Fixed group representation (@helix90)
