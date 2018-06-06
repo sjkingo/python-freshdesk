@@ -151,6 +151,17 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+    def create_contact(self, **kwargs):
+        """Creates a contact"""
+        url = 'contacts'
+        data = {
+            'tags': ['POS-Agent'],
+            'view_all_tickets': False,
+            'description': 'POS-Agent'
+        }
+        data.update(kwargs)
+        return Contact(**self._api._post(url, data=json.dumps(data)))
+
     def get_contact(self, contact_id):
         url = 'contacts/%s' % contact_id
         return Contact(**self._api._get(url))

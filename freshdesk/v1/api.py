@@ -79,6 +79,21 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+    def create_contact(self, **kwargs):
+        """Creates a contact"""
+        url = 'contacts.json'
+        contact_data = {
+            'active': True,
+            'helpdesk_agent': False,
+            'description': 'POS Agent'
+        }
+        contact_data.update(kwargs)
+        payload = {
+            'user': contact_data
+        }
+
+        return Contact(**self._api._post(url, data=payload)['user'])
+        
     def get_contact(self, contact_id):
         url = 'contacts/%s.json' % contact_id
         return Contact(**self._api._get(url)['user'])
@@ -186,6 +201,7 @@ class API(object):
         try:
             res.raise_for_status()
         except Exception as e:
+            print res
             raise HTTPError("{}: {}".format(e, j))
 
         return j
