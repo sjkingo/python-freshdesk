@@ -1,4 +1,5 @@
 import requests
+import json
 from requests.exceptions import HTTPError
 from freshdesk.v1.models import Ticket, Contact, Customer, TimeEntry
 
@@ -6,6 +7,25 @@ from freshdesk.v1.models import Ticket, Contact, Customer, TimeEntry
 class TicketAPI(object):
     def __init__(self, api):
         self._api = api
+
+    def create_ticket(self, subject, **kwargs):
+        url = 'helpdesk/tickets.json'
+        status = kwargs.get('status', 2)
+        priority = kwargs.get('priority', 1)
+        cc_emails = ','.join(kwargs.get('cc_emails', []))
+        ticket_data = {
+            'subject': subject,
+            'status': status,
+            'priority': priority,
+        }
+        ticket_data.update(kwargs)
+        data = {
+            'helpdesk_ticket': ticket_data,
+            'cc_emails': cc_emails,
+        }
+        
+        return Ticket(**self._api._post(url, data=data)['helpdesk_ticket'])
+        
 
     def get_ticket(self, ticket_id):
         """Fetches the ticket for the given ticket ID"""
@@ -115,10 +135,9 @@ class API(object):
           .tickets:  the Ticket API
         """
 
-        self._api_prefix = 'http://{}/'.format(domain.rstrip('/'))
-        self._session = requests.Session()
-        self._session.auth = (api_key, 'unused_with_api_key')
-        self._session.headers = {'Content-Type': 'application/json'}
+        self._api_prefix = 'https://{}/'.format(domain.rstrip('/'))
+        self.auth = (api_key, 'X')
+        self.headers = {'Content-Type': 'application/json'}
 
         self.tickets = TicketAPI(self)
         self.contacts = ContactAPI(self)
@@ -127,12 +146,46 @@ class API(object):
 
     def _get(self, url, params={}):
         """Wrapper around request.get() to use the API prefix. Returns a JSON response."""
-        r = self._session.get(self._api_prefix + url, params=params)
-        r.raise_for_status()
-        if 'Retry-After' in r.headers:
+        r = requests.get(self._api_prefix + url,
+            params=params,
+            headers=self.headers,
+            auth=self.auth,
+        )
+        return self._action(r)
+
+    def _post(self, url, data={}):
+        """Wrapper around request.post() to use the API prefix. Returns a JSON response."""
+        r = requests.post(self._api_prefix + url,
+            data=json.dumps(data),
+            headers=self.headers,
+            auth=self.auth,
+            allow_redirects=False,
+        )
+        return self._action(r)        
+    
+    def _action(self, res):
+        try:
+            j = res.json()
+        except:
+            res.raise_for_status()
+            j = {}
+
+        if 'Retry-After' in res.headers:
             raise HTTPError('403 Forbidden: API rate-limit has been reached until {}.'
-                            'See http://freshdesk.com/api#ratelimit'.format(r.headers['Retry-After']))
-        j = r.json()
+                            'See http://freshdesk.com/api#ratelimit'.format(res.headers['Retry-After']))
+
         if 'require_login' in j:
             raise HTTPError('403 Forbidden: API key is incorrect for this domain')
-        return r.json()
+                
+        
+        if 'error' in j:
+            raise HTTPError('{}: {}'.format(j.get('description'),
+                                            j.get('errors')))
+
+        # Catch any other errors
+        try:
+            res.raise_for_status()
+        except Exception as e:
+            raise HTTPError("{}: {}".format(e, j))
+
+        return j
