@@ -166,6 +166,11 @@ class ContactAPI(object):
         url = 'contacts/%s' % contact_id
         return Contact(**self._api._get(url))
 
+    def make_agent(self, contact_id, **kwargs):
+        url = 'contacts/%d/make_agent' % contact_id
+        agent = self._api._put(url, **kwargs)['agent']
+        return self._api.agents.get_agent(agent['id'])
+
 
 class CustomerAPI(object):
     def __init__(self, api):
