@@ -201,7 +201,6 @@ class API(object):
         try:
             res.raise_for_status()
         except Exception as e:
-            print res
             raise HTTPError("{}: {}".format(e, j))
 
         return j
