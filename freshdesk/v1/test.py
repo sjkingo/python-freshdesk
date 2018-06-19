@@ -56,14 +56,14 @@ class MockedAPI(API):
 class TestAPIClass(TestCase):
     def test_api_prefix(self):
         api = API('test_domain', 'test_key')
-        self.assertEqual(api._api_prefix, 'http://test_domain/')
+        self.assertEqual(api._api_prefix, 'https://test_domain/')
         api = API('test_domain/', 'test_key')
-        self.assertEqual(api._api_prefix, 'http://test_domain/')
+        self.assertEqual(api._api_prefix, 'https://test_domain/')
 
     @responses.activate
     def test_403_error(self):
         responses.add(responses.GET,
-                      'http://{}/helpdesk/tickets/1.json'.format(DOMAIN),
+                      'https://{}/helpdesk/tickets/1.json'.format(DOMAIN),
                       status=403)
 
         api = API(DOMAIN, 'invalid_api_key')
@@ -75,7 +75,7 @@ class TestAPIClass(TestCase):
     def test_404_error(self):
         DOMAIN_404 = 'google.com'
         responses.add(responses.GET,
-                      'http://{}/helpdesk/tickets/1.json'.format(DOMAIN_404),
+                      'https://{}/helpdesk/tickets/1.json'.format(DOMAIN_404),
                       status=404)
 
         api = API(DOMAIN_404, 'invalid_api_key')
