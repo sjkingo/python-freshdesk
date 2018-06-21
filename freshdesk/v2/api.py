@@ -151,6 +151,51 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+    def list_contacts(self, **kwargs):
+        """
+        List all contacts, optionally filtered by a query. Specify filters as
+        query keyword argument, such as: 
+        
+        query= email is abc@xyz.com,
+        query= mobile is 1234567890,
+        query= phone is 1234567890,
+
+        contacts can be filtered by state and company_id such as:
+        
+        state=[blocked/deleted/unverified/verified]
+        company_id=1234
+
+        contacts updated after a timestamp can be filtered such as;
+        
+        _updated_since=2018-01-19T02:00:00Z
+
+        Passing None means that no named filter will be passed to
+        Freshdesk, which returns list of all contacts
+
+        """
+
+        url = 'contacts?'
+        if kwargs:
+            for filter_name, filter_value in kwargs.items():
+                url = url + "{}={}&".format(filter_name, filter_value)
+                del kwargs[filter_name]
+
+        page = 1
+        per_page = 100
+        contacts = []
+
+        # Skip pagination by looping over each page and adding contacts
+        while True:
+            this_page = self._api._get(url + 'page=%d&per_page=%d'
+                                       % (page, per_page), kwargs)
+            contacts += this_page
+            if len(this_page) < per_page:
+                break
+            page += 1
+
+        return [Contact(**c) for c in contacts]
+            
+
     def create_contact(self, **kwargs):
         """Creates a contact"""
         url = 'contacts'
@@ -163,12 +208,25 @@ class ContactAPI(object):
         return Contact(**self._api._post(url, data=json.dumps(data)))
 
     def get_contact(self, contact_id):
-        url = 'contacts/%s' % contact_id
+        url = 'contacts/%d' % contact_id
         return Contact(**self._api._get(url))
 
+    def soft_delete_contact(self, contact_id):
+        url = 'contacts/%d' % contact_id
+        self._api._delete(url)    
+
+    def permanently_delete_contact(self, contact_id, force=True):
+        url = 'contacts/%d/hard_delete?force=%r' % (contact_id, force)
+        self._api._delete(url)    
+            
     def make_agent(self, contact_id, **kwargs):
         url = 'contacts/%d/make_agent' % contact_id
-        agent = self._api._put(url, **kwargs)['agent']
+        data = {
+            'occasional': False,
+            'ticket_scope': 2,
+        }
+        data.update(kwargs)
+        agent = self._api._put(url, data=json.dumps(data))['agent']
         return self._api.agents.get_agent(agent['id'])
 
 

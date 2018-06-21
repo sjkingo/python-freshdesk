@@ -296,7 +296,7 @@ class TestContact(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.contact = cls.api.contacts.get_contact('1')
+        cls.contact = cls.api.contacts.get_contact(1)
 
     def test_get_contact(self):
         self.assertIsInstance(self.contact, Contact)
@@ -321,7 +321,7 @@ class TestCustomer(TestCase):
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
         cls.customer = cls.api.customers.get_customer('1')
-        cls.contact = cls.api.contacts.get_contact('1')
+        cls.contact = cls.api.contacts.get_contact(1)
 
     def test_customer(self):
         self.assertIsInstance(self.customer, Customer)

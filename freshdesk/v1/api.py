@@ -1,7 +1,7 @@
 import requests
 import json
 from requests.exceptions import HTTPError
-from freshdesk.v1.models import Ticket, Contact, Customer, TimeEntry
+from freshdesk.v1.models import Ticket, Contact, Agent, Customer, TimeEntry
 
 
 class TicketAPI(object):
@@ -79,6 +79,40 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+    def list_contacts(self, **kwargs):
+        """
+        List all contacts, optionally filtered by a query. Specify filters as
+        query keyword argument, such as: 
+        
+        query= email is abc@xyz.com,
+        query= mobile is 1234567890,
+        query= phone is 1234567890,
+
+        contacts can be filtered by name such as;
+        
+        letter=Prenit
+
+        Passing None means that no named filter will be passed to
+        Freshdesk, which returns list of all contacts
+
+        """
+
+        url = 'contacts.json?'
+        if 'query' in kwargs.keys():
+            filter_query = kwargs.pop('query')
+            url = url + "query={}".format(filter_query)
+
+        if 'state' in kwargs.keys():
+            state_query = kwargs.pop('state')
+            url = url + "state={}".format(state_query)    
+
+        if 'letter' in kwargs.keys():
+            name_query = kwargs.pop('letter')
+            url = url + "letter={}".format(name_query)        
+                
+        contacts = self._api._get(url)    
+        return [Contact(**c['user']) for c in contacts]
+
     def create_contact(self, **kwargs):
         """Creates a contact"""
         url = 'contacts.json'
@@ -93,10 +127,69 @@ class ContactAPI(object):
         }
 
         return Contact(**self._api._post(url, data=payload)['user'])
-        
+     
+    def make_agent(self, contact_id):
+        url = 'contacts/%d/make_agent.json' % contact_id
+        agent = self._api._put(url)['agent']
+        return self._api.agents.get_agent(agent['id'])
+
     def get_contact(self, contact_id):
         url = 'contacts/%s.json' % contact_id
         return Contact(**self._api._get(url)['user'])
+
+    def delete_contact(self, contact_id):
+        url = 'contacts/%s.json' % contact_id
+        self._api._delete(url)
+
+
+class AgentAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def list_agents(self, **kwargs):
+        """List all agents, optionally filtered by a query. Specify filters as
+        query keyword argument, such as: 
+        
+        query= email is abc@xyz.com,
+        query= mobile is 1234567890,
+        query= phone is 1234567890,
+
+        agents can be filtered by state such as:
+        
+        state=active/occasional
+
+        Passing None means that no named filter will be passed to
+        Freshdesk, which returns list of all agents 
+
+        """
+
+        url = 'agents.json?'
+        if 'query' in kwargs.keys():
+            filter_query = kwargs.pop('query')
+            url = url + "query={}".format(filter_query)
+
+        if 'state' in kwargs.keys():
+            state_query = kwargs.pop('state')
+            url = url + "state={}".format(state_query)    
+                
+        agents = self._api._get(url)    
+        return [Agent(**a['agent']) for a in agents]
+    
+    def get_agent(self, agent_id):
+        """Fetches the agent for the given agent ID"""    
+        url = 'agents/%s.json' % agent_id
+        return Agent(**self._api._get(url)['agent'])   
+            
+    def update_agent(self, agent_id, **kwargs):
+        """Updates an agent"""
+        url = 'agents/%s.json' % agent_id
+        agent = self._api._put(url, data=json.dumps(kwargs))
+        return Agent(**agent)
+
+    def delete_agent(self, agent_id):
+        """Delete the agent for the given agent ID"""
+        url = 'agents/%d.json' % agent_id
+        self._api._delete(url)
 
 
 class CustomerAPI(object):
@@ -156,6 +249,7 @@ class API(object):
 
         self.tickets = TicketAPI(self)
         self.contacts = ContactAPI(self)
+        self.agents = AgentAPI(self)
         self.timesheets = TimeAPI(self)
         self.customers = CustomerAPI(self)
 
@@ -178,6 +272,25 @@ class API(object):
         )
         return self._action(r)        
     
+    def _put(self, url, data={}):
+        """Wrapper around request.put() to use the API prefix. Returns a JSON response."""
+        r = requests.put(self._api_prefix + url,
+            data=json.dumps(data),
+            headers=self.headers,
+            auth=self.auth,
+            allow_redirects=False,
+        )
+        return self._action(r)
+
+    def _delete(self, url):
+        """Wrapper around request.delete() to use the API prefix. Returns a JSON response."""
+        r = requests.delete(self._api_prefix + url,
+            headers=self.headers,
+            auth=self.auth,
+            allow_redirects=False,
+        )
+        return self._action(r)    
+
     def _action(self, res):
         try:
             j = res.json()
