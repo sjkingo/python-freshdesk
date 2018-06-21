@@ -62,6 +62,7 @@ class MockedAPI(API):
                 re.compile(r'tickets/1$'): None,
                 re.compile(r'agents/1$'): None,
                 re.compile(r'contacts/1$'): None,
+                re.compile(r'contacts/1/hard_delete\?force=True$'): None,
             }
         }
 
@@ -352,7 +353,8 @@ class TestContact(TestCase):
         self.assertIsInstance(agent, Agent)
         self.assertEquals(agent.available, True)
         self.assertEquals(agent.occasional, False)
-        self.assertEquals(agent.contact['email'], self.cont)
+        self.assertEquals(agent.contact['email'], self.contact.email)
+        self.assertEquals(agent.contact['name'], self.contact.name)
 
     def test_contact_datetime(self):
         self.assertIsInstance(self.contact.created_at, datetime.datetime)
@@ -378,14 +380,14 @@ class TestCustomer(TestCase):
         self.assertEqual(self.customer.domains, 'acme.com')
         self.assertEqual(self.customer.cf_custom_key, 'custom_value')
 
-    def test_contact_datetime(self):
+    def test_customer_datetime(self):
         self.assertIsInstance(self.customer.created_at, datetime.datetime)
         self.assertIsInstance(self.customer.updated_at, datetime.datetime)
 
-    def test_contact_str(self):
+    def test_customer_str(self):
         self.assertEqual(str(self.customer), 'ACME Corp.')
 
-    def test_contact_repr(self):
+    def test_customer_repr(self):
         self.assertEqual(repr(self.customer), '<Customer \'ACME Corp.\'>')
 
     def test_get_customer_from_contact(self):
@@ -456,30 +458,28 @@ class TestAgent(TestCase):
                                                        'agent_1.json')).read())
 
     def test_str(self):
-        self.assertEqual(str(self.agent), 'Support')
+        self.assertEqual(str(self.agent), 'Rachel')
 
     def test_repr(self):
-        self.assertEqual(repr(self.agent), '<Agent #1 \'Support\'>')
+        self.assertEqual(repr(self.agent), '<Agent #1 \'Rachel\'>')
 
     def test_get_agent(self):
         self.assertIsInstance(self.agent, Agent)
         self.assertEqual(self.agent.id, 1)
-        self.assertEqual(self.agent.contact['name'], 'Support')
-        self.assertEqual(self.agent.contact['email'], 'abc@xyz.com')
+        self.assertEqual(self.agent.contact['name'], 'Rachel')
+        self.assertEqual(self.agent.contact['email'], 'rachel@freshdesk.com')
         self.assertEqual(self.agent.contact['mobile'], 1234)
         self.assertEqual(self.agent.contact['phone'], 5678)
         self.assertEqual(self.agent.occasional, False)
 
     def test_update_agent(self):
-        a = self.agent_json.copy()
-        
         values = {
             'occasional': True,
             'contact': {
                 'name': 'Updated Name' 
             }
         }
-        agent = self.api.agents.update_agent(a['id'], **values)
+        agent = self.api.agents.update_agent(1, **values)
         
         self.assertEqual(agent.occasional, True)
         self.assertEqual(agent.contact['name'], 'Updated Name')
@@ -488,7 +488,7 @@ class TestAgent(TestCase):
         self.assertEquals(self.api.agents.delete_agent(1), None)
 
     def test_agent_name(self):
-        self.assertEqual(self.agent.contact['name'], 'Support')
+        self.assertEqual(self.agent.contact['name'], 'Rachel')
         
     def test_agent_mobile(self):
         self.assertEqual(self.agent.contact['mobile'], 1234)
