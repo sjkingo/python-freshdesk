@@ -1,0 +1,18 @@
+{
+    "body": "<div>This is a private note</div>",
+    "body_text": "This is a private note",
+    "id": 1,
+    "incoming": false,
+    "private": true,
+    "user_id": 1,
+    "support_email": null,
+    "source": 2,
+    "ticket_id": 1,
+    "to_emails": [],
+    "from_email": null,
+    "cc_emails": null,
+    "bcc_emails": null,
+    "created_at": "2016-05-19T05:36:12Z",
+    "updated_at": "2016-05-19T05:36:12Z",
+    "attachments": []
+}

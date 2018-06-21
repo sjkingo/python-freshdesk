@@ -23,20 +23,34 @@ API_KEY = 'MX4CEAw4FogInimEdRW2'
 class MockedAPI(API):
     def __init__(self, *args):
         self.resolver = {
-            re.compile(r'helpdesk/tickets/filter/all_tickets\?format=json&page=1'): self.read_test_file('all_tickets.json'),
-            re.compile(r'helpdesk/tickets/filter/new_my_open\?format=json&page=1'): self.read_test_file('all_tickets.json'),
-            re.compile(r'helpdesk/tickets/filter/spam\?format=json&page=1'): [],
-            re.compile(r'helpdesk/tickets/filter/deleted\?format=json&page=1'): [],
-            re.compile(r'helpdesk/tickets/1/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
-            re.compile(r'helpdesk/tickets/1.json'): self.read_test_file('ticket_1.json'),
-            re.compile(r'.*&page=2'): [],
-            re.compile(r'contacts/5004272351.json'): self.read_test_file('contact.json'),
-            re.compile(r'contacts/5004272350.json'): self.read_test_file('contact5004272350.json'),
-            re.compile(r'customers/1.json'): self.read_test_file('customer.json'),
-            re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
-            re.compile(r'helpdesk/time_sheets.json\?agent_id='): self.read_test_file('timeentries_ticket_1.json'),
-            re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
+            'get': {
+                re.compile(r'helpdesk/tickets/filter/all_tickets\?format=json&page=1'): self.read_test_file(
+                    'all_tickets.json'),
+                re.compile(r'helpdesk/tickets/filter/new_my_open\?format=json&page=1'): self.read_test_file(
+                    'all_tickets.json'),
+                re.compile(r'helpdesk/tickets/filter/spam\?format=json&page=1'): [],
+                re.compile(r'helpdesk/tickets/filter/deleted\?format=json&page=1'): [],
+                re.compile(r'helpdesk/tickets/1/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
+                re.compile(r'helpdesk/tickets/1.json'): self.read_test_file('ticket_1.json'),
+                re.compile(r'.*&page=2'): [],
+                re.compile(r'contacts/5004272351.json'): self.read_test_file('contact.json'),
+                re.compile(r'contacts/5004272350.json'): self.read_test_file('contact5004272350.json'),
+                re.compile(r'customers/1.json'): self.read_test_file('customer.json'),
+                re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
+                re.compile(r'helpdesk/time_sheets.json\?agent_id='): self.read_test_file('timeentries_ticket_1.json'),
+                re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
+            },
+            'post': {
+                re.compile(r'helpdesk/tickets.json'): self.read_test_file('ticket_1.json'),
+            },
+            'put': {
+                
+            },
+            'delete': {
+                re.compile(r'helpdesk/tickets/1.json'): None,
+            }
         }
+
         super(MockedAPI, self).__init__(*args)
 
     def read_test_file(self, filename):
@@ -44,13 +58,40 @@ class MockedAPI(API):
         return json.loads(open(path, 'r').read())
 
     def _get(self, url, *args, **kwargs):
-        for pattern, j in self.resolver.items():
+        for pattern, j in self.resolver['get'].items():
             if pattern.match(url):
                 return j
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
         raise HTTPError('404: mocked_api_get() has no pattern for \'{}\''.format(url))
+
+    def _post(self, url, *args, **kwargs):
+        for pattern, data in self.resolver['post'].items():
+            if pattern.match(url):
+                return data
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_post() has no pattern for \'{}\''.format(url))
+
+    def _put(self, url, *args, **kwargs):
+        for pattern, data in self.resolver['put'].items():
+            if pattern.match(url):
+                return data
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_put() has no pattern for \'{}\''.format(url))
+
+    def _delete(self, url, *args, **kwargs):
+        for pattern, data in self.resolver['delete'].items():
+            if pattern.match(url):
+                return data
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_delete() has no pattern for \'{}\''.format(url))
 
 
 class TestAPIClass(TestCase):
@@ -89,6 +130,9 @@ class TestTicket(TestCase):
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
         cls.ticket = cls.api.tickets.get_ticket(1)
+        cls.ticket_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+                                                       'sample_json_data',
+                                                       'ticket_1.json')).read())
 
     def test_str(self):
         self.assertEqual(str(self.ticket), 'This is a sample ticket')
@@ -96,6 +140,22 @@ class TestTicket(TestCase):
     def test_repr(self):
         self.assertEqual(repr(self.ticket), '<Ticket \'This is a sample ticket\'>')
 
+    def test_create_ticket(self):
+        ticket = self.api.tickets.create_ticket('This is a sample ticket',
+                                                description='This is a sample ticket, feel free to delete it.',
+                                                email='test@example.com',
+                                                priority=1, status=2,
+                                                tags=['foo', 'bar'],
+                                                cc_emails=['test2@example.com'])
+        self.assertIsInstance(ticket, Ticket)
+        self.assertEqual(ticket.subject, 'This is a sample ticket')
+        self.assertEqual(ticket.description, 'This is a sample ticket, feel free to delete it.')
+        self.assertEqual(ticket.priority, 'low')
+        self.assertEqual(ticket.status, 'open')
+        self.assertEqual(ticket.cc_email['cc_emails'], ['test2@example.com'])
+        self.assertIn('foo', ticket.tags)
+        self.assertIn('bar', ticket.tags)
+            
     def test_get_ticket(self):
         self.assertIsInstance(self.ticket, Ticket)
         self.assertEqual(self.ticket.display_id, 1)
