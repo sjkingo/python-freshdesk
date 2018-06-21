@@ -2,6 +2,8 @@ import datetime
 import json
 import re
 import os.path
+from _ctypes import Array
+
 import responses
 from unittest import TestCase
 
@@ -30,6 +32,7 @@ class MockedAPI(API):
                 re.compile(r'tickets\?page=1&per_page=100'): self.read_test_file('all_tickets.json'),
                 re.compile(r'tickets/1$'): self.read_test_file('ticket_1.json'),
                 re.compile(r'tickets/1/conversations'): self.read_test_file('conversations.json'),
+                re.compile(r'contacts\?page=1&per_page=10$'): self.read_test_file('contacts.json'),
                 re.compile(r'contacts/1$'): self.read_test_file('contact.json'),
                 re.compile(r'customers/1$'): self.read_test_file('customer.json'),
                 re.compile(r'groups$'): self.read_test_file('groups.json'),
@@ -48,14 +51,17 @@ class MockedAPI(API):
                 re.compile(r'tickets/outbound_email$'): self.read_test_file('outbound_email_1.json'),
                 re.compile(r'tickets/1/notes$'): self.read_test_file('note_1.json'),
                 re.compile(r'tickets/1/reply$'): self.read_test_file('reply_1.json'),
+                re.compile(r'contacts$'): self.read_test_file('contact.json'),
             },
             'put': {
                 re.compile(r'tickets/1$'): self.read_test_file('ticket_1_updated.json'),
+                re.compile(r'contacts/1/make_agent$'): self.read_test_file('agent_1.json'),
                 re.compile(r'agents/1$'): self.read_test_file('agent_1_updated.json'),
             },
             'delete': {
                 re.compile(r'tickets/1$'): None,
                 re.compile(r'agents/1$'): None,
+                re.compile(r'contacts/1$'): None,
             }
         }
 
@@ -318,6 +324,36 @@ class TestContact(TestCase):
         self.assertEqual(self.contact.helpdesk_agent, False)
         self.assertEqual(self.contact.customer_id, 1)
 
+    def test_list_contact(self):
+        contacts = self.api.contacts.list_contacts()
+        self.assertIsInstance(contacts, list)
+        self.assertIsInstance(contacts[0], Contact)
+        self.assertEquals(len(contacts), 2)
+        self.assertEquals(contacts[0].__dict__, self.contact.__dict__)
+
+    def test_create_contact(self):
+        contact_data = {
+            'name': 'Rachel',
+            'email': 'rachel@freshdesk.com'
+        }
+        contact = self.api.contacts.create_contact(contact_data)
+        self.assertIsInstance(contact, Contact)
+        self.assertEquals(contact.email, self.contact.email)
+        self.assertEquals(contact.name, self.contact.name)
+
+    def test_soft_delete_contact(self):
+        self.assertEquals(self.api.contacts.soft_delete_contact(1), None)
+
+    def test_permanently_delete_contact(self):
+        self.assertEquals(self.api.contacts.permanently_delete_contact(1), None)
+
+    def test_make_agent(self):
+        agent = self.api.contacts.make_agent(self.contact.id)
+        self.assertIsInstance(agent, Agent)
+        self.assertEquals(agent.available, True)
+        self.assertEquals(agent.occasional, False)
+        self.assertEquals(agent.contact['email'], self.cont)
+
     def test_contact_datetime(self):
         self.assertIsInstance(self.contact.created_at, datetime.datetime)
         self.assertIsInstance(self.contact.updated_at, datetime.datetime)
@@ -377,6 +413,9 @@ class TestGroup(TestCase):
     def test_group_datetime(self):
         self.assertIsInstance(self.group.created_at, datetime.datetime)
         self.assertIsInstance(self.group.updated_at, datetime.datetime)
+
+    def test_group_str(self):
+        self.assertEqual(str(self.group), 'Entertainers')
 
     def test_group_repr(self):
         self.assertEqual(repr(self.group), '<Group \'Entertainers\'>')

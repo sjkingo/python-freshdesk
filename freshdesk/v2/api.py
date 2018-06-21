@@ -180,8 +180,8 @@ class ContactAPI(object):
                 url = url + "{}={}&".format(filter_name, filter_value)
                 del kwargs[filter_name]
 
-        page = 1
-        per_page = 100
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 10 if not 'per_page' in kwargs else kwargs['per_page']
         contacts = []
 
         # Skip pagination by looping over each page and adding contacts
@@ -189,20 +189,19 @@ class ContactAPI(object):
             this_page = self._api._get(url + 'page=%d&per_page=%d'
                                        % (page, per_page), kwargs)
             contacts += this_page
-            if len(this_page) < per_page:
+            if len(this_page) < per_page or 'page' in kwargs:
                 break
+
             page += 1
 
         return [Contact(**c) for c in contacts]
-            
 
-    def create_contact(self, **kwargs):
+    def create_contact(self, *args, **kwargs):
         """Creates a contact"""
         url = 'contacts'
         data = {
-            'tags': ['POS-Agent'],
             'view_all_tickets': False,
-            'description': 'POS-Agent'
+            'description': 'Freshdesk Contact'
         }
         data.update(kwargs)
         return Contact(**self._api._post(url, data=json.dumps(data)))
@@ -226,7 +225,7 @@ class ContactAPI(object):
             'ticket_scope': 2,
         }
         data.update(kwargs)
-        agent = self._api._put(url, data=json.dumps(data))['agent']
+        agent = self._api._put(url, data=json.dumps(data))
         return self._api.agents.get_agent(agent['id'])
 
 

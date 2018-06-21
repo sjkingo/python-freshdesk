@@ -44,7 +44,7 @@ class MockedAPI(API):
                 re.compile(r'helpdesk/tickets.json'): self.read_test_file('ticket_1.json'),
             },
             'put': {
-                
+
             },
             'delete': {
                 re.compile(r'helpdesk/tickets/1.json'): None,
