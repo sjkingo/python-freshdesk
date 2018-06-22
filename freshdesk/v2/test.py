@@ -2,7 +2,6 @@ import datetime
 import json
 import re
 import os.path
-from _ctypes import Array
 
 import responses
 from unittest import TestCase

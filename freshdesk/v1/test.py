@@ -379,7 +379,7 @@ class TestAgent(TestCase):
         self.assertEqual(self.agent.user['email'], 'rachel@freshdesk.com')
         self.assertEqual(self.agent.user['mobile'], 1234)
         self.assertEqual(self.agent.user['phone'], 5678)
-        self.assertEqual(self.agent.user, False)
+        self.assertEqual(self.agent.occasional, False)
 
     def test_update_agent(self):
         values = {
