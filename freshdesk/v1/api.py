@@ -25,7 +25,6 @@ class TicketAPI(object):
         }
         
         return Ticket(**self._api._post(url, data=data)['helpdesk_ticket'])
-        
 
     def get_ticket(self, ticket_id):
         """Fetches the ticket for the given ticket ID"""
@@ -113,13 +112,13 @@ class ContactAPI(object):
         contacts = self._api._get(url)    
         return [Contact(**c['user']) for c in contacts]
 
-    def create_contact(self, **kwargs):
+    def create_contact(self, *args, **kwargs):
         """Creates a contact"""
         url = 'contacts.json'
         contact_data = {
             'active': True,
             'helpdesk_agent': False,
-            'description': 'POS Agent'
+            'description': 'Freshdesk Contact'
         }
         contact_data.update(kwargs)
         payload = {
@@ -134,11 +133,11 @@ class ContactAPI(object):
         return self._api.agents.get_agent(agent['id'])
 
     def get_contact(self, contact_id):
-        url = 'contacts/%s.json' % contact_id
+        url = 'contacts/%d.json' % contact_id
         return Contact(**self._api._get(url)['user'])
 
     def delete_contact(self, contact_id):
-        url = 'contacts/%s.json' % contact_id
+        url = 'contacts/%d.json' % contact_id
         self._api._delete(url)
 
 
@@ -183,7 +182,7 @@ class AgentAPI(object):
     def update_agent(self, agent_id, **kwargs):
         """Updates an agent"""
         url = 'agents/%s.json' % agent_id
-        agent = self._api._put(url, data=json.dumps(kwargs))
+        agent = self._api._put(url, data=json.dumps(kwargs))['agent']
         return Agent(**agent)
 
     def delete_agent(self, agent_id):
@@ -292,6 +291,7 @@ class API(object):
         return self._action(r)    
 
     def _action(self, res):
+        """Returns JSON response or raise exception if errors are present"""
         try:
             j = res.json()
         except:
@@ -304,8 +304,7 @@ class API(object):
 
         if 'require_login' in j:
             raise HTTPError('403 Forbidden: API key is incorrect for this domain')
-                
-        
+
         if 'error' in j:
             raise HTTPError('{}: {}'.format(j.get('description'),
                                             j.get('errors')))

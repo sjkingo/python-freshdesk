@@ -6,8 +6,7 @@ import responses
 from unittest import TestCase
 
 from freshdesk.v1.api import API
-from freshdesk.v1.models import Ticket, Comment, Contact, Customer, TimeEntry
-
+from freshdesk.v1.models import Ticket, Comment, Contact, Customer, TimeEntry, Agent
 
 """
 Test suite for python-freshdesk.
@@ -33,8 +32,11 @@ class MockedAPI(API):
                 re.compile(r'helpdesk/tickets/1/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
                 re.compile(r'helpdesk/tickets/1.json'): self.read_test_file('ticket_1.json'),
                 re.compile(r'.*&page=2'): [],
-                re.compile(r'contacts/5004272351.json'): self.read_test_file('contact.json'),
-                re.compile(r'contacts/5004272350.json'): self.read_test_file('contact5004272350.json'),
+                re.compile(r'contacts.json'): self.read_test_file('contacts.json'),
+                re.compile(r'contacts/1.json'): self.read_test_file('contact.json'),
+                re.compile(r'contacts/1.json'): self.read_test_file('contact.json'),
+                re.compile(r'agents.json\?$'): self.read_test_file('agents.json'),
+                re.compile(r'agents/1.json$'): self.read_test_file('agent_1.json'),
                 re.compile(r'customers/1.json'): self.read_test_file('customer.json'),
                 re.compile(r'helpdesk/time_sheets.json'): self.read_test_file('timeentries_ticket_1.json'),
                 re.compile(r'helpdesk/time_sheets.json\?agent_id='): self.read_test_file('timeentries_ticket_1.json'),
@@ -42,12 +44,17 @@ class MockedAPI(API):
             },
             'post': {
                 re.compile(r'helpdesk/tickets.json'): self.read_test_file('ticket_1.json'),
+                re.compile(r'contacts.json'): self.read_test_file('contact.json'),
+                re.compile(r'agents/1.json$'): self.read_test_file('agent_1.json'),
             },
             'put': {
-
+                re.compile(r'contacts/1/make_agent.json'): self.read_test_file('agent_1.json'),
+                re.compile(r'agents/1.json$'): self.read_test_file('agent_1_updated.json'),
             },
             'delete': {
                 re.compile(r'helpdesk/tickets/1.json'): None,
+                re.compile(r'contacts/1.json'): None,
+                re.compile(r'agents/1.json$'): None,
             }
         }
 
@@ -235,7 +242,7 @@ class TestContact(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.contact = cls.api.contacts.get_contact('5004272351')
+        cls.contact = cls.api.contacts.get_contact(1)
 
     def test_get_contact(self):
         self.assertIsInstance(self.contact, Contact)
@@ -243,6 +250,39 @@ class TestContact(TestCase):
         self.assertEqual(self.contact.email, 'rachel@freshdesk.com')
         self.assertEqual(self.contact.helpdesk_agent, False)
         self.assertEqual(self.contact.customer_id, 1)
+
+    def test_list_contacts(self):
+        contacts = self.api.contacts.list_contacts()
+        self.assertIsInstance(contacts, list)
+        self.assertEquals(len(contacts), 2)
+        self.assertIsInstance(contacts[0], Contact)
+        self.assertEquals(contacts[0].id, self.contact.id)
+        self.assertEquals(contacts[0].email, self.contact.email)
+        self.assertEquals(contacts[0].name, self.contact.name)
+
+    def test_create_contact(self):
+        contact_data = {
+            'name': 'Rachel',
+            'email': 'rachel@freshdesk.com'
+        }
+        contact = self.api.contacts.create_contact(contact_data)
+        self.assertIsInstance(contact, Contact)
+        self.assertEquals(contact.id, self.contact.id)
+        self.assertEquals(contact.email, self.contact.email)
+        self.assertEquals(contact.name, self.contact.name)
+
+    def test_make_agent(self):
+        agent = self.api.contacts.make_agent(self.contact.id)
+        self.assertIsInstance(agent, Agent)
+        self.assertEquals(agent.available, True)
+        self.assertEquals(agent.occasional, False)
+        self.assertEquals(agent.id, 1)
+        self.assertEquals(agent.user_id, self.contact.id)
+        self.assertEquals(agent.user['email'], self.contact.email)
+        self.assertEquals(agent.user['name'], self.contact.name)
+
+    def test_delete_contact(self):
+        self.assertEquals(self.api.contacts.delete_contact(1), None)
 
     def test_contact_datetime(self):
         self.assertIsInstance(self.contact.created_at, datetime.datetime)
@@ -259,8 +299,8 @@ class TestCustomer(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.customer = cls.api.customers.get_customer('1')
-        cls.contact = cls.api.contacts.get_contact('5004272351')
+        cls.customer = cls.api.customers.get_customer(1)
+        cls.contact = cls.api.contacts.get_contact(1)
 
     def test_customer(self):
         self.assertIsInstance(self.customer, Customer)
@@ -308,3 +348,64 @@ class TestTimesheets(TestCase):
         self.test_timesheet()
         self.timesheet = self.api.timesheets.get_all_timesheets(filter_name="agent_id", filter_value="5004272350")
         self.test_timesheet()
+
+
+class TestAgent(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.api = MockedAPI(DOMAIN, API_KEY)
+        cls.agent = cls.api.agents.get_agent(1)
+        cls.agent_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+                                                      'sample_json_data',
+                                                      'agent_1.json')).read())
+
+    def test_str(self):
+        self.assertEqual(str(self.agent), 'Rachel')
+
+    def test_repr(self):
+        self.assertEqual(repr(self.agent), '<Agent #1 \'Rachel\'>')
+
+    def test_list_agents(self):
+        agents = self.api.agents.list_agents()
+        self.assertIsInstance(agents, list)
+        self.assertEqual(len(agents), 2)
+        self.assertEqual(agents[0].id, self.agent.id)
+
+    def test_get_agent(self):
+        self.assertIsInstance(self.agent, Agent)
+        self.assertEqual(self.agent.id, 1)
+        self.assertEqual(self.agent.user['name'], 'Rachel')
+        self.assertEqual(self.agent.user['email'], 'rachel@freshdesk.com')
+        self.assertEqual(self.agent.user['mobile'], 1234)
+        self.assertEqual(self.agent.user['phone'], 5678)
+        self.assertEqual(self.agent.user, False)
+
+    def test_update_agent(self):
+        values = {
+            'occasional': True,
+            'contact': {
+                'name': 'Updated Name'
+            }
+        }
+        agent = self.api.agents.update_agent(1, **values)
+
+        self.assertEqual(agent.occasional, True)
+        self.assertEqual(agent.user['name'], 'Updated Name')
+
+    def test_delete_agent(self):
+        self.assertEquals(self.api.agents.delete_agent(1), None)
+
+    def test_agent_name(self):
+        self.assertEqual(self.agent.user['name'], 'Rachel')
+
+    def test_agent_mobile(self):
+        self.assertEqual(self.agent.user['mobile'], 1234)
+
+    def test_agent_state(self):
+        self.assertEqual(self.agent.available, True)
+        self.assertEqual(self.agent.occasional, False)
+
+    def test_agent_datetime(self):
+        self.assertIsInstance(self.agent.created_at, datetime.datetime)
+        self.assertIsInstance(self.agent.updated_at, datetime.datetime)
