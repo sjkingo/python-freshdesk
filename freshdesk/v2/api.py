@@ -156,9 +156,9 @@ class ContactAPI(object):
         List all contacts, optionally filtered by a query. Specify filters as
         query keyword argument, such as: 
         
-        query= email is abc@xyz.com,
-        query= mobile is 1234567890,
-        query= phone is 1234567890,
+        email=abc@xyz.com,
+        mobile=1234567890,
+        phone=1234567890,
 
         contacts can be filtered by state and company_id such as:
         
