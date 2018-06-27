@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.2.0 - 2018-06-27
+
+  * Filled out v1 and v2 API's and expanded test cases (@prenit-coverfox)
+
 v1.1.2 - 2018-06-04
 
   * No code changes: fix release stuff up (@sjkingo)
