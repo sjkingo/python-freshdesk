@@ -1,6 +1,6 @@
 {
    "available":true,
-   "occasional":false,
+   "occasional":true,
    "signature":null,
    "id":1,
    "ticket_scope":1,
@@ -9,12 +9,12 @@
    "available_since":null,
    "contact":{
       "active":true,
-      "email":"rachel@freshdesk.com",
+      "email":"abc@xyz.com",
       "job_title":null,
       "language":"en",
       "last_login_at":"2015-08-21T14:54:46+05:30",
       "mobile":1234,
-      "name":"Rachel",
+      "name":"Updated Name",
       "phone":5678,
       "time_zone":"Chennai",
       "created_at":"2015-08-18T16:18:05Z",

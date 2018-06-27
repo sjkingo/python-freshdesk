@@ -151,9 +151,82 @@ class ContactAPI(object):
     def __init__(self, api):
         self._api = api
 
+    def list_contacts(self, **kwargs):
+        """
+        List all contacts, optionally filtered by a query. Specify filters as
+        query keyword argument, such as:
+
+        email=abc@xyz.com,
+        mobile=1234567890,
+        phone=1234567890,
+
+        contacts can be filtered by state and company_id such as:
+
+        state=[blocked/deleted/unverified/verified]
+        company_id=1234
+
+        contacts updated after a timestamp can be filtered such as;
+
+        _updated_since=2018-01-19T02:00:00Z
+
+        Passing None means that no named filter will be passed to
+        Freshdesk, which returns list of all contacts
+
+        """
+
+        url = 'contacts?'
+        if kwargs:
+            for filter_name, filter_value in kwargs.items():
+                url = url + "{}={}&".format(filter_name, filter_value)
+                del kwargs[filter_name]
+
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 10 if not 'per_page' in kwargs else kwargs['per_page']
+        contacts = []
+
+        # Skip pagination by looping over each page and adding contacts
+        while True:
+            this_page = self._api._get(url + 'page=%d&per_page=%d'
+                                       % (page, per_page), kwargs)
+            contacts += this_page
+            if len(this_page) < per_page or 'page' in kwargs:
+                break
+
+            page += 1
+
+        return [Contact(**c) for c in contacts]
+
+    def create_contact(self, *args, **kwargs):
+        """Creates a contact"""
+        url = 'contacts'
+        data = {
+            'view_all_tickets': False,
+            'description': 'Freshdesk Contact'
+        }
+        data.update(kwargs)
+        return Contact(**self._api._post(url, data=json.dumps(data)))
+
     def get_contact(self, contact_id):
-        url = 'contacts/%s' % contact_id
+        url = 'contacts/%d' % contact_id
         return Contact(**self._api._get(url))
+
+    def soft_delete_contact(self, contact_id):
+        url = 'contacts/%d' % contact_id
+        self._api._delete(url)
+
+    def permanently_delete_contact(self, contact_id, force=True):
+        url = 'contacts/%d/hard_delete?force=%r' % (contact_id, force)
+        self._api._delete(url)
+
+    def make_agent(self, contact_id, **kwargs):
+        url = 'contacts/%d/make_agent' % contact_id
+        data = {
+            'occasional': False,
+            'ticket_scope': 2,
+        }
+        data.update(kwargs)
+        agent = self._api._put(url, data=json.dumps(data))
+        return self._api.agents.get_agent(agent['id'])
 
 
 class CustomerAPI(object):
@@ -202,7 +275,7 @@ class TicketFieldAPI(object):
 
         if kwargs.has_key('type'):
             url = "{}?type={}".format(url, kwargs['type'])
-            
+
         for tf in self._api._get(url):
             ticket_fields.append(TicketField(**tf))
         return ticket_fields
@@ -215,7 +288,7 @@ class AgentAPI(object):
     def list_agents(self, **kwargs):
         """List all agents, optionally filtered by a view. Specify filters as
         keyword arguments, such as:
-    
+
         {
             email='abc@xyz.com',
             phone=873902,
@@ -224,7 +297,7 @@ class AgentAPI(object):
         }
 
         Passing None means that no named filter will be passed to
-        Freshdesk, which returns list of all agents 
+        Freshdesk, which returns list of all agents
 
         Multiple filters are AND'd together.
         """
@@ -249,12 +322,12 @@ class AgentAPI(object):
             page += 1
 
         return [Agent(**a) for a in agents]
-    
+
     def get_agent(self, agent_id):
-        """Fetches the agent for the given agent ID"""    
+        """Fetches the agent for the given agent ID"""
         url = 'agents/%s' % agent_id
-        return Agent(**self._api._get(url))   
-            
+        return Agent(**self._api._get(url))
+
     def update_agent(self, agent_id, **kwargs):
         """Updates an agent"""
         url = 'agents/%s' % agent_id
@@ -270,7 +343,7 @@ class AgentAPI(object):
         """Fetches currently logged in agent"""
         url = 'agents/me'
         return Agent(**self._api._get(url))
-    
+
 
 class API(object):
     def __init__(self, domain, api_key):

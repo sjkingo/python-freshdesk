@@ -13,6 +13,7 @@ class FreshdeskModel(object):
                 k = '_' + k
             setattr(self, k, v)
             self._keys.add(k)
+
         self.created_at = self._to_timestamp(self.created_at)
         self.updated_at = self._to_timestamp(self.updated_at)
 
@@ -66,6 +67,14 @@ class Contact(FreshdeskModel):
 
     def __repr__(self):
         return '<Contact \'{}\'>'.format(self.name)
+
+
+class Agent(FreshdeskModel):
+    def __str__(self):
+        return self.user['name']
+
+    def __repr__(self):
+        return '<Agent #{} \'{}\'>'.format(self.id, self.user['name'])
 
 
 class TimeEntry(FreshdeskModel):

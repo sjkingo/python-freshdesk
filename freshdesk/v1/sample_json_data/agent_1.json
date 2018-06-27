@@ -1,0 +1,36 @@
+{
+   "agent":{
+      "active_since":null,
+      "available":true,
+      "created_at":"2015-01-02T22:56:39-10:00",
+      "id":1,
+      "occasional":false,
+      "points":0,
+      "scoreboard_level_id":1,
+      "signature":null,
+      "signature_html":"\u003Cp\u003E\u003Cbr\u003E\u003C/p\u003E\r\n",
+      "ticket_permission":1,
+      "updated_at":"2015-01-04T23:09:52-10:00",
+      "user":{
+         "active":false,
+         "address":null,
+         "created_at":"2014-12-30T18:49:39-10:00",
+         "deleted":false,
+         "description":null,
+         "email":"rachel@freshdesk.com",
+         "external_id":null,
+         "fb_profile_id":null,
+         "helpdesk_agent":true,
+         "id":1,
+         "job_title":"Agent",
+         "language":"en",
+         "mobile":1234,
+         "name":"Rachel",
+         "phone":5678,
+         "time_zone":"Chennai",
+         "twitter_id":null,
+         "updated_at":"2015-01-04T23:09:51-10:00"
+      },
+      "user_id":1
+   }
+}

@@ -1,0 +1,42 @@
+{
+    "cc_emails": [
+        "test2@example.com"
+    ],
+    "fwd_emails": [],
+    "reply_cc_emails": [
+        "test2@example.com"
+    ],
+    "email_config_id": 5000054536,
+    "fr_escalated": false,
+    "group_id": null,
+    "priority": 1,
+    "priority_name": "Low",
+    "requester_id": 6012691534,
+    "responder_id": 6010396333,
+    "source": 2,
+    "spam": false,
+    "status": 2,
+    "subject": "This is a sample outbound email",
+    "type": "Question",
+    "company_id": null,
+    "id": 1,
+    "to_emails": null,
+    "product_id": null,
+    "created_at": "2016-05-18T04:36:04Z",
+    "updated_at": "2016-05-18T23:42:50Z",
+    "due_by": "2016-05-18T23:36:04Z",
+    "fr_due_by": "2016-05-18T05:36:04Z",
+    "is_escalated": true,
+    "description_text": "This is a sample outbound email, feel free to delete it.",
+    "description": "<div>This is a sample outbound email, feel free to delete it.</div>",
+    "custom_fields": {
+        "parent_or_child": null,
+        "parent_ticket_id": null,
+        "child_ticket_id": null
+    },
+    "tags": [
+        "foo",
+        "bar"
+    ],
+    "attachments": []
+}

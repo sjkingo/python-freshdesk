@@ -2,6 +2,7 @@ import datetime
 import json
 import re
 import os.path
+
 import responses
 from unittest import TestCase
 
@@ -22,26 +23,48 @@ API_KEY = 'MX4CEAw4FogInimEdRW2'
 class MockedAPI(API):
     def __init__(self, *args):
         self.resolver = {
-            re.compile(r'tickets\?filter=new_and_my_open&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets\?filter=deleted&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets\?filter=spam&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets\?filter=watching&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets\?page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-            re.compile(r'tickets/1$'): self.read_test_file('ticket_1.json'),
-            re.compile(r'tickets/1/conversations'): self.read_test_file('conversations.json'),
-            re.compile(r'contacts/1$'): self.read_test_file('contact.json'),
-            re.compile(r'customers/1$'): self.read_test_file('customer.json'),
-            re.compile(r'groups$'): self.read_test_file('groups.json'),
-            re.compile(r'groups/1$'): self.read_test_file('group_1.json'),
-            re.compile(r'roles$'): self.read_test_file('roles.json'),
-            re.compile(r'roles/1$'): self.read_test_file('role_1.json'),
-            re.compile(r'agents\?email=abc@xyz.com&page=1&per_page=100'): self.read_test_file('agent_1.json'),
-            re.compile(r'agents\?mobile=1234&page=1&per_page=100'): self.read_test_file('agent_1.json'),
-            re.compile(r'agents\?phone=5678&page=1&per_page=100'): self.read_test_file('agent_1.json'),
-            re.compile(r'agents\?state=fulltime&page=1&per_page=100'): self.read_test_file('agent_1.json'),
-            re.compile(r'agents\?page=1&per_page=100'): self.read_test_file('agents.json'),
-            re.compile(r'agents/1$'): self.read_test_file('agent_1.json'),
+            'get': {
+                re.compile(r'tickets\?filter=new_and_my_open&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
+                re.compile(r'tickets\?filter=deleted&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
+                re.compile(r'tickets\?filter=spam&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
+                re.compile(r'tickets\?filter=watching&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
+                re.compile(r'tickets\?page=1&per_page=100'): self.read_test_file('all_tickets.json'),
+                re.compile(r'tickets/1$'): self.read_test_file('ticket_1.json'),
+                re.compile(r'tickets/1/conversations'): self.read_test_file('conversations.json'),
+                re.compile(r'contacts\?page=1&per_page=10$'): self.read_test_file('contacts.json'),
+                re.compile(r'contacts/1$'): self.read_test_file('contact.json'),
+                re.compile(r'customers/1$'): self.read_test_file('customer.json'),
+                re.compile(r'groups$'): self.read_test_file('groups.json'),
+                re.compile(r'groups/1$'): self.read_test_file('group_1.json'),
+                re.compile(r'roles$'): self.read_test_file('roles.json'),
+                re.compile(r'roles/1$'): self.read_test_file('role_1.json'),
+                re.compile(r'agents\?email=abc@xyz.com&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+                re.compile(r'agents\?mobile=1234&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+                re.compile(r'agents\?phone=5678&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+                re.compile(r'agents\?state=fulltime&page=1&per_page=100'): self.read_test_file('agent_1.json'),
+                re.compile(r'agents\?page=1&per_page=100'): self.read_test_file('agents.json'),
+                re.compile(r'agents/1$'): self.read_test_file('agent_1.json'),
+            },
+            'post': {
+                re.compile(r'tickets$'): self.read_test_file('ticket_1.json'),
+                re.compile(r'tickets/outbound_email$'): self.read_test_file('outbound_email_1.json'),
+                re.compile(r'tickets/1/notes$'): self.read_test_file('note_1.json'),
+                re.compile(r'tickets/1/reply$'): self.read_test_file('reply_1.json'),
+                re.compile(r'contacts$'): self.read_test_file('contact.json'),
+            },
+            'put': {
+                re.compile(r'tickets/1$'): self.read_test_file('ticket_1_updated.json'),
+                re.compile(r'contacts/1/make_agent$'): self.read_test_file('agent_1.json'),
+                re.compile(r'agents/1$'): self.read_test_file('agent_1_updated.json'),
+            },
+            'delete': {
+                re.compile(r'tickets/1$'): None,
+                re.compile(r'agents/1$'): None,
+                re.compile(r'contacts/1$'): None,
+                re.compile(r'contacts/1/hard_delete\?force=True$'): None,
+            }
         }
+
         super(MockedAPI, self).__init__(*args)
 
     def read_test_file(self, filename):
@@ -49,13 +72,40 @@ class MockedAPI(API):
         return json.loads(open(path, 'r').read())
 
     def _get(self, url, *args, **kwargs):
-        for pattern, data in self.resolver.items():
+        for pattern, data in self.resolver['get'].items():
             if pattern.match(url):
                 return data
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
         raise HTTPError('404: mocked_api_get() has no pattern for \'{}\''.format(url))
+
+    def _post(self, url, *args, **kwargs):
+        for pattern, data in self.resolver['post'].items():
+            if pattern.match(url):
+                return data
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_post() has no pattern for \'{}\''.format(url))    
+
+    def _put(self, url, *args, **kwargs):
+        for pattern, data in self.resolver['put'].items():
+            if pattern.match(url):
+                return data
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_put() has no pattern for \'{}\''.format(url))
+
+    def _delete(self, url, *args, **kwargs):
+        for pattern, data in self.resolver['delete'].items():
+            if pattern.match(url):
+                return data
+
+        # No match found, raise 404
+        from requests.exceptions import HTTPError
+        raise HTTPError('404: mocked_api_delete() has no pattern for \'{}\''.format(url))    
 
 
 class TestAPIClass(TestCase):
@@ -93,6 +143,9 @@ class TestTicket(TestCase):
         cls.ticket_json = json.loads(open(os.path.join(os.path.dirname(__file__),
                                                        'sample_json_data',
                                                        'ticket_1.json')).read())
+        cls.outbound_email_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+                                                       'sample_json_data',
+                                                       'outbound_email_1.json')).read())
 
     def test_str(self):
         self.assertEqual(str(self.ticket), 'This is a sample ticket')
@@ -109,13 +162,7 @@ class TestTicket(TestCase):
         self.assertIn('foo', self.ticket.tags)
         self.assertIn('bar', self.ticket.tags)
 
-    @responses.activate
     def test_create_ticket(self):
-        responses.add(responses.POST,
-                      'https://{}/api/v2/tickets'.format(DOMAIN),
-                      status=200, content_type='application/json',
-                      json=self.ticket_json)
-
         ticket = self.api.tickets.create_ticket('This is a sample ticket',
                                                 description='This is a sample ticket, feel free to delete it.',
                                                 email='test@example.com',
@@ -131,38 +178,34 @@ class TestTicket(TestCase):
         self.assertIn('foo', ticket.tags)
         self.assertIn('bar', ticket.tags)
 
-    @responses.activate
     def test_create_outbound_email(self):
-        j = self.ticket_json.copy()
+        j = self.outbound_email_json.copy()
+        email = 'test@example.com'
+        subject = 'This is a sample outbound email'
+        description = 'This is a sample outbound email, feel free to delete it.'
+        email_config_id = 5000054536
         values = {
-            'subject': 'This is a sample outbound_email',
-            'description_text': 'This is a sample outbound, feel free to delete it.',
             'status': 5,
-            'email_config_id': 5000054536,
+            'priority': 1,
+            'tags': ['foo', 'bar'],
+            'cc_emails': ['test2@example.com']
         }
-        j.update(values)
-        responses.add(responses.POST,
-                      'https://{}/api/v2/tickets/outbound_email'.format(DOMAIN),
-                      status=200, content_type='application/json',
-                      json=j)
 
-        ticket = self.api.tickets.create_outbound_email('This is a sample outbound_email',
-                                                        description='This is a sample outbound, feel free to delete it.',
-                                                        email='test@example.com',
-                                                        email_config_id=5000054536,
-                                                        priority=1,
-                                                        tags=['foo', 'bar'],
-                                                        cc_emails=['test2@example.com'])
-        self.assertIsInstance(ticket, Ticket)
-        self.assertEqual(ticket.subject, 'This is a sample outbound_email')
-        self.assertEqual(ticket.description_text, 'This is a sample outbound, feel free to delete it.')
-        self.assertEqual(ticket.priority, 'low')
-        self.assertEqual(ticket.status, 'closed')
-        self.assertEqual(ticket.cc_emails, ['test2@example.com'])
-        self.assertIn('foo', ticket.tags)
-        self.assertIn('bar', ticket.tags)
+        email = self.api.tickets.create_outbound_email(
+                subject,
+                description,
+                email,
+                email_config_id,
+                **values
+        )
 
-    @responses.activate
+        self.assertEqual(email.description_text, j['description_text'])
+        self.assertEqual(email._priority, j['priority'])
+        self.assertEqual(email._status, j['status'])
+        self.assertEqual(email.cc_emails, j['cc_emails'])
+        self.assertIn('foo', email.tags)
+        self.assertIn('bar', email.tags)
+
     def test_update_ticket(self):
         j = self.ticket_json.copy()
         values = {
@@ -173,14 +216,6 @@ class TestTicket(TestCase):
         }
         j.update(values)
 
-        responses.add(responses.GET,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=200, content_type='application/json', json=j)
-
-        responses.add(responses.PUT,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=200, content_type='application/json', json=j)
-
         ticket = self.api.tickets.update_ticket(j['id'], **values)
         self.assertEqual(ticket.subject, 'Test subject update')
         self.assertEqual(ticket.status, 'resolved')
@@ -188,12 +223,8 @@ class TestTicket(TestCase):
         self.assertIn('hello', ticket.tags)
         self.assertIn('world', ticket.tags)
 
-    @responses.activate
     def test_delete_ticket(self):
-        responses.add(responses.DELETE,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=204)
-        self.api.tickets.delete_ticket(1)
+        self.assertEquals(self.api.tickets.delete_ticket(1), None)
 
     def test_ticket_priority(self):
         self.assertEqual(self.ticket._priority, 1)
@@ -267,25 +298,13 @@ class TestComment(TestCase):
     def test_comment_repr(self):
         self.assertEqual(repr(self.comments[0]), '<Comment for Ticket #1>')
 
-    @responses.activate
     def test_create_note(self):
-        responses.add(responses.POST,
-                      'https://{}/api/v2/tickets/1/notes'.format(DOMAIN),
-                      status=200, content_type='application/json',
-                      json=self.comments_json[0])
-
         comment = self.api.comments.create_note(1, 'This is a private note')
         self.assertIsInstance(comment, Comment)
         self.assertEqual(comment.body_text, 'This is a private note')
         self.assertEqual(comment.source, 'note')
 
-    @responses.activate
     def test_create_reply(self):
-        responses.add(responses.POST,
-                      'https://{}/api/v2/tickets/1/reply'.format(DOMAIN),
-                      status=200, content_type='application/json',
-                      json=self.comments_json[1])
-
         comment = self.api.comments.create_reply(1, 'This is a reply')
         self.assertIsInstance(comment, Comment)
         self.assertEqual(comment.body_text, 'This is a reply')
@@ -296,7 +315,7 @@ class TestContact(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.contact = cls.api.contacts.get_contact('1')
+        cls.contact = cls.api.contacts.get_contact(1)
 
     def test_get_contact(self):
         self.assertIsInstance(self.contact, Contact)
@@ -304,6 +323,37 @@ class TestContact(TestCase):
         self.assertEqual(self.contact.email, 'rachel@freshdesk.com')
         self.assertEqual(self.contact.helpdesk_agent, False)
         self.assertEqual(self.contact.customer_id, 1)
+
+    def test_list_contact(self):
+        contacts = self.api.contacts.list_contacts()
+        self.assertIsInstance(contacts, list)
+        self.assertIsInstance(contacts[0], Contact)
+        self.assertEquals(len(contacts), 2)
+        self.assertEquals(contacts[0].__dict__, self.contact.__dict__)
+
+    def test_create_contact(self):
+        contact_data = {
+            'name': 'Rachel',
+            'email': 'rachel@freshdesk.com'
+        }
+        contact = self.api.contacts.create_contact(contact_data)
+        self.assertIsInstance(contact, Contact)
+        self.assertEquals(contact.email, self.contact.email)
+        self.assertEquals(contact.name, self.contact.name)
+
+    def test_soft_delete_contact(self):
+        self.assertEquals(self.api.contacts.soft_delete_contact(1), None)
+
+    def test_permanently_delete_contact(self):
+        self.assertEquals(self.api.contacts.permanently_delete_contact(1), None)
+
+    def test_make_agent(self):
+        agent = self.api.contacts.make_agent(self.contact.id)
+        self.assertIsInstance(agent, Agent)
+        self.assertEquals(agent.available, True)
+        self.assertEquals(agent.occasional, False)
+        self.assertEquals(agent.contact['email'], self.contact.email)
+        self.assertEquals(agent.contact['name'], self.contact.name)
 
     def test_contact_datetime(self):
         self.assertIsInstance(self.contact.created_at, datetime.datetime)
@@ -321,7 +371,7 @@ class TestCustomer(TestCase):
     def setUpClass(cls):
         cls.api = MockedAPI(DOMAIN, API_KEY)
         cls.customer = cls.api.customers.get_customer('1')
-        cls.contact = cls.api.contacts.get_contact('1')
+        cls.contact = cls.api.contacts.get_contact(1)
 
     def test_customer(self):
         self.assertIsInstance(self.customer, Customer)
@@ -329,14 +379,14 @@ class TestCustomer(TestCase):
         self.assertEqual(self.customer.domains, 'acme.com')
         self.assertEqual(self.customer.cf_custom_key, 'custom_value')
 
-    def test_contact_datetime(self):
+    def test_customer_datetime(self):
         self.assertIsInstance(self.customer.created_at, datetime.datetime)
         self.assertIsInstance(self.customer.updated_at, datetime.datetime)
 
-    def test_contact_str(self):
+    def test_customer_str(self):
         self.assertEqual(str(self.customer), 'ACME Corp.')
 
-    def test_contact_repr(self):
+    def test_customer_repr(self):
         self.assertEqual(repr(self.customer), '<Customer \'ACME Corp.\'>')
 
     def test_get_customer_from_contact(self):
@@ -364,6 +414,9 @@ class TestGroup(TestCase):
     def test_group_datetime(self):
         self.assertIsInstance(self.group.created_at, datetime.datetime)
         self.assertIsInstance(self.group.updated_at, datetime.datetime)
+
+    def test_group_str(self):
+        self.assertEqual(str(self.group), 'Entertainers')
 
     def test_group_repr(self):
         self.assertEqual(repr(self.group), '<Group \'Entertainers\'>')
@@ -404,56 +457,37 @@ class TestAgent(TestCase):
                                                        'agent_1.json')).read())
 
     def test_str(self):
-        self.assertEqual(str(self.agent), 'Support')
+        self.assertEqual(str(self.agent), 'Rachel')
 
     def test_repr(self):
-        self.assertEqual(repr(self.agent), '<Agent #1 \'Support\'>')
+        self.assertEqual(repr(self.agent), '<Agent #1 \'Rachel\'>')
 
     def test_get_agent(self):
         self.assertIsInstance(self.agent, Agent)
         self.assertEqual(self.agent.id, 1)
-        self.assertEqual(self.agent.contact['name'], 'Support')
-        self.assertEqual(self.agent.contact['email'], 'abc@xyz.com')
+        self.assertEqual(self.agent.contact['name'], 'Rachel')
+        self.assertEqual(self.agent.contact['email'], 'rachel@freshdesk.com')
         self.assertEqual(self.agent.contact['mobile'], 1234)
         self.assertEqual(self.agent.contact['phone'], 5678)
         self.assertEqual(self.agent.occasional, False)
 
-    @responses.activate
     def test_update_agent(self):
-        a = self.agent_json.copy()
-        
-        responses.add(responses.GET,
-                      'https://{}/api/v2/agents/1'.format(DOMAIN),
-                      status=200, content_type='application/json', json=a)
-
         values = {
             'occasional': True,
             'contact': {
                 'name': 'Updated Name' 
             }
         }
-
-        b = a.copy()
-        b.update(values)
-        
-        responses.add(responses.PUT,
-                      'https://{}/api/v2/agents/1'.format(DOMAIN),
-                      status=200, content_type='application/json', json=b)
-
-        agent = self.api.agents.update_agent(a['id'], **values)
+        agent = self.api.agents.update_agent(1, **values)
         
         self.assertEqual(agent.occasional, True)
         self.assertEqual(agent.contact['name'], 'Updated Name')
     
-    @responses.activate
     def test_delete_agent(self):
-        responses.add(responses.DELETE,
-                      'https://{}/api/v2/agents/1'.format(DOMAIN),
-                      status=204)
-        self.api.agents.delete_agent(1)
+        self.assertEquals(self.api.agents.delete_agent(1), None)
 
     def test_agent_name(self):
-        self.assertEqual(self.agent.contact['name'], 'Support')
+        self.assertEqual(self.agent.contact['name'], 'Rachel')
         
     def test_agent_mobile(self):
         self.assertEqual(self.agent.contact['mobile'], 1234)
