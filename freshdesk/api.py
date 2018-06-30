@@ -33,11 +33,14 @@ def API(domain, api_key, version=1, **kwargs):
             For more info about freshdesk V2 API, visit https://developers.freshdesk.com/api/
             
             Now python-freshdesk library will by default return V2 API client. You need to migrate your project accordingly.
+            
+            
         """
         print(deprecation_message)
+        version = 2
 
     if version != 2:
-        print("Freshdesk V%d API is not released yet. Returning default V2 API client")
+        print("Freshdesk V%d API is not released yet. Returning default V2 API client\n" % version)
 
     version = 2
     client_class = _VERSIONS[version]
