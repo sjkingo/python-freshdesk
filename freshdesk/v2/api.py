@@ -379,7 +379,14 @@ class API(object):
             req.raise_for_status()
             j = {}
 
-        if 'error' in j:
+        if 'Retry-After' in req.headers:
+            raise HTTPError('429 Rate Limit Exceeded: API rate-limit has been reached until {} seconds.'
+                            'See http://freshdesk.com/api#ratelimit'.format(req.headers['Retry-After']))
+
+        if 'code' in j and j['code'] == "invalid_credentials":
+            raise HTTPError('401 Unauthorized: Please login with correct credentials')
+
+        if 'errors' in j:
             raise HTTPError('{}: {}'.format(j.get('description'),
                                             j.get('errors')))
 
