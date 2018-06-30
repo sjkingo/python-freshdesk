@@ -79,16 +79,17 @@ class TicketAPI(object):
             url += '?filter=%s&' % filter_name
         else:
             url += '?'
-        page = 1
-        per_page = 100
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 100 if not 'per_page' in kwargs else kwargs['per_page']
         tickets = []
 
-        # Skip pagination by looping over each page and adding tickets
+        # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
         while True:
             this_page = self._api._get(url + 'page=%d&per_page=%d'
                                        % (page, per_page), kwargs)
             tickets += this_page
-            if len(this_page) < per_page:
+            if len(this_page) < per_page or 'page' in kwargs:
                 break
             page += 1
 
@@ -175,16 +176,13 @@ class ContactAPI(object):
         """
 
         url = 'contacts?'
-        if kwargs:
-            for filter_name, filter_value in kwargs.items():
-                url = url + "{}={}&".format(filter_name, filter_value)
-                del kwargs[filter_name]
-
         page = 1 if not 'page' in kwargs else kwargs['page']
-        per_page = 10 if not 'per_page' in kwargs else kwargs['per_page']
+        per_page = 100 if not 'per_page' in kwargs else kwargs['per_page']
+
         contacts = []
 
-        # Skip pagination by looping over each page and adding contacts
+        # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
         while True:
             this_page = self._api._get(url + 'page=%d&per_page=%d'
                                        % (page, per_page), kwargs)
@@ -303,21 +301,18 @@ class AgentAPI(object):
         """
 
         url = 'agents?'
-        if kwargs:
-            for filter_name, filter_value in kwargs.items():
-                url = url + "{}={}&".format(filter_name, filter_value)
-                del kwargs[filter_name]
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 100 if not 'per_page' in kwargs else kwargs['per_page']
 
-        page = 1
-        per_page = 100
         agents = []
 
-        # Skip pagination by looping over each page and adding tickets
+        # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
         while True:
             this_page = self._api._get(url + 'page=%d&per_page=%d'
                                        % (page, per_page), kwargs)
             agents += this_page
-            if len(this_page) < per_page:
+            if len(this_page) < per_page or 'page' in kwargs:
                 break
             page += 1
 
