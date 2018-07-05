@@ -2,9 +2,11 @@ import dateutil.parser
 
 
 class FreshdeskModel(object):
-    _keys = set()
+    _keys = None
 
     def __init__(self, **kwargs):
+        self._keys = set()
+
         if "custom_field" in kwargs.keys() and len(kwargs["custom_field"]) > 0:
             custom_fields = kwargs.pop("custom_field")
             kwargs.update(custom_fields)
