@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.2.2 - 2018-07-09
+
+  * #20: Changes from #20 including v1 deprecation (@prenit-coverfox)
+
 v1.2.1 - 2018-07-05
 
   * #21: Fixed set declaration bug in base class (@sjkingo)
