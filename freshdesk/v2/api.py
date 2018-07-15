@@ -136,12 +136,21 @@ class GroupAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def list_groups(self):
-        url = 'groups'
+    def list_groups(self, **kwargs):
+        url = 'groups?'
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 100 if not 'per_page' in kwargs else kwargs['per_page']
+
         groups = []
-        for g in self._api._get(url):
-            groups.append(Group(**g))
-        return groups
+        while True:
+            this_page = self._api._get(url + 'page=%d&per_page=%d'
+                                       % (page, per_page), kwargs)
+            groups += this_page
+            if len(this_page) < per_page or 'page' in kwargs:
+                break
+            page += 1
+
+        return [Group(**g) for g in groups]
 
     def get_group(self, group_id):
         url = 'groups/%s' % group_id
@@ -237,6 +246,7 @@ class CustomerAPI(object):
 
     def get_customer_from_contact(self, contact):
         return self.get_customer(contact.customer_id)
+
 
 class CompanyAPI(object):
     def __init__(self, api):
