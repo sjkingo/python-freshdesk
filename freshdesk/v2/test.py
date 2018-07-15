@@ -34,7 +34,7 @@ class MockedAPI(API):
                 re.compile(r'contacts\?page=1&per_page=100$'): self.read_test_file('contacts.json'),
                 re.compile(r'contacts/1$'): self.read_test_file('contact.json'),
                 re.compile(r'customers/1$'): self.read_test_file('customer.json'),
-                re.compile(r'groups$'): self.read_test_file('groups.json'),
+                re.compile(r'groups\?page=1&per_page=100$'): self.read_test_file('groups.json'),
                 re.compile(r'groups/1$'): self.read_test_file('group_1.json'),
                 re.compile(r'roles$'): self.read_test_file('roles.json'),
                 re.compile(r'roles/1$'): self.read_test_file('role_1.json'),
