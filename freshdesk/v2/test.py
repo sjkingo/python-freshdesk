@@ -54,7 +54,7 @@ class MockedAPI(API):
             },
             'put': {
                 re.compile(r'tickets/1$'): self.read_test_file('ticket_1_updated.json'),
-                re.compile(r'contacts/1/make_agent$'): self.read_test_file('agent_1.json'),
+                re.compile(r'contacts/1/make_agent$'): self.read_test_file('contact_1_agent.json'),
                 re.compile(r'agents/1$'): self.read_test_file('agent_1_updated.json'),
             },
             'delete': {

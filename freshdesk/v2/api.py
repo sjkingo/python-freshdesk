@@ -232,8 +232,8 @@ class ContactAPI(object):
             'ticket_scope': 2,
         }
         data.update(kwargs)
-        agent = self._api._put(url, data=json.dumps(data))
-        return self._api.agents.get_agent(agent['id'])
+        contact = self._api._put(url, data=json.dumps(data))
+        return self._api.agents.get_agent(contact['agent']['id'])
 
 
 class CustomerAPI(object):
