@@ -216,6 +216,10 @@ class ContactAPI(object):
         url = 'contacts/%d' % contact_id
         self._api._delete(url)
 
+    def restore_contact(self, contact_id):
+        url = 'contacts/%d/restore' % contact_id
+        self._api._put(url)
+
     def permanently_delete_contact(self, contact_id, force=True):
         url = 'contacts/%d/hard_delete?force=%r' % (contact_id, force)
         self._api._delete(url)
