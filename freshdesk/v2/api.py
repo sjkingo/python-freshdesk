@@ -15,7 +15,13 @@ class TicketAPI(object):
         return Ticket(**ticket)
 
     def create_ticket(self, subject, **kwargs):
-        """Creates a ticket"""
+        """
+            Creates a ticket
+            To create ticket with attachments,
+            pass a key 'attachments' with value as list of fully qualified file paths in string format.
+            ex: attachments = ('/path/to/attachment1', '/path/to/attachment2')
+        """
+
         url = 'tickets'
         status = kwargs.get('status', 2)
         priority = kwargs.get('priority', 1)
@@ -25,11 +31,26 @@ class TicketAPI(object):
             'priority': priority,
         }
         data.update(kwargs)
+        if 'attachments' in data:
+            ticket = self._create_ticket_with_attachment(url, data)
+            return Ticket(**ticket)
+
         ticket = self._api._post(url, data=json.dumps(data))
         return Ticket(**ticket)
 
-    def create_outbound_email(self, subject, description, email,
-                              email_config_id, **kwargs):
+    def _create_ticket_with_attachment(self, url, data):
+        attachments = data['attachments']
+        del data['attachments']
+        multipart_data = []
+
+        for attachment in attachments:
+            file_name = attachment.split("/")[-1:][0]
+            multipart_data.append(('attachments[]', (file_name, open(attachment), None)))
+
+        ticket = self._api._post(url, data=data, files=multipart_data)
+        return ticket
+
+    def create_outbound_email(self, subject, description, email, email_config_id, **kwargs):
         """Creates an outbound email"""
         url = 'tickets/outbound_email'
         priority = kwargs.get('priority', 1)
@@ -413,9 +434,13 @@ class API(object):
         req = self._session.get(self._api_prefix + url, params=params)
         return self._action(req)
 
-    def _post(self, url, data={}):
+    def _post(self, url, data={}, **kwargs):
         """Wrapper around request.post() to use the API prefix. Returns a JSON response."""
-        req = self._session.post(self._api_prefix + url, data=data)
+        if 'files' in kwargs:
+            req = requests.post(self._api_prefix + url, auth=self._session.auth, data=data, **kwargs)
+            return self._action(req)
+
+        req = self._session.post(self._api_prefix + url, data=data, **kwargs)
         return self._action(req)
 
     def _put(self, url, data={}):

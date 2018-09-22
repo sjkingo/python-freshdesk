@@ -163,12 +163,14 @@ class TestTicket(TestCase):
         self.assertIn('bar', self.ticket.tags)
 
     def test_create_ticket(self):
+        attachment_path = os.path.join(os.path.dirname(__file__), 'sample_json_data', 'attachment.txt')
         ticket = self.api.tickets.create_ticket('This is a sample ticket',
                                                 description='This is a sample ticket, feel free to delete it.',
                                                 email='test@example.com',
                                                 priority=1, status=2,
                                                 tags=['foo', 'bar'],
-                                                cc_emails=['test2@example.com'])
+                                                cc_emails=['test2@example.com'],
+                                                attachments=(attachment_path,))
         self.assertIsInstance(ticket, Ticket)
         self.assertEqual(ticket.subject, 'This is a sample ticket')
         self.assertEqual(ticket.description_text, 'This is a sample ticket, feel free to delete it.')
