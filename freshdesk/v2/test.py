@@ -54,6 +54,8 @@ class MockedAPI(API):
             },
             'put': {
                 re.compile(r'tickets/1$'): self.read_test_file('ticket_1_updated.json'),
+                re.compile(r'contacts/1$'): self.read_test_file('contact_updated.json'),
+                re.compile(r'contacts/1/restore$'): self.read_test_file('contact.json'),
                 re.compile(r'contacts/1/make_agent$'): self.read_test_file('contact_1_agent.json'),
                 re.compile(r'agents/1$'): self.read_test_file('agent_1_updated.json'),
             },
@@ -343,11 +345,25 @@ class TestContact(TestCase):
         self.assertEquals(contact.email, self.contact.email)
         self.assertEquals(contact.name, self.contact.name)
 
+    def test_update_contact(self):
+        contact_data = {
+            'name': 'New Name'
+        }
+        contact = self.api.contacts.update_contact(1, **contact_data)
+        self.assertIsInstance(contact, Contact)
+        self.assertEquals(contact.name, 'New Name')
+
     def test_soft_delete_contact(self):
         self.assertEquals(self.api.contacts.soft_delete_contact(1), None)
 
     def test_permanently_delete_contact(self):
         self.assertEquals(self.api.contacts.permanently_delete_contact(1), None)
+
+    def test_restore_contact(self):
+        self.api.contacts.restore_contact(1)
+        contact = self.api.contacts.get_contact(1)
+        self.assertIsInstance(contact, Contact)
+        self.assertEquals(contact.deleted, False)
 
     def test_make_agent(self):
         agent = self.api.contacts.make_agent(self.contact.id)
