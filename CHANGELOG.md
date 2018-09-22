@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.2.3- 2018-09-23
+
+  
+  * #28: Changes from #28 create ticket with attachments (@prenit-coverfox)
+  * #25: Changes from #25 update_contact, restore_contact (@vdboor)
+  * #22: Changes from #22 pagination in list_groups(@prenit-coverfox)
+
 v1.2.2 - 2018-07-09
 
   * #20: Changes from #20 including v1 deprecation (@prenit-coverfox)
