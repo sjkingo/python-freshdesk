@@ -8,7 +8,7 @@ A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 
 
 There is support for a limited subset of features, using either Freshdesk API v1 or v2.
 
-After the deprication of Freshdesk V1 API, library uses V2 API only.
+After the deprecation of Freshdesk V1 API, library uses V2 API only.
 
 Support for the v2 API includes the following features:
 * [Tickets](http://developer.freshdesk.com/api/#tickets)
@@ -85,7 +85,7 @@ without changing these.
 To find your API key, follow Freshdesk's step-by-step solution article
 [How to find your API key](https://support.freshdesk.com/support/solutions/articles/215517).
 
-By default, API v2 is used after the deprication of Freshdesk V1 API
+By default, API v2 is used after the deprecation of Freshdesk V1 API
 
 ```python
 >>> a = API('company.freshdesk.com', 'q8dnkjaS554Aol21dmnas9d92', version=2)
