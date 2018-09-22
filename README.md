@@ -100,7 +100,7 @@ instance. Tickets are loaded as instances of the `freshdesk.v2.models.Ticket`
 class, and can be iterated over:
 
 ```python
->>> a.tickets.list_open_tickets()
+>>> a.tickets.list_tickets()
 [<Ticket 'New ticket'>, <Ticket 'Some tests should be created'>, <Ticket 'Library needs to be uploaded to PyPi'>]
 >>> a.tickets.list_deleted_tickets()
 [<Ticket 'This is a sample ticket'>]
@@ -119,7 +119,7 @@ set([u'status', u'source_name', u'ticket_type', u'updated_at', ...])
 Attributes are automatically converted to native Python objects where appropriate:
 
 ```python
->>> a.tickets.list_open_tickets()[0].created_at
+>>> a.tickets.list_tickets()[0].created_at
 datetime.datetime(2014, 12, 5, 14, 7, 44)
 ```
 
