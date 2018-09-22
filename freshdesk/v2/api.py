@@ -238,9 +238,17 @@ class ContactAPI(object):
         url = 'contacts/%d' % contact_id
         return Contact(**self._api._get(url))
 
+    def update_contact(self, contact_id, **data):
+        url = 'contacts/%d' % contact_id
+        return Contact(**self._api._put(url, data=json.dumps(data)))
+
     def soft_delete_contact(self, contact_id):
         url = 'contacts/%d' % contact_id
         self._api._delete(url)
+
+    def restore_contact(self, contact_id):
+        url = 'contacts/%d/restore' % contact_id
+        self._api._put(url)
 
     def permanently_delete_contact(self, contact_id, force=True):
         url = 'contacts/%d/hard_delete?force=%r' % (contact_id, force)
