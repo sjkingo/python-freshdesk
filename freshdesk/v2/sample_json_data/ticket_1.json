@@ -38,5 +38,15 @@
         "foo",
         "bar"
     ],
-    "attachments": []
+    "attachments": [
+        {
+            "id":1,
+            "content_type":"text/plain",
+            "file_size":44115,
+            "name":"attachment.txt",
+            "attachment_url":"https://cdn.freshdesk.com/data/helpdesk/attachments/production/4004881085/original/attachment.txt",
+            "created_at":"2014-07-28T16:20:03+05:30",
+            "updated_at":"2014-07-28T16:20:03+05:30"
+        }
+    ]
 }
