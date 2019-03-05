@@ -380,7 +380,7 @@ class AgentAPI(object):
 
 
 class API(object):
-    def __init__(self, domain, api_key):
+    def __init__(self, domain, api_key, verify=True, proxies=None):
         """Creates a wrapper to perform API actions.
 
         Arguments:
@@ -394,6 +394,8 @@ class API(object):
         self._api_prefix = 'https://{}/api/v2/'.format(domain.rstrip('/'))
         self._session = requests.Session()
         self._session.auth = (api_key, 'unused_with_api_key')
+        self._session.verify = verify
+        self._session.proxies = proxies
         self._session.headers = {'Content-Type': 'application/json'}
 
         self.tickets = TicketAPI(self)
