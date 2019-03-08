@@ -93,6 +93,20 @@ By default, API v2 is used after the deprecation of Freshdesk V1 API
 
 The `API` class provides access to all the methods exposed by the Freshdesk API.
 
+Optionally, the API v2 can be given SSL verification and/or proxy settings to obey for all requests:
+
+```python
+>>> a = API('company.freshdesk.com', 'q8dnkjaS554Aol21dmnas9d92', verify=False)
+```
+
+```python
+>>> proxies = {
+...     'http': 'http://example.proxy:8000',
+...     'https': 'https://example.proxy:8443'
+... }
+>>> a = API('company.freshdesk.com', 'q8dnkjaS554Aol21dmnas9d92', proxies=proxies)
+```
+
 ### Tickets (API v2)
 
 The Ticket API is accessed by using the methods assigned to the `a.tickets`
