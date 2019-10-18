@@ -45,7 +45,7 @@ class TicketAPI(object):
 
         for attachment in attachments:
             file_name = attachment.split("/")[-1:][0]
-            multipart_data.append(('attachments[]', (file_name, open(attachment), None)))
+            multipart_data.append(('attachments[]', (file_name, open(attachment, 'rb'), None)))
 
         ticket = self._api._post(url, data=data, files=multipart_data)
         return ticket
