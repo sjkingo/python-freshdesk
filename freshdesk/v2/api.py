@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company, Agent, Role, TicketField
+from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company, Agent, Role, TicketField, TimeEntry
 
 
 class TicketAPI(object):
@@ -301,6 +301,22 @@ class RoleAPI(object):
         url = 'roles/%s' % role_id
         return Role(**self._api._get(url))
 
+class TimeEntryAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def list_time_entries(self, ticket_id=None):
+        url = 'tickets/time_entries'
+        if ticket_id is not None:
+            url = 'tickets/%d/time_entries' % ticket_id
+        timeEntries = []
+        for r in self._api._get(url):
+            timeEntries.append(TimeEntry(**r))
+        return timeEntries
+
+    def get_role(self, role_id):
+        url = 'roles/%s' % role_id
+        return Role(**self._api._get(url))
 
 class TicketFieldAPI(object):
     def __init__(self, api):
