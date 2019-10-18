@@ -3,7 +3,7 @@ Changelog
 
 v1.2.4 - 2019-10-19
 
- * #38: Add time entry API (@smontoya)
+ * #38: Add ticket time entry API (@smontoya)
  * #39: Support binary ticket attachments (@ArtemGordinsky)
  * Drop Python 3.3 from Travis CI and add 3.6 (@sjkingo)
 
