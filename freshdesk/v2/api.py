@@ -1,7 +1,13 @@
-import requests
-from requests.exceptions import HTTPError
 import json
-from freshdesk.v2.models import Ticket, Comment, Customer, Contact, Group, Company, Agent, Role, TicketField, TimeEntry
+
+import requests
+from requests import HTTPError
+
+from freshdesk.v2.errors import (
+    FreshdeskAccessDenied, FreshdeskBadRequest, FreshdeskError, FreshdeskNotFound, FreshdeskRateLimited,
+    FreshdeskServerError, FreshdeskUnauthorized,
+)
+from freshdesk.v2.models import Agent, Comment, Company, Contact, Customer, Group, Role, Ticket, TicketField, TimeEntry
 
 
 class TicketAPI(object):
@@ -432,26 +438,33 @@ class API(object):
     def _action(self, req):
         try:
             j = req.json()
-        except:
-            req.raise_for_status()
+        except ValueError:
             j = {}
 
-        if 'Retry-After' in req.headers:
-            raise HTTPError('429 Rate Limit Exceeded: API rate-limit has been reached until {} seconds.'
-                            'See http://freshdesk.com/api#ratelimit'.format(req.headers['Retry-After']))
-
-        if 'code' in j and j['code'] == "invalid_credentials":
-            raise HTTPError('401 Unauthorized: Please login with correct credentials')
-
+        error_message = 'Freshdesk Request Failed'
         if 'errors' in j:
-            raise HTTPError('{}: {}'.format(j.get('description'),
-                                            j.get('errors')))
+            error_message = '{}: {}'.format(j.get('description'), j.get('errors'))
+
+        if req.status_code == 400:
+            raise FreshdeskBadRequest(error_message)
+        elif req.status_code == 401:
+            raise FreshdeskUnauthorized(error_message)
+        elif req.status_code == 403:
+            raise FreshdeskAccessDenied(error_message)
+        elif req.status_code == 404:
+            raise FreshdeskNotFound(error_message)
+        if req.status_code == 429:
+            raise FreshdeskRateLimited(
+                '429 Rate Limit Exceeded: API rate-limit has been reached until {} seconds. See '
+                'http://freshdesk.com/api#ratelimit'.format(req.headers.get('Retry-After')))
+        elif 500 < req.status_code < 600:
+            raise FreshdeskServerError(f'{req.status_code}: Server Error')
 
         # Catch any other errors
         try:
             req.raise_for_status()
-        except Exception as e:
-            raise HTTPError("{}: {}".format(e, j))
+        except HTTPError as e:
+            raise FreshdeskError("{}: {}".format(e, j))
 
         return j
 
