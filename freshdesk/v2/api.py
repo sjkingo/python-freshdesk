@@ -458,7 +458,7 @@ class API(object):
                 '429 Rate Limit Exceeded: API rate-limit has been reached until {} seconds. See '
                 'http://freshdesk.com/api#ratelimit'.format(req.headers.get('Retry-After')))
         elif 500 < req.status_code < 600:
-            raise FreshdeskServerError(f'{req.status_code}: Server Error')
+            raise FreshdeskServerError('{}: Server Error'.format(req.status_code))
 
         # Catch any other errors
         try:
