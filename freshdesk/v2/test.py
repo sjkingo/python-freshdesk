@@ -125,14 +125,58 @@ class TestAPIClass(TestCase):
                          'https://test_domain.freshdesk.com/api/v2/')
 
     @responses.activate
+    def test_400_error(self):
+        responses.add(responses.GET,
+                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
+                      status=400)
+
+        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
+        from freshdesk.v2.errors import FreshdeskBadRequest
+        with self.assertRaises(FreshdeskBadRequest):
+            api.tickets.get_ticket(1)
+
+    @responses.activate
     def test_403_error(self):
         responses.add(responses.GET,
                       'https://{}/api/v2/tickets/1'.format(DOMAIN),
                       status=403)
 
         api = API('pythonfreshdesk.freshdesk.com', 'invalid_api_key')
-        from requests.exceptions import HTTPError
-        with self.assertRaises(HTTPError):
+        from freshdesk.v2.errors import FreshdeskAccessDenied
+        with self.assertRaises(FreshdeskAccessDenied):
+            api.tickets.get_ticket(1)
+
+    @responses.activate
+    def test_404_error(self):
+        responses.add(responses.GET,
+                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
+                      status=404)
+
+        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
+        from freshdesk.v2.errors import FreshdeskNotFound
+        with self.assertRaises(FreshdeskNotFound):
+            api.tickets.get_ticket(1)
+
+    @responses.activate
+    def test_rate_limited_error(self):
+        responses.add(responses.GET,
+                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
+                      status=429)
+
+        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
+        from freshdesk.v2.errors import FreshdeskRateLimited
+        with self.assertRaises(FreshdeskRateLimited):
+            api.tickets.get_ticket(1)
+
+    @responses.activate
+    def test_50x_error(self):
+        responses.add(responses.GET,
+                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
+                      status=502)
+
+        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
+        from freshdesk.v2.errors import FreshdeskServerError
+        with self.assertRaises(FreshdeskServerError):
             api.tickets.get_ticket(1)
 
 
