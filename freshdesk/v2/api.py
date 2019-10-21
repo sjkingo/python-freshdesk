@@ -453,7 +453,7 @@ class API(object):
             raise FreshdeskAccessDenied(error_message)
         elif req.status_code == 404:
             raise FreshdeskNotFound(error_message)
-        if req.status_code == 429:
+        elif req.status_code == 429:
             raise FreshdeskRateLimited(
                 '429 Rate Limit Exceeded: API rate-limit has been reached until {} seconds. See '
                 'http://freshdesk.com/api#ratelimit'.format(req.headers.get('Retry-After')))
