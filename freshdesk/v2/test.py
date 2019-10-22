@@ -1,19 +1,17 @@
 import datetime
 import json
-import re
 import os.path
+import re
 
 import pytest
 import responses
-from unittest import TestCase
 
 from freshdesk.v2.api import API
 from freshdesk.v2.errors import (
-    FreshdeskBadRequest, FreshdeskAccessDenied, FreshdeskNotFound, FreshdeskRateLimited,
+    FreshdeskAccessDenied, FreshdeskBadRequest, FreshdeskError, FreshdeskNotFound, FreshdeskRateLimited,
     FreshdeskServerError,
-    FreshdeskError,
 )
-from freshdesk.v2.models import Ticket, Comment, Contact, Customer, Group, Agent, Role
+from freshdesk.v2.models import Agent, Comment, Contact, Customer, Group, Role, Ticket
 
 """
 Test suite for python-freshdesk.
@@ -117,7 +115,6 @@ class MockedAPI(API):
 
 
 class TestAPIClass:
-
     def test_custom_cname(self):
         with pytest.raises(AttributeError):
             API('custom_cname_domain', 'invalid_api_key')
@@ -144,33 +141,31 @@ class TestAPIClass:
             api.tickets.get_ticket(1)
 
 
-class TestTicket(TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.ticket = cls.api.tickets.get_ticket(1)
-        cls.ticket_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+class TestTicket:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.ticket = self.api.tickets.get_ticket(1)
+        self.ticket_json = json.loads(open(os.path.join(os.path.dirname(__file__),
                                                        'sample_json_data',
                                                        'ticket_1.json')).read())
-        cls.outbound_email_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+        self.outbound_email_json = json.loads(open(os.path.join(os.path.dirname(__file__),
                                                        'sample_json_data',
                                                        'outbound_email_1.json')).read())
 
     def test_str(self):
-        self.assertEqual(str(self.ticket), 'This is a sample ticket')
+        assert str(self.ticket) == 'This is a sample ticket'
 
     def test_repr(self):
-        self.assertEqual(repr(self.ticket), '<Ticket \'This is a sample ticket\' #1>')
+        assert repr(self.ticket) == '<Ticket \'This is a sample ticket\' #1>'
 
     def test_get_ticket(self):
-        self.assertIsInstance(self.ticket, Ticket)
-        self.assertEqual(self.ticket.id, 1)
-        self.assertEqual(self.ticket.subject, 'This is a sample ticket')
-        self.assertEqual(self.ticket.description_text, 'This is a sample ticket, feel free to delete it.')
-        self.assertEqual(self.ticket.cc_emails, ['test2@example.com'])
-        self.assertIn('foo', self.ticket.tags)
-        self.assertIn('bar', self.ticket.tags)
+        assert isinstance(self.ticket, Ticket)
+        assert self.ticket.id == 1
+        assert self.ticket.subject == 'This is a sample ticket'
+        assert self.ticket.description_text, 'This is a sample ticket == feel free to delete it.'
+        assert self.ticket.cc_emails == ['test2@example.com']
+        assert 'foo' in self.ticket.tags
+        assert 'bar' in self.ticket.tags
 
     def test_create_ticket(self):
         attachment_path = os.path.join(os.path.dirname(__file__), 'sample_json_data', 'attachment.txt')
@@ -181,14 +176,14 @@ class TestTicket(TestCase):
                                                 tags=['foo', 'bar'],
                                                 cc_emails=['test2@example.com'],
                                                 attachments=(attachment_path,))
-        self.assertIsInstance(ticket, Ticket)
-        self.assertEqual(ticket.subject, 'This is a sample ticket')
-        self.assertEqual(ticket.description_text, 'This is a sample ticket, feel free to delete it.')
-        self.assertEqual(ticket.priority, 'low')
-        self.assertEqual(ticket.status, 'open')
-        self.assertEqual(ticket.cc_emails, ['test2@example.com'])
-        self.assertIn('foo', ticket.tags)
-        self.assertIn('bar', ticket.tags)
+        assert isinstance(ticket, Ticket)
+        assert ticket.subject == 'This is a sample ticket'
+        assert ticket.description_text, 'This is a sample ticket == feel free to delete it.'
+        assert ticket.priority == 'low'
+        assert ticket.status == 'open'
+        assert ticket.cc_emails == ['test2@example.com']
+        assert 'foo' in ticket.tags
+        assert 'bar' in ticket.tags
 
     def test_create_outbound_email(self):
         j = self.outbound_email_json.copy()
@@ -211,12 +206,12 @@ class TestTicket(TestCase):
                 **values
         )
 
-        self.assertEqual(email.description_text, j['description_text'])
-        self.assertEqual(email._priority, j['priority'])
-        self.assertEqual(email._status, j['status'])
-        self.assertEqual(email.cc_emails, j['cc_emails'])
-        self.assertIn('foo', email.tags)
-        self.assertIn('bar', email.tags)
+        assert email.description_text == j['description_text']
+        assert email._priority == j['priority']
+        assert email._status == j['status']
+        assert email.cc_emails == j['cc_emails']
+        assert 'foo' in email.tags
+        assert 'bar' in email.tags
 
     def test_update_ticket(self):
         j = self.ticket_json.copy()
@@ -229,119 +224,117 @@ class TestTicket(TestCase):
         j.update(values)
 
         ticket = self.api.tickets.update_ticket(j['id'], **values)
-        self.assertEqual(ticket.subject, 'Test subject update')
-        self.assertEqual(ticket.status, 'resolved')
-        self.assertEqual(ticket.priority, 'high')
-        self.assertIn('hello', ticket.tags)
-        self.assertIn('world', ticket.tags)
+        assert ticket.subject == 'Test subject update'
+        assert ticket.status == 'resolved'
+        assert ticket.priority == 'high'
+        assert 'hello' in ticket.tags
+        assert 'world' in ticket.tags
 
     def test_delete_ticket(self):
-        self.assertEqual(self.api.tickets.delete_ticket(1), None)
+        assert self.api.tickets.delete_ticket(1) is None
 
     def test_ticket_priority(self):
-        self.assertEqual(self.ticket._priority, 1)
-        self.assertEqual(self.ticket.priority, 'low')
+        assert self.ticket._priority == 1
+        assert self.ticket.priority == 'low'
 
     def test_ticket_status(self):
-        self.assertEqual(self.ticket._status, 2)
-        self.assertEqual(self.ticket.status, 'open')
+        assert self.ticket._status == 2
+        assert self.ticket.status == 'open'
 
     def test_ticket_source(self):
-        self.assertEqual(self.ticket._source, 2)
-        self.assertEqual(self.ticket.source, 'portal')
+        assert self.ticket._source == 2
+        assert self.ticket.source == 'portal'
 
     def test_ticket_datetime(self):
-        self.assertIsInstance(self.ticket.created_at, datetime.datetime)
-        self.assertIsInstance(self.ticket.updated_at, datetime.datetime)
+        assert isinstance(self.ticket.created_at, datetime.datetime)
+        assert isinstance(self.ticket.updated_at, datetime.datetime)
 
     def test_new_and_my_open_tickets(self):
         tickets = self.api.tickets.list_new_and_my_open_tickets()
-        self.assertIsInstance(tickets, list)
-        self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].id, self.ticket.id)
+        assert isinstance(tickets, list)
+        assert len(tickets) == 1
+        assert tickets[0].id == self.ticket.id
 
     def test_deleted_tickets(self):
         tickets = self.api.tickets.list_deleted_tickets()
-        self.assertIsInstance(tickets, list)
-        self.assertEqual(len(tickets), 1)
+        assert isinstance(tickets, list)
+        assert len(tickets) == 1
 
     def test_watched_tickets(self):
         tickets = self.api.tickets.list_watched_tickets()
-        self.assertIsInstance(tickets, list)
-        self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].id, self.ticket.id)
+        assert isinstance(tickets, list)
+        assert len(tickets) == 1
+        assert tickets[0].id == self.ticket.id
 
     def test_spam_tickets(self):
         tickets = self.api.tickets.list_tickets(filter_name='spam')
-        self.assertIsInstance(tickets, list)
-        self.assertEqual(len(tickets), 1)
+        assert isinstance(tickets, list)
+        assert len(tickets) == 1
 
     def test_default_filter_name(self):
         tickets = self.api.tickets.list_tickets()
-        self.assertIsInstance(tickets, list)
-        self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].id, self.ticket.id)
+        assert isinstance(tickets, list)
+        assert len(tickets) == 1
+        assert tickets[0].id == self.ticket.id
 
     def test_none_filter_name(self):
         tickets = self.api.tickets.list_tickets(filter_name=None)
-        self.assertIsInstance(tickets, list)
-        self.assertEqual(len(tickets), 1)
-        self.assertEqual(tickets[0].id, self.ticket.id)
+        assert isinstance(tickets, list)
+        assert len(tickets) == 1
+        assert tickets[0].id == self.ticket.id
 
 
-class TestComment(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.comments = cls.api.comments.list_comments(1)
-        cls.comments_json = json.loads(open(os.path.join(
+class TestComment:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.comments = self.api.comments.list_comments(1)
+        self.comments_json = json.loads(open(os.path.join(
             os.path.dirname(__file__),
             'sample_json_data',
             'conversations.json')).read())
 
     def test_comments_list(self):
-        self.assertIsInstance(self.comments, list)
-        self.assertEqual(len(self.comments), 2)
-        self.assertIsInstance(self.comments[0], Comment)
+        assert isinstance(self.comments, list)
+        assert len(self.comments) == 2
+        assert isinstance(self.comments[0], Comment)
 
     def test_comment_str(self):
-        self.assertEqual(str(self.comments[0]), 'This is a private note')
+        assert str(self.comments[0]) == 'This is a private note'
 
     def test_comment_repr(self):
-        self.assertEqual(repr(self.comments[0]), '<Comment for Ticket #1>')
+        assert repr(self.comments[0]) == '<Comment for Ticket #1>'
 
     def test_create_note(self):
         comment = self.api.comments.create_note(1, 'This is a private note')
-        self.assertIsInstance(comment, Comment)
-        self.assertEqual(comment.body_text, 'This is a private note')
-        self.assertEqual(comment.source, 'note')
+        assert isinstance(comment, Comment)
+        assert comment.body_text == 'This is a private note'
+        assert comment.source == 'note'
 
     def test_create_reply(self):
         comment = self.api.comments.create_reply(1, 'This is a reply')
-        self.assertIsInstance(comment, Comment)
-        self.assertEqual(comment.body_text, 'This is a reply')
-        self.assertEqual(comment.source, 'reply')
+        assert isinstance(comment, Comment)
+        assert comment.body_text == 'This is a reply'
+        assert comment.source == 'reply'
 
 
-class TestContact(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.contact = cls.api.contacts.get_contact(1)
+class TestContact:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.contact = self.api.contacts.get_contact(1)
 
     def test_get_contact(self):
-        self.assertIsInstance(self.contact, Contact)
-        self.assertEqual(self.contact.name, 'Rachel')
-        self.assertEqual(self.contact.email, 'rachel@freshdesk.com')
-        self.assertEqual(self.contact.helpdesk_agent, False)
-        self.assertEqual(self.contact.customer_id, 1)
+        assert isinstance(self.contact, Contact)
+        assert self.contact.name == 'Rachel'
+        assert self.contact.email == 'rachel@freshdesk.com'
+        assert self.contact.helpdesk_agent is False
+        assert self.contact.customer_id == 1
 
     def test_list_contact(self):
         contacts = self.api.contacts.list_contacts()
-        self.assertIsInstance(contacts, list)
-        self.assertIsInstance(contacts[0], Contact)
-        self.assertEqual(len(contacts), 2)
-        self.assertEqual(contacts[0].__dict__, self.contact.__dict__)
+        assert isinstance(contacts, list)
+        assert isinstance(contacts[0], Contact)
+        assert len(contacts) == 2
+        assert contacts[0].__dict__ == self.contact.__dict__
 
     def test_create_contact(self):
         contact_data = {
@@ -349,153 +342,149 @@ class TestContact(TestCase):
             'email': 'rachel@freshdesk.com'
         }
         contact = self.api.contacts.create_contact(contact_data)
-        self.assertIsInstance(contact, Contact)
-        self.assertEqual(contact.email, self.contact.email)
-        self.assertEqual(contact.name, self.contact.name)
+        assert isinstance(contact, Contact)
+        assert contact.email == self.contact.email
+        assert contact.name == self.contact.name
 
     def test_update_contact(self):
         contact_data = {
             'name': 'New Name'
         }
         contact = self.api.contacts.update_contact(1, **contact_data)
-        self.assertIsInstance(contact, Contact)
-        self.assertEqual(contact.name, 'New Name')
+        assert isinstance(contact, Contact)
+        assert contact.name == 'New Name'
 
     def test_soft_delete_contact(self):
-        self.assertEqual(self.api.contacts.soft_delete_contact(1), None)
+        assert self.api.contacts.soft_delete_contact(1) is None
 
     def test_permanently_delete_contact(self):
-        self.assertEqual(self.api.contacts.permanently_delete_contact(1), None)
+        assert self.api.contacts.permanently_delete_contact(1) is None
 
     def test_restore_contact(self):
         self.api.contacts.restore_contact(1)
         contact = self.api.contacts.get_contact(1)
-        self.assertIsInstance(contact, Contact)
-        self.assertEqual(contact.deleted, False)
+        assert isinstance(contact, Contact)
+        assert contact.deleted is False
 
     def test_make_agent(self):
         agent = self.api.contacts.make_agent(self.contact.id)
-        self.assertIsInstance(agent, Agent)
-        self.assertEqual(agent.available, True)
-        self.assertEqual(agent.occasional, False)
-        self.assertEqual(agent.contact['email'], self.contact.email)
-        self.assertEqual(agent.contact['name'], self.contact.name)
+        assert isinstance(agent, Agent)
+        assert agent.available is True
+        assert agent.occasional is False
+        assert agent.contact['email'] == self.contact.email
+        assert agent.contact['name'] == self.contact.name
 
     def test_contact_datetime(self):
-        self.assertIsInstance(self.contact.created_at, datetime.datetime)
-        self.assertIsInstance(self.contact.updated_at, datetime.datetime)
+        assert isinstance(self.contact.created_at, datetime.datetime)
+        assert isinstance(self.contact.updated_at, datetime.datetime)
 
     def test_contact_str(self):
-        self.assertEqual(str(self.contact), 'Rachel')
+        assert str(self.contact) == 'Rachel'
 
     def test_contact_repr(self):
-        self.assertEqual(repr(self.contact), '<Contact \'Rachel\'>')
+        assert repr(self.contact) == '<Contact \'Rachel\'>'
 
 
-class TestCustomer(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.customer = cls.api.customers.get_customer('1')
-        cls.contact = cls.api.contacts.get_contact(1)
+class TestCustomer:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.customer = self.api.customers.get_customer('1')
+        self.contact = self.api.contacts.get_contact(1)
 
     def test_customer(self):
-        self.assertIsInstance(self.customer, Customer)
-        self.assertEqual(self.customer.name, 'ACME Corp.')
-        self.assertEqual(self.customer.domains, 'acme.com')
-        self.assertEqual(self.customer.cf_custom_key, 'custom_value')
+        assert isinstance(self.customer, Customer)
+        assert self.customer.name == 'ACME Corp.'
+        assert self.customer.domains == 'acme.com'
+        assert self.customer.cf_custom_key == 'custom_value'
 
     def test_customer_datetime(self):
-        self.assertIsInstance(self.customer.created_at, datetime.datetime)
-        self.assertIsInstance(self.customer.updated_at, datetime.datetime)
+        assert isinstance(self.customer.created_at, datetime.datetime)
+        assert isinstance(self.customer.updated_at, datetime.datetime)
 
     def test_customer_str(self):
-        self.assertEqual(str(self.customer), 'ACME Corp.')
+        assert str(self.customer) == 'ACME Corp.'
 
     def test_customer_repr(self):
-        self.assertEqual(repr(self.customer), '<Customer \'ACME Corp.\'>')
+        assert repr(self.customer) == '<Customer \'ACME Corp.\'>'
 
     def test_get_customer_from_contact(self):
         self.customer = self.api.customers.get_customer_from_contact(self.contact)
         self.test_customer()
 
 
-class TestGroup(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.group = cls.api.groups.get_group(1)
+class TestGroup:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.group = self.api.groups.get_group(1)
 
     def test_list_groups(self):
         groups = self.api.groups.list_groups()
-        self.assertIsInstance(groups, list)
-        self.assertEqual(len(groups), 2)
-        self.assertEqual(groups[0].id, self.group.id)
+        assert isinstance(groups, list)
+        assert len(groups) == 2
+        assert groups[0].id == self.group.id
 
     def test_group(self):
-        self.assertIsInstance(self.group, Group)
-        self.assertEqual(self.group.name, 'Entertainers')
-        self.assertEqual(self.group.description, 'Singers dancers and stand up comedians')
+        assert isinstance(self.group, Group)
+        assert self.group.name == 'Entertainers'
+        assert self.group.description == 'Singers dancers and stand up comedians'
 
     def test_group_datetime(self):
-        self.assertIsInstance(self.group.created_at, datetime.datetime)
-        self.assertIsInstance(self.group.updated_at, datetime.datetime)
+        assert isinstance(self.group.created_at, datetime.datetime)
+        assert isinstance(self.group.updated_at, datetime.datetime)
 
     def test_group_str(self):
-        self.assertEqual(str(self.group), 'Entertainers')
+        assert str(self.group) == 'Entertainers'
 
     def test_group_repr(self):
-        self.assertEqual(repr(self.group), '<Group \'Entertainers\'>')
+        assert repr(self.group) == '<Group \'Entertainers\'>'
 
-class TestRole(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.role = cls.api.roles.get_role(1)
+
+class TestRole:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.role = self.api.roles.get_role(1)
 
     def test_list_roles(self):
         roles = self.api.roles.list_roles()
-        self.assertIsInstance(roles, list)
-        self.assertEqual(len(roles), 2)
-        self.assertEqual(roles[0].id, self.role.id)
+        assert isinstance(roles, list)
+        assert len(roles) == 2
+        assert roles[0].id == self.role.id
 
     def test_role(self):
-        self.assertIsInstance(self.role, Role)
-        self.assertEqual(self.role.name, 'Agent')
-        self.assertEqual(self.role.description, 'Can log, view, reply, update and resolve tickets and manage contacts.')
+        assert isinstance(self.role, Role)
+        assert self.role.name == 'Agent'
+        assert self.role.description, 'Can log, view, reply == update and resolve tickets and manage contacts.'
 
     def test_group_datetime(self):
-        self.assertIsInstance(self.role.created_at, datetime.datetime)
-        self.assertIsInstance(self.role.updated_at, datetime.datetime)
+        assert isinstance(self.role.created_at, datetime.datetime)
+        assert isinstance(self.role.updated_at, datetime.datetime)
 
     def test_group_repr(self):
-        self.assertEqual(repr(self.role), '<Role \'Agent\'>')
+        assert repr(self.role) == '<Role \'Agent\'>'
 
 
-class TestAgent(TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.api = MockedAPI(DOMAIN, API_KEY)
-        cls.agent = cls.api.agents.get_agent(1)
-        cls.agent_json = json.loads(open(os.path.join(os.path.dirname(__file__),
+class TestAgent:
+    def setup(self):
+        self.api = MockedAPI(DOMAIN, API_KEY)
+        self.agent = self.api.agents.get_agent(1)
+        self.agent_json = json.loads(open(os.path.join(os.path.dirname(__file__),
                                                        'sample_json_data',
                                                        'agent_1.json')).read())
 
     def test_str(self):
-        self.assertEqual(str(self.agent), 'Rachel')
+        assert str(self.agent) == 'Rachel'
 
     def test_repr(self):
-        self.assertEqual(repr(self.agent), '<Agent #1 \'Rachel\'>')
+        assert repr(self.agent) == '<Agent #1 \'Rachel\'>'
 
     def test_get_agent(self):
-        self.assertIsInstance(self.agent, Agent)
-        self.assertEqual(self.agent.id, 1)
-        self.assertEqual(self.agent.contact['name'], 'Rachel')
-        self.assertEqual(self.agent.contact['email'], 'rachel@freshdesk.com')
-        self.assertEqual(self.agent.contact['mobile'], 1234)
-        self.assertEqual(self.agent.contact['phone'], 5678)
-        self.assertEqual(self.agent.occasional, False)
+        assert isinstance(self.agent, Agent)
+        assert self.agent.id == 1
+        assert self.agent.contact['name'] == 'Rachel'
+        assert self.agent.contact['email'] == 'rachel@freshdesk.com'
+        assert self.agent.contact['mobile'] == 1234
+        assert self.agent.contact['phone'] == 5678
+        assert self.agent.occasional is False
 
     def test_update_agent(self):
         values = {
@@ -506,28 +495,28 @@ class TestAgent(TestCase):
         }
         agent = self.api.agents.update_agent(1, **values)
         
-        self.assertEqual(agent.occasional, True)
-        self.assertEqual(agent.contact['name'], 'Updated Name')
+        assert agent.occasional is True
+        assert agent.contact['name'] == 'Updated Name'
     
     def test_delete_agent(self):
-        self.assertEqual(self.api.agents.delete_agent(1), None)
+        assert self.api.agents.delete_agent(1) is None
 
     def test_agent_name(self):
-        self.assertEqual(self.agent.contact['name'], 'Rachel')
+        assert self.agent.contact['name'] == 'Rachel'
         
     def test_agent_mobile(self):
-        self.assertEqual(self.agent.contact['mobile'], 1234)
+        assert self.agent.contact['mobile'] == 1234
     
     def test_agent_state(self):
-        self.assertEqual(self.agent.available, True)
-        self.assertEqual(self.agent.occasional, False)
+        assert self.agent.available is True
+        assert self.agent.occasional is False
 
     def test_agent_datetime(self):
-        self.assertIsInstance(self.agent.created_at, datetime.datetime)
-        self.assertIsInstance(self.agent.updated_at, datetime.datetime)
+        assert isinstance(self.agent.created_at, datetime.datetime)
+        assert isinstance(self.agent.updated_at, datetime.datetime)
 
     def test_none_filter_name(self):
         agents = self.api.agents.list_agents()
-        self.assertIsInstance(agents, list)
-        self.assertEqual(len(agents), 2)
-        self.assertEqual(agents[0].id, self.agent.id)
+        assert isinstance(agents, list)
+        assert len(agents) == 2
+        assert agents[0].id == self.agent.id
