@@ -272,7 +272,7 @@ class TestTicket(TestCase):
         self.assertIn('world', ticket.tags)
 
     def test_delete_ticket(self):
-        self.assertEquals(self.api.tickets.delete_ticket(1), None)
+        self.assertEqual(self.api.tickets.delete_ticket(1), None)
 
     def test_ticket_priority(self):
         self.assertEqual(self.ticket._priority, 1)
@@ -376,8 +376,8 @@ class TestContact(TestCase):
         contacts = self.api.contacts.list_contacts()
         self.assertIsInstance(contacts, list)
         self.assertIsInstance(contacts[0], Contact)
-        self.assertEquals(len(contacts), 2)
-        self.assertEquals(contacts[0].__dict__, self.contact.__dict__)
+        self.assertEqual(len(contacts), 2)
+        self.assertEqual(contacts[0].__dict__, self.contact.__dict__)
 
     def test_create_contact(self):
         contact_data = {
@@ -386,8 +386,8 @@ class TestContact(TestCase):
         }
         contact = self.api.contacts.create_contact(contact_data)
         self.assertIsInstance(contact, Contact)
-        self.assertEquals(contact.email, self.contact.email)
-        self.assertEquals(contact.name, self.contact.name)
+        self.assertEqual(contact.email, self.contact.email)
+        self.assertEqual(contact.name, self.contact.name)
 
     def test_update_contact(self):
         contact_data = {
@@ -395,27 +395,27 @@ class TestContact(TestCase):
         }
         contact = self.api.contacts.update_contact(1, **contact_data)
         self.assertIsInstance(contact, Contact)
-        self.assertEquals(contact.name, 'New Name')
+        self.assertEqual(contact.name, 'New Name')
 
     def test_soft_delete_contact(self):
-        self.assertEquals(self.api.contacts.soft_delete_contact(1), None)
+        self.assertEqual(self.api.contacts.soft_delete_contact(1), None)
 
     def test_permanently_delete_contact(self):
-        self.assertEquals(self.api.contacts.permanently_delete_contact(1), None)
+        self.assertEqual(self.api.contacts.permanently_delete_contact(1), None)
 
     def test_restore_contact(self):
         self.api.contacts.restore_contact(1)
         contact = self.api.contacts.get_contact(1)
         self.assertIsInstance(contact, Contact)
-        self.assertEquals(contact.deleted, False)
+        self.assertEqual(contact.deleted, False)
 
     def test_make_agent(self):
         agent = self.api.contacts.make_agent(self.contact.id)
         self.assertIsInstance(agent, Agent)
-        self.assertEquals(agent.available, True)
-        self.assertEquals(agent.occasional, False)
-        self.assertEquals(agent.contact['email'], self.contact.email)
-        self.assertEquals(agent.contact['name'], self.contact.name)
+        self.assertEqual(agent.available, True)
+        self.assertEqual(agent.occasional, False)
+        self.assertEqual(agent.contact['email'], self.contact.email)
+        self.assertEqual(agent.contact['name'], self.contact.name)
 
     def test_contact_datetime(self):
         self.assertIsInstance(self.contact.created_at, datetime.datetime)
@@ -546,7 +546,7 @@ class TestAgent(TestCase):
         self.assertEqual(agent.contact['name'], 'Updated Name')
     
     def test_delete_agent(self):
-        self.assertEquals(self.api.agents.delete_agent(1), None)
+        self.assertEqual(self.api.agents.delete_agent(1), None)
 
     def test_agent_name(self):
         self.assertEqual(self.agent.contact['name'], 'Rachel')

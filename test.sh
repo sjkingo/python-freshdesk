@@ -1,2 +1,2 @@
 #!/bin/sh
-nosetests --with-coverage --cover-package=freshdesk
+pytest --cov=freshdesk

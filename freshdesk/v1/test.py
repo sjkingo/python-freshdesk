@@ -254,11 +254,11 @@ class TestContact(TestCase):
     def test_list_contacts(self):
         contacts = self.api.contacts.list_contacts()
         self.assertIsInstance(contacts, list)
-        self.assertEquals(len(contacts), 2)
+        self.assertEqual(len(contacts), 2)
         self.assertIsInstance(contacts[0], Contact)
-        self.assertEquals(contacts[0].id, self.contact.id)
-        self.assertEquals(contacts[0].email, self.contact.email)
-        self.assertEquals(contacts[0].name, self.contact.name)
+        self.assertEqual(contacts[0].id, self.contact.id)
+        self.assertEqual(contacts[0].email, self.contact.email)
+        self.assertEqual(contacts[0].name, self.contact.name)
 
     def test_create_contact(self):
         contact_data = {
@@ -267,22 +267,22 @@ class TestContact(TestCase):
         }
         contact = self.api.contacts.create_contact(contact_data)
         self.assertIsInstance(contact, Contact)
-        self.assertEquals(contact.id, self.contact.id)
-        self.assertEquals(contact.email, self.contact.email)
-        self.assertEquals(contact.name, self.contact.name)
+        self.assertEqual(contact.id, self.contact.id)
+        self.assertEqual(contact.email, self.contact.email)
+        self.assertEqual(contact.name, self.contact.name)
 
     def test_make_agent(self):
         agent = self.api.contacts.make_agent(self.contact.id)
         self.assertIsInstance(agent, Agent)
-        self.assertEquals(agent.available, True)
-        self.assertEquals(agent.occasional, False)
-        self.assertEquals(agent.id, 1)
-        self.assertEquals(agent.user_id, self.contact.id)
-        self.assertEquals(agent.user['email'], self.contact.email)
-        self.assertEquals(agent.user['name'], self.contact.name)
+        self.assertEqual(agent.available, True)
+        self.assertEqual(agent.occasional, False)
+        self.assertEqual(agent.id, 1)
+        self.assertEqual(agent.user_id, self.contact.id)
+        self.assertEqual(agent.user['email'], self.contact.email)
+        self.assertEqual(agent.user['name'], self.contact.name)
 
     def test_delete_contact(self):
-        self.assertEquals(self.api.contacts.delete_contact(1), None)
+        self.assertEqual(self.api.contacts.delete_contact(1), None)
 
     def test_contact_datetime(self):
         self.assertIsInstance(self.contact.created_at, datetime.datetime)
@@ -394,7 +394,7 @@ class TestAgent(TestCase):
         self.assertEqual(agent.user['name'], 'Updated Name')
 
     def test_delete_agent(self):
-        self.assertEquals(self.api.agents.delete_agent(1), None)
+        self.assertEqual(self.api.agents.delete_agent(1), None)
 
     def test_agent_name(self):
         self.assertEqual(self.agent.user['name'], 'Rachel')
