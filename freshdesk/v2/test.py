@@ -3,10 +3,16 @@ import json
 import re
 import os.path
 
+import pytest
 import responses
 from unittest import TestCase
 
 from freshdesk.v2.api import API
+from freshdesk.v2.errors import (
+    FreshdeskBadRequest, FreshdeskAccessDenied, FreshdeskNotFound, FreshdeskRateLimited,
+    FreshdeskServerError,
+    FreshdeskError,
+)
 from freshdesk.v2.models import Ticket, Comment, Contact, Customer, Group, Agent, Role
 
 """
@@ -110,73 +116,31 @@ class MockedAPI(API):
         raise HTTPError('404: mocked_api_delete() has no pattern for \'{}\''.format(url))    
 
 
-class TestAPIClass(TestCase):
+class TestAPIClass:
 
     def test_custom_cname(self):
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             API('custom_cname_domain', 'invalid_api_key')
 
     def test_api_prefix(self):
         api = API('test_domain.freshdesk.com', 'test_key')
-        self.assertEqual(api._api_prefix,
-                         'https://test_domain.freshdesk.com/api/v2/')
+        assert api._api_prefix == 'https://test_domain.freshdesk.com/api/v2/'
         api = API('test_domain.freshdesk.com/', 'test_key')
-        self.assertEqual(api._api_prefix,
-                         'https://test_domain.freshdesk.com/api/v2/')
+        assert api._api_prefix == 'https://test_domain.freshdesk.com/api/v2/'
 
     @responses.activate
-    def test_400_error(self):
+    @pytest.mark.parametrize(
+        ('status_code', 'exception'),
+        [(400, FreshdeskBadRequest), (403, FreshdeskAccessDenied), (404, FreshdeskNotFound),
+         (418, FreshdeskError), (429, FreshdeskRateLimited), (502, FreshdeskServerError)]
+    )
+    def test_errors(self, status_code, exception):
         responses.add(responses.GET,
                       'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=400)
+                      status=status_code)
 
         api = API('pythonfreshdesk.freshdesk.com', 'test_key')
-        from freshdesk.v2.errors import FreshdeskBadRequest
-        with self.assertRaises(FreshdeskBadRequest):
-            api.tickets.get_ticket(1)
-
-    @responses.activate
-    def test_403_error(self):
-        responses.add(responses.GET,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=403)
-
-        api = API('pythonfreshdesk.freshdesk.com', 'invalid_api_key')
-        from freshdesk.v2.errors import FreshdeskAccessDenied
-        with self.assertRaises(FreshdeskAccessDenied):
-            api.tickets.get_ticket(1)
-
-    @responses.activate
-    def test_404_error(self):
-        responses.add(responses.GET,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=404)
-
-        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
-        from freshdesk.v2.errors import FreshdeskNotFound
-        with self.assertRaises(FreshdeskNotFound):
-            api.tickets.get_ticket(1)
-
-    @responses.activate
-    def test_rate_limited_error(self):
-        responses.add(responses.GET,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=429)
-
-        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
-        from freshdesk.v2.errors import FreshdeskRateLimited
-        with self.assertRaises(FreshdeskRateLimited):
-            api.tickets.get_ticket(1)
-
-    @responses.activate
-    def test_50x_error(self):
-        responses.add(responses.GET,
-                      'https://{}/api/v2/tickets/1'.format(DOMAIN),
-                      status=502)
-
-        api = API('pythonfreshdesk.freshdesk.com', 'test_key')
-        from freshdesk.v2.errors import FreshdeskServerError
-        with self.assertRaises(FreshdeskServerError):
+        with pytest.raises(exception):
             api.tickets.get_ticket(1)
 
 
