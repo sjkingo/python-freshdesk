@@ -1,5 +1,6 @@
 coveralls
-nose
+pytest
+pytest-cov
 python-dateutil
 requests
 responses

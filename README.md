@@ -69,8 +69,8 @@ The easiest way to install is from [PyPi](https://pypi.python.org/pypi/python-fr
 3. Optionally, run the test suite:
 
    ```
-   $ pip install nose
-   $ nosetests
+   $ pip install pytest
+   $ pytest
    ```
 
 ## Usage
