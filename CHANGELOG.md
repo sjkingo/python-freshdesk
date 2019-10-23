@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.2.5 - 2019-10-23
+
+ * #41: Refactor tests and switch to pytest (@ArtemGordinsky)
+ * Fix typo in Company repr (@sjkingo)
+
 v1.2.4 - 2019-10-19
 
  * #38: Add ticket time entry API (@smontoya)
