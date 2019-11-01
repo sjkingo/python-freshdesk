@@ -53,7 +53,20 @@ class TicketAPI(object):
             file_name = attachment.split("/")[-1:][0]
             multipart_data.append(('attachments[]', (file_name, open(attachment, 'rb'), None)))
 
-        ticket = self._api._post(url, data=data, files=multipart_data)
+        for key, value in data.copy().items():
+            # Reformat ticket properties to work with the multipart/form-data encoding.
+            if isinstance(value, list) and not key.endswith('[]'):
+                data[key + '[]'] = value
+                del data[key]
+
+        if 'custom_fields' in data and isinstance(data['custom_fields'], dict):
+            # Reformat custom fields to work with the multipart/form-data encoding.
+            for field, value in data['custom_fields'].items():
+                data['custom_fields[{}]'.format(field)] = value
+            del data['custom_fields']
+
+        # Override the content type so that `requests` correctly sets it to multipart/form-data instead of JSON.
+        ticket = self._api._post(url, data=data, files=multipart_data, headers={'Content-Type': None})
         return ticket
 
     def create_outbound_email(self, subject, description, email, email_config_id, **kwargs):
