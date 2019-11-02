@@ -1,6 +1,7 @@
 import datetime
 import json
 import os.path
+from unittest.mock import patch, ANY
 
 import pytest
 
@@ -35,27 +36,71 @@ def test_get_ticket(ticket):
     assert isinstance(ticket, Ticket)
     assert ticket.id == 1
     assert ticket.subject == 'This is a sample ticket'
-    assert ticket.description_text, 'This is a sample ticket == feel free to delete it.'
+    assert ticket.description_text, 'This is a sample ticket, feel free to delete it.'
     assert ticket.cc_emails == ['test2@example.com']
     assert 'foo' in ticket.tags
     assert 'bar' in ticket.tags
 
 
 def test_create_ticket(api):
-    attachment_path = os.path.join(os.path.dirname(__file__), 'sample_json_data', 'attachment.txt')
-    ticket = api.tickets.create_ticket('This is a sample ticket',
-                                       description='This is a sample ticket, feel free to delete it.',
-                                       email='test@example.com',
-                                       priority=1, status=2,
-                                       tags=['foo', 'bar'],
-                                       cc_emails=['test2@example.com'],
-                                       attachments=(attachment_path,))
+    ticket = api.tickets.create_ticket(
+        'This is a sample ticket',
+        description='This is a sample ticket, feel free to delete it.',
+        email='test@example.com',
+        priority=1, status=2,
+        tags=['foo', 'bar'],
+        cc_emails=['test2@example.com', 'test3@example.com'],
+        custom_fields={'power': 11, 'importance': 'very'},
+    )
     assert isinstance(ticket, Ticket)
     assert ticket.subject == 'This is a sample ticket'
-    assert ticket.description_text, 'This is a sample ticket == feel free to delete it.'
+    assert ticket.description_text, 'This is a sample ticket, feel free to delete it.'
     assert ticket.priority == 'low'
     assert ticket.status == 'open'
     assert ticket.cc_emails == ['test2@example.com']
+    assert 'foo' in ticket.tags
+    assert 'bar' in ticket.tags
+
+
+def test_create_ticket_with_attachments(api):
+    attachment_path = os.path.join(os.path.dirname(__file__), 'sample_json_data', 'attachment.txt')
+    with patch.object(api, '_post', wraps=api._post) as post_mock:
+        ticket = api.tickets.create_ticket(
+            'This is a sample ticket with an attachment',
+            description='This is a sample ticket, feel free to delete it.',
+            email='test@example.com',
+            priority=1, status=2,
+            cc_emails=['test2@example.com', 'test3@example.com'],
+            custom_fields={'power': 11, 'importance': 'very'},
+            attachments=(attachment_path,)
+        )
+
+    post_mock.assert_called_once_with(
+        'tickets',
+        data={
+            'subject': 'This is a sample ticket with an attachment',
+            'status': 2,
+            'priority': 1,
+            'description': 'This is a sample ticket, feel free to delete it.',
+            'email': 'test@example.com',
+            # List argument names should be sent as arrays, otherwise it's not deserialized correctly.
+            'cc_emails[]': ['test2@example.com', 'test3@example.com'],
+            # Dict arguments must unrolled into indexed arrays to work properly with the form-data encoding.
+            'custom_fields[power]': 11,
+            'custom_fields[importance]': 'very'
+        },
+        files=[('attachments[]', ('attachment.txt', ANY, None))],
+        # Content-type should be unset so that `requests` uses "multipart/form-data" instead of application/json.
+        headers={'Content-Type': None}
+    )
+
+    assert isinstance(ticket, Ticket)
+    assert ticket.subject == 'This is a sample ticket'
+    assert ticket.description_text, 'This is a sample ticket, feel free to delete it.'
+    assert ticket.priority == 'low'
+    assert ticket.status == 'open'
+    assert ticket.cc_emails == ['test2@example.com']
+    assert ticket.attachments[0]['name'] == 'attachment.txt'
     assert 'foo' in ticket.tags
     assert 'bar' in ticket.tags
 
