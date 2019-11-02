@@ -1,7 +1,7 @@
 import datetime
 import json
 import os.path
-from unittest.mock import patch, ANY
+from mock import patch, ANY
 
 import pytest
 
