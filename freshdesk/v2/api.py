@@ -332,7 +332,7 @@ class TicketFieldAPI(object):
         url = 'ticket_fields'
         ticket_fields = []
 
-        if kwargs.has_key('type'):
+        if 'type' in kwargs:
             url = "{}?type={}".format(url, kwargs['type'])
 
         for tf in self._api._get(url):
