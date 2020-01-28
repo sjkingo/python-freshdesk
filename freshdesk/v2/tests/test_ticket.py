@@ -169,3 +169,10 @@ def test_none_filter_name(api, ticket):
     assert isinstance(tickets, list)
     assert len(tickets) == 1
     assert tickets[0].id == ticket.id
+
+
+def test_filter_query(api, ticket):
+    tickets = api.tickets.filter_tickets(query="tag:'mytag'")
+    assert isinstance(tickets, list)
+    assert len(tickets) == 2
+    assert 'mytag' in tickets[0].tags
