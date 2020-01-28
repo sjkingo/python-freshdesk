@@ -1,0 +1,6 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": false,
+    "python.linting.enabled": true,
+    "python.pythonPath": "/Users/pr0teus/Projects/Tenchi/python-freshdesk/venv/bin/python3.7"
+}

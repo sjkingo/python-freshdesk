@@ -472,7 +472,7 @@ class FolderAPI(object):
         self._api = api
 
     def list_folders(self, category_id):
-        url = '/solutions/categories/%s/folders' % category_id
+        url = 'solutions/categories/%s/folders' % category_id
         folders = []
         for r in self._api._get(url):
             folders.append(Folder(**r))
@@ -482,7 +482,7 @@ class FolderAPI(object):
         if not kwargs.get('name'):
             raise Exception('Missing required argument')
         else:
-            url = '/solutions/categories/%s/folders' % category_id
+            url = 'solutions/categories/%s/folders' % category_id
             data = {}
             data.update(kwargs)
             return Folder(**self._api._post(url, data=json.dumps(data)))

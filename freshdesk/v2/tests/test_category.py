@@ -10,13 +10,6 @@ def category(api):
     return api.categories.get_category(1)
 
 
-def test_list_categories(api, category):
-    categories = api.categories.list_categories()
-    assert isinstance(categories, list)
-    assert len(categories) == 2
-    assert categories[0].id == category.id
-
-
 def test_category(category):
     assert isinstance(category, Category)
     assert category.name == 'Category 1'
