@@ -48,6 +48,11 @@ Support for the v2 API includes the following features:
     - [List](http://developer.freshdesk.com/api/#list_all_agents)
     - [Update](http://developer.freshdesk.com/api/#update_agent)
     - [Delete](http://developer.freshdesk.com/api/#delete_agent)
+* [Solutions](https://developers.freshdesk.com/api/#solutions) - from 1.1.1
+    - [Get](http://developer.freshdesk.com/api/#view_agent)
+    - [List](http://developer.freshdesk.com/api/#list_all_agents)
+    - [Update](http://developer.freshdesk.com/api/#update_agent)
+    - [Delete](http://developer.freshdesk.com/api/#delete_agent)
 
 ## Installation
 

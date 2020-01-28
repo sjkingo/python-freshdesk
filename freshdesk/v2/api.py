@@ -7,7 +7,7 @@ from freshdesk.v2.errors import (
     FreshdeskAccessDenied, FreshdeskBadRequest, FreshdeskError, FreshdeskNotFound, FreshdeskRateLimited,
     FreshdeskServerError, FreshdeskUnauthorized,
 )
-from freshdesk.v2.models import Agent, Comment, Company, Contact, Customer, Group, Role, Ticket, TicketField, TimeEntry
+from freshdesk.v2.models import Agent, Comment, Company, Contact, Customer, Group, Role, Ticket, TicketField, TimeEntry, Article, Category, Folder
 
 
 class TicketAPI(object):
@@ -401,6 +401,149 @@ class AgentAPI(object):
         return Agent(**self._api._get(url))
 
 
+class CategoryAPI(object):
+
+    def __init__(self, api):
+        self._api = api
+
+    def list_categories(self):
+        """
+        List Solutions Categories
+        """
+        url = 'solutions/categories'
+        categories = []
+        for r in self._api._get(url):
+            categories.append(Category(**r))
+        return categories
+
+    def get_category(self, category_id):
+        """
+        Get a category given an category_id
+        """
+        url = 'solutions/categories/%s' % category_id
+        return Category(**self._api._get(url))
+    
+    def create_category(self, name, description):
+        """
+        Create new Category
+        @name must be unique
+        """
+        url = 'solutions/categories'
+        data = {
+            'name': name,
+            'description': description
+        }
+        return Category(**self._api._post(url, data=json.dumps(data)))
+    
+    def _create_category_translation(self, name, description, lang=''):
+        """
+        If it's a new translation, create based on category id
+        """
+        if lang == '':
+            url = 'solutions/categories'
+        else:
+            url = 'solutions/categories/%s/%s' % (category_id, lang)
+        data = {
+            'name': name,
+            'description': description
+        }
+        return Category(**self._api._post(url, data=json.dumps(data)))
+
+    def update_category(self, category_id, **kwargs):
+        """
+        Update a category given an category_id.
+        """
+        url = 'solutions/categories/%s' % category_id
+        data = {
+            'description': kwargs.get('description')
+        }
+        return Category(**self._api._put(url, data=json.dumps(data)))
+
+    def delete_category(self, category_id):
+        """
+        Delete a category by category_id
+        """
+        url = 'solutions/categories/%s' % category_id
+        return self._api._delete(url)
+
+class FolderAPI(object):
+
+    def __init__(self, api):
+        self._api = api
+
+    def list_folders(self, category_id):
+        url = '/solutions/categories/%s/folders' % category_id
+        folders = []
+        for r in self._api._get(url):
+            folders.append(Folder(**r))
+        return folders
+    
+    def create_folder(self, category_id, **kwargs):
+        if not kwargs.get('name'):
+            raise Exception('Missing required argument')
+        else:
+            url = '/solutions/categories/%s/folders' % category_id
+            data = {}
+            data.update(kwargs)
+            return Folder(**self._api._post(url, data=json.dumps(data)))
+
+    def get_folder(self, folder_id):
+        url = 'solutions/folders/%s' % folder_id
+        return Folder(**self._api._get(url))
+
+    def update_folder(self, folder_id, **kwargs):
+        url = 'solutions/folders/%s' % folder_id
+        data = {}
+        data.update(kwargs)
+        return Folder(**self._api._put(url, data=json.dumps(data)))
+
+    def delete_folder(self, folder_id):
+        url = 'solutions/folders/%s' % folder_id
+        return self._api._delete(url)
+
+class ArticleAPI(object):
+
+    def __init__(self, api):
+        self._api = api
+
+    def list_articles(self, folder_id):
+        url = 'solutions/folders/%s/articles' % folder_id
+        articles = []
+        for r in self._api._get(url):
+            articles.append(Article(**r))
+        return articles
+
+    def create_article(self, folder_id, **kwargs):
+        url = 'solutions/folders/%s/articles' %folder_id
+        data = {}
+        data.update(kwargs)
+
+        print(url)
+        return Article(**self._api._post(url, data=json.dumps(data)))
+
+
+    def get_article(self, article_id):
+        url = 'solutions/articles/%s' % article_id
+        return Article(**self._api._get(url))
+
+    def update_article(self, article_id):
+        url = 'solutions/articles/%s' % article_id
+        return Article(**self._api._get(url))
+
+    def delete_article(self, article_id):
+        url = 'solutions/articles/%s' % article_id
+        return self._api._delete(url)
+    
+    def search(self, keyword):
+        url = 'search/solutions?term=%s' % keyword
+        articles = []
+        for r in self._api._get(url):
+            articles.append(Article(**r))
+        return articles
+
+
+        
+
 class API(object):
     def __init__(self, domain, api_key, verify=True, proxies=None):
         """Creates a wrapper to perform API actions.
@@ -429,6 +572,9 @@ class API(object):
         self.agents = AgentAPI(self)
         self.roles = RoleAPI(self)
         self.ticket_fields = TicketFieldAPI(self)
+        self.categories = CategoryAPI(self)
+        self.folders = FolderAPI(self)
+        self.articles = ArticleAPI(self)
 
         if domain.find('freshdesk.com') < 0:
             raise AttributeError('Freshdesk v2 API works only via Freshdesk'

@@ -123,5 +123,37 @@ class Role(FreshdeskModel):
         return self.name
 
     def __repr__(self):
-        return '<Role \'{}\'>'.format(self.name)    
+        return '<Role \'{}\'>'.format(self.name)
 
+class Category(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<Category \'{}\'>'.format(self.name)        
+
+class Folder(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<Folder \'{}\'>'.format(self.name)
+
+    #@property
+    #def visibility(self):
+    #    _s = {1: 'note', 2: 'twitter', 3: 'survey', 4: 'facebook'}
+    #    return _s[self._visibility]
+
+ 
+
+class Article(FreshdeskModel):
+    def __str__(self):
+        return self.title
+
+    def __repr__(self):
+        return '<Article \'{}\'>'.format(self.title)
+
+    #@property
+    #def status(self):
+    #    _s = {1: 'draft', 2: 'published'}
+    #    return _s[self._status]    
