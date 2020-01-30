@@ -498,10 +498,6 @@ class API(object):
 
     def _post(self, url, data={}, **kwargs):
         """Wrapper around request.post() to use the API prefix. Returns a JSON response."""
-        if 'files' in kwargs:
-            req = self._session.post(self._api_prefix + url, auth=self._session.auth, data=data, **kwargs)
-            return self._action(req)
-
         req = self._session.post(self._api_prefix + url, data=data, **kwargs)
         return self._action(req)
 
