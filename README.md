@@ -11,6 +11,7 @@ There is support for a limited subset of features, using either Freshdesk API v1
 After the deprecation of Freshdesk V1 API, library uses V2 API only.
 
 Support for the v2 API includes the following features:
+
 * [Tickets](http://developer.freshdesk.com/api/#tickets)
   - [Get](http://developer.freshdesk.com/api/#view_a_ticket)
   - [Create](http://developer.freshdesk.com/api/#create_ticket)
@@ -38,7 +39,6 @@ Support for the v2 API includes the following features:
     - [Delete](http://developer.freshdesk.com/api/#delete_contact)
     - [Restore](http://developer.freshdesk.com/api/#restore_contact) - from 1.2.3
     - [Make agent](http://developer.freshdesk.com/api/#make_agent)
-
 * [Company](https://developers.freshdesk.com/api/#companies)
     - [Get](http://developer.freshdesk.com/api/#view_company)
 * [Roles](https://developers.freshdesk.com/api/#roles) - from 1.1.1
@@ -49,7 +49,7 @@ Support for the v2 API includes the following features:
     - [List](http://developer.freshdesk.com/api/#list_all_agents)
     - [Update](http://developer.freshdesk.com/api/#update_agent)
     - [Delete](http://developer.freshdesk.com/api/#delete_agent)
-* [Solutions](https://developers.freshdesk.com/api/#solutions) - from 1.1.1
+* [Solutions](https://developers.freshdesk.com/api/#solutions) - from 1.2.6
     - [Get](http://developer.freshdesk.com/api/#view_agent)
     - [List](http://developer.freshdesk.com/api/#list_all_agents)
     - [Update](http://developer.freshdesk.com/api/#update_agent)
