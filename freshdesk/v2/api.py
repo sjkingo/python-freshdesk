@@ -134,6 +134,29 @@ class TicketAPI(object):
         """Lists all deleted tickets."""
         return self.list_tickets(filter_name='deleted')
 
+    def filter_tickets(self, query, **kwargs):
+        """Filter tickets by a given query string. The query string must be in
+        the format specified in the API documentation at:
+          https://developer.freshdesk.com/api/#filter_tickets
+
+        query = "(ticket_field:integer OR ticket_field:'string') AND ticket_field:boolean"
+        """
+        url = 'search/tickets?'
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 30
+
+        tickets = []
+        while True:
+            this_page = self._api._get(url + 'page=%d&query=%s'
+                                       % (page, repr(query)), kwargs)
+            this_page = this_page['results']
+            tickets += this_page
+            if len(this_page) < per_page or page == 10 or 'page' in kwargs:
+                break
+            page += 1
+
+        return [Ticket(**t) for t in tickets]
+
 
 class CommentAPI(object):
     def __init__(self, api):

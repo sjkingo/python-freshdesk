@@ -35,6 +35,7 @@ class MockedAPI(API):
                 re.compile(r'agents\?state=fulltime&page=1&per_page=100'): self.read_test_file('agent_1.json'),
                 re.compile(r'agents\?page=1&per_page=100'): self.read_test_file('agents.json'),
                 re.compile(r'agents/1$'): self.read_test_file('agent_1.json'),
+                re.compile(r'search/tickets\?page=1&query="tag:\'mytag\'"'): self.read_test_file('search_tickets.json'),
             },
             'post': {
                 re.compile(r'tickets$'): self.read_test_file('ticket_1.json'),
