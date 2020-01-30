@@ -4,7 +4,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/sjkingo/python-freshdesk.svg)](https://coveralls.io/r/sjkingo/python-freshdesk)
 [![Latest version](https://img.shields.io/pypi/v/python-freshdesk.svg)](https://pypi.python.org/pypi/python-freshdesk)
 
-A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 2.7 and 3.
+A library for the [Freshdesk](http://freshdesk.com/) helpdesk system for Python 2.7 and 3.6+.
 
 There is support for a limited subset of features, using either Freshdesk API v1 or v2.
 
