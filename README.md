@@ -18,6 +18,7 @@ Support for the v2 API includes the following features:
   - [Delete](http://developer.freshdesk.com/api/#delete_a_ticket)
   - [Create OutBound Email](http://developer.freshdesk.com/api/#create_outbound_email)
   - [List](http://developer.freshdesk.com/api/#list_all_tickets)
+  - [Filter](https://developer.freshdesk.com/api/#filter_tickets)
   - [List Time Entries](https://developers.freshdesk.com/api/#list_all_ticket_timeentries) (as of 1.2.4)
   - Custom ticket fields (as of 1.1.1)
 * [Ticket Fields](http://developer.freshdesk.com/api/#ticket_fields)

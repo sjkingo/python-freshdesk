@@ -39,6 +39,7 @@ class MockedAPI(API):
                 re.compile(r'solutions/categories'): self.read_test_file('categories.json'),
                 re.compile(r'solutions/categories/1$/folders'): self.read_test_file('folders.json'),
                 re.compile(r'solutions/folders/1$'): self.read_test_file('folders_1.json'),
+                re.compile(r'search/tickets\?page=1&query="tag:\'mytag\'"'): self.read_test_file('search_tickets.json'),
             },
             'post': {
                 re.compile(r'tickets$'): self.read_test_file('ticket_1.json'),
