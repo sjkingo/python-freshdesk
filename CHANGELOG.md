@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v1.2.6 - 2020-01-30
+
+ * #47: Remove obsolete code (@maqquettex)
+ * #45: Add support for ticket filtering (@andybotting)
+ * #43: Fix Python3 incompatibility in dict test (@hakib)
+ * #42: Fix encoding and content-type when creating tickets with attachments (@ArtemGordinsky)
+ * Add test environments for Python 3.7 and 3.8 (@sjkingo)
+
 v1.2.5 - 2019-10-23
 
  * #41: Refactor tests and switch to pytest (@ArtemGordinsky)
