@@ -1,7 +1,7 @@
 Changelog
 =========
 
-v1.2.6 - 2020-01-30
+v1.2.6 - 2020-01-31
 
  * #47: Remove obsolete code (@maqquettex)
  * #45: Add support for ticket filtering (@andybotting)
