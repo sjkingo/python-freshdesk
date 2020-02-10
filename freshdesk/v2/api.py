@@ -480,7 +480,9 @@ class API(object):
         error_message = 'Freshdesk Request Failed'
         if 'errors' in j:
             error_message = '{}: {}'.format(j.get('description'), j.get('errors'))
-
+        elif 'message' in j:
+            error_message = j['message']
+            
         if req.status_code == 400:
             raise FreshdeskBadRequest(error_message)
         elif req.status_code == 401:
