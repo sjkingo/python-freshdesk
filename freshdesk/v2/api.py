@@ -160,8 +160,8 @@ class TicketAPI(object):
 
         tickets = []
         while True:
-            this_page = self._api._get(url + 'page=%d&query="%s"'
-                                       % (page, query), kwargs)
+            this_page = self._api._get(url + 'page={}&query="{}"'.format(page, query),
+                                        kwargs)
             this_page = this_page['results']
             tickets += this_page
             if len(this_page) < per_page or page == 10 or 'page' in kwargs:
