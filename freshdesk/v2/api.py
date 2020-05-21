@@ -154,14 +154,17 @@ class TicketAPI(object):
 
         query = "(ticket_field:integer OR ticket_field:'string') AND ticket_field:boolean"
         """
+        if(len(query) > 512):
+            raise AttributeError('Query string can have up to 512 characters')
+        
         url = 'search/tickets?'
         page = 1 if not 'page' in kwargs else kwargs['page']
         per_page = 30
 
         tickets = []
         while True:
-            this_page = self._api._get(url + 'page=%d&query=%s'
-                                       % (page, repr(query)), kwargs)
+            this_page = self._api._get(url + 'page={}&query="{}"'.format(page, query),
+                                        kwargs)
             this_page = this_page['results']
             tickets += this_page
             if len(this_page) < per_page or page == 10 or 'page' in kwargs:
