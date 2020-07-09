@@ -1,9 +1,13 @@
 Changelog
 =========
 
-v1.2.7 - 2020-07-10
+v1.2.8 - 2020-07-10
 
  * #52: Add list companies (@RyanOM)
+
+v1.2.7 - 2020-05-22
+
+ * #50: Fix quoting in ticket query filter (@FellipeMendonca)
 
 v1.2.6 - 2020-01-31
 
