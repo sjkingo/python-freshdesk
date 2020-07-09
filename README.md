@@ -343,5 +343,5 @@ Pagination is supported. If `page` option is not specified, then all the pages a
 To get a company, use:
 ```python
 >>> repr(a.companies.get_company(1))
-["<Company 'Super Nova'>"]
+"<Company 'Super Nova'>"
 ``` 
