@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v1.3.0 - 2020-07-20
+
+ * Return v2 of the Freshdesk API by default (@sjkingo)
+ * Reformat codebase with black (@sjkingo)
+ * Tidied README (@sjkingo)
+
 v1.2.8 - 2020-07-10
 
  * #52: Add list companies (@RyanOM)

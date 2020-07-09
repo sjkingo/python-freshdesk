@@ -47,6 +47,8 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [Update](http://developer.freshdesk.com/api/#update_agent)
     - [Delete](http://developer.freshdesk.com/api/#delete_agent)
 
+From version 1.3.0, this library uses the Freshdesk v2 API by default.
+
 ## Installation
 
 The easiest way to install is from [PyPi](https://pypi.python.org/pypi/python-freshdesk) inside a virtualenv:

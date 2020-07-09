@@ -17,7 +17,7 @@ class FreshdeskAPI(object):
         """
 
 
-def API(domain, api_key, version=1, **kwargs):
+def API(domain, api_key, version=2, **kwargs):
 
     # trim the v from a 'v1' or similar
     try:
