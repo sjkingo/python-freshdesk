@@ -330,6 +330,26 @@ class CompanyAPI(object):
         url = 'companies/%s' % company_id
         return Company(**self._api._get(url))
 
+    def list_companies(self, **kwargs):
+        url = 'companies?'
+        page = 1 if not 'page' in kwargs else kwargs['page']
+        per_page = 100 if not 'per_page' in kwargs else kwargs['per_page']
+
+        companies = []
+
+        # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
+        while True:
+            this_page = self._api._get(url + 'page=%d&per_page=%d'
+                                       % (page, per_page), kwargs)
+            companies += this_page
+            if len(this_page) < per_page or 'page' in kwargs:
+                break
+
+            page += 1
+
+        return [Company(**c) for c in companies]
+
 
 class RoleAPI(object):
     def __init__(self, api):
@@ -345,6 +365,7 @@ class RoleAPI(object):
     def get_role(self, role_id):
         url = 'roles/%s' % role_id
         return Role(**self._api._get(url))
+
 
 class TimeEntryAPI(object):
     def __init__(self, api):
@@ -362,6 +383,7 @@ class TimeEntryAPI(object):
     def get_role(self, role_id):
         url = 'roles/%s' % role_id
         return Role(**self._api._get(url))
+
 
 class TicketFieldAPI(object):
     def __init__(self, api):

@@ -41,6 +41,7 @@ Support for the v2 API includes the following features:
 
 * [Company](https://developers.freshdesk.com/api/#companies)
     - [Get](http://developer.freshdesk.com/api/#view_company)
+    - [List](http://developer.freshdesk.com/api/#list_all_companies)
 * [Roles](https://developers.freshdesk.com/api/#roles) - from 1.1.1
     - [Get](http://developer.freshdesk.com/api/#view_role)
     - [List](http://developer.freshdesk.com/api/#list_role)
@@ -330,3 +331,17 @@ To get a group, use:
 ["<Group 'Service Managers'>"]
 ``` 
 
+### Companies (API v2)
+
+To get the list of companies, use:
+```python
+>>> repr(a.companies.list_companies(page=1, per_page=10))
+["<Company 'Super Nova'>"]
+```
+Pagination is supported. If `page` option is not specified, then all the pages are fetched, else specified page is returned.
+ 
+To get a company, use:
+```python
+>>> repr(a.companies.get_company(1))
+"<Company 'Super Nova'>"
+``` 
