@@ -8,6 +8,6 @@ sudo: false
 branches:
     only:
         - master
-install: pip install -r test-requirements.txt
+install: pip install -U -r test-requirements.txt
 script: ./test.sh
 after_success: coveralls
