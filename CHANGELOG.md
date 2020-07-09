@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.2.7 - 2020-07-10
+
+ * #52: Add list companies (@RyanOM)
+
 v1.2.6 - 2020-01-31
 
  * #47: Remove obsolete code (@maqquettex)

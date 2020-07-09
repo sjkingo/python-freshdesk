@@ -41,7 +41,7 @@ Support for the v2 API includes the following features:
 
 * [Company](https://developers.freshdesk.com/api/#companies)
     - [Get](http://developer.freshdesk.com/api/#view_company)
-    - [List](http://developer.freshdesk.com/api/#list_all_companies)
+    - [List](http://developer.freshdesk.com/api/#list_all_companies) - from 1.2.7
 * [Roles](https://developers.freshdesk.com/api/#roles) - from 1.1.1
     - [Get](http://developer.freshdesk.com/api/#view_role)
     - [List](http://developer.freshdesk.com/api/#list_role)
