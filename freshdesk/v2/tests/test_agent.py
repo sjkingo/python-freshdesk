@@ -14,38 +14,33 @@ def agent(api):
 
 @pytest.fixture
 def agent_json():
-    return json.loads(open(os.path.join(os.path.dirname(__file__), 'sample_json_data', 'agent_1.json')).read())
+    return json.loads(open(os.path.join(os.path.dirname(__file__), "sample_json_data", "agent_1.json")).read())
 
 
 def test_str(agent):
-    assert str(agent) == 'Rachel'
+    assert str(agent) == "Rachel"
 
 
 def test_repr(agent):
-    assert repr(agent) == '<Agent #1 \'Rachel\'>'
+    assert repr(agent) == "<Agent #1 'Rachel'>"
 
 
 def test_get_agent(agent):
     assert isinstance(agent, Agent)
     assert agent.id == 1
-    assert agent.contact['name'] == 'Rachel'
-    assert agent.contact['email'] == 'rachel@freshdesk.com'
-    assert agent.contact['mobile'] == 1234
-    assert agent.contact['phone'] == 5678
+    assert agent.contact["name"] == "Rachel"
+    assert agent.contact["email"] == "rachel@freshdesk.com"
+    assert agent.contact["mobile"] == 1234
+    assert agent.contact["phone"] == 5678
     assert agent.occasional is False
 
 
 def test_update_agent(api):
-    values = {
-        'occasional': True,
-        'contact': {
-            'name': 'Updated Name'
-        }
-    }
+    values = {"occasional": True, "contact": {"name": "Updated Name"}}
     agent = api.agents.update_agent(1, **values)
 
     assert agent.occasional is True
-    assert agent.contact['name'] == 'Updated Name'
+    assert agent.contact["name"] == "Updated Name"
 
 
 def test_delete_agent(api):
@@ -53,11 +48,11 @@ def test_delete_agent(api):
 
 
 def test_agent_name(agent):
-    assert agent.contact['name'] == 'Rachel'
+    assert agent.contact["name"] == "Rachel"
 
 
 def test_agent_mobile(agent):
-    assert agent.contact['mobile'] == 1234
+    assert agent.contact["mobile"] == 1234
 
 
 def test_agent_state(agent):

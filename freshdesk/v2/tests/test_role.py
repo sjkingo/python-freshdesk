@@ -19,8 +19,8 @@ def test_list_roles(api, role):
 
 def test_role(role):
     assert isinstance(role, Role)
-    assert role.name == 'Agent'
-    assert role.description, 'Can log, view, reply == update and resolve tickets and manage contacts.'
+    assert role.name == "Agent"
+    assert role.description, "Can log, view, reply == update and resolve tickets and manage contacts."
 
 
 def test_group_datetime(role):
@@ -29,4 +29,4 @@ def test_group_datetime(role):
 
 
 def test_group_repr(role):
-    assert repr(role) == '<Role \'Agent\'>'
+    assert repr(role) == "<Role 'Agent'>"

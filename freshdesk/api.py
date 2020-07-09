@@ -2,8 +2,7 @@ from freshdesk.v1 import api as v1_api
 from freshdesk.v2 import api as v2_api
 
 
-_VERSIONS = {1: v1_api.API,
-             2: v2_api.API}
+_VERSIONS = {1: v1_api.API, 2: v2_api.API}
 
 
 class FreshdeskAPI(object):
@@ -21,7 +20,7 @@ def API(domain, api_key, version=2, **kwargs):
 
     # trim the v from a 'v1' or similar
     try:
-        version = version.lstrip('v')
+        version = version.lstrip("v")
     except AttributeError:
         pass
 

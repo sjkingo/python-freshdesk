@@ -12,11 +12,11 @@ def company(api):
 def test_get_company(company):
     assert isinstance(company, Company)
     assert company.id == 1
-    assert company.name == 'Super Nova'
-    assert company.description == 'Space Shuttle Manufacturing'
+    assert company.name == "Super Nova"
+    assert company.description == "Space Shuttle Manufacturing"
     assert company.domains == ["supernova", "nova", "super"]
     assert company.industry is None
-    assert company.custom_fields.get('website') == 'https://www.supernova.org'
+    assert company.custom_fields.get("website") == "https://www.supernova.org"
 
 
 def test_contact_datetime(company):
@@ -25,11 +25,11 @@ def test_contact_datetime(company):
 
 
 def test_company_str(company):
-    assert str(company) == 'Super Nova'
+    assert str(company) == "Super Nova"
 
 
 def test_company_repr(company):
-    assert repr(company) == '<Company \'Super Nova\'>'
+    assert repr(company) == "<Company 'Super Nova'>"
 
 
 def test_list_companies(api, company):

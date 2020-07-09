@@ -22,7 +22,7 @@ def test_timesheet_str(timesheet):
 
 
 def test_timesheet_repr(timesheet):
-    assert repr(timesheet[1]) == '<Timesheet Entry 6000041896>'
+    assert repr(timesheet[1]) == "<Timesheet Entry 6000041896>"
 
 
 def test_get_all_timesheets(api):

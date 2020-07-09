@@ -15,8 +15,8 @@ def test_comments_list(ticket):
 
 
 def test_comment_str(ticket):
-    assert str(ticket.comments[0]) == 'This is a reply.'
+    assert str(ticket.comments[0]) == "This is a reply."
 
 
 def test_comment_repr(ticket):
-    assert repr(ticket.comments[0]) == '<Comment for <Ticket \'This is a sample ticket\'>>'
+    assert repr(ticket.comments[0]) == "<Comment for <Ticket 'This is a sample ticket'>>"
