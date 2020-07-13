@@ -3,7 +3,7 @@ Changelog
 
 v1.3.1 - 2020-07-13
 
- * Added pagination support for comments (@jatzz10)
+ * #54: Added pagination support for comments (@jatzz10)
  * Fixed date in changelog for v1.3.0 (@sjkingo)
 
 v1.3.0 - 2020-07-10
