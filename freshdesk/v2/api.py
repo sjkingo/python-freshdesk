@@ -135,8 +135,9 @@ class TicketAPI(object):
             url += "?filter=%s&" % filter_name
         else:
             url += "?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
-        per_page = 100 if "per_page" not in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+
         tickets = []
 
         # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
@@ -173,7 +174,7 @@ class TicketAPI(object):
             raise AttributeError("Query string can have up to 512 characters")
 
         url = "search/tickets?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
+        page = kwargs.get("page", 1)
         per_page = 30
 
         tickets = []
@@ -229,8 +230,8 @@ class GroupAPI(object):
 
     def list_groups(self, **kwargs):
         url = "groups?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
-        per_page = 100 if "per_page" not in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         groups = []
         while True:
@@ -275,8 +276,8 @@ class ContactAPI(object):
         """
 
         url = "contacts?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
-        per_page = 100 if "per_page" not in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         contacts = []
 
@@ -352,8 +353,8 @@ class CompanyAPI(object):
 
     def list_companies(self, **kwargs):
         url = "companies?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
-        per_page = 100 if "per_page" not in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         companies = []
 
@@ -380,7 +381,7 @@ class CompanyAPI(object):
             raise AttributeError("Query string can have up to 512 characters")
 
         url = "search/companies?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
+        page = kwargs.get("page", 1)
         per_page = 30
 
         companies = []
@@ -467,8 +468,8 @@ class AgentAPI(object):
         """
 
         url = "agents?"
-        page = 1 if "page" not in kwargs else kwargs["page"]
-        per_page = 100 if "per_page" not in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         agents = []
 
