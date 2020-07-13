@@ -38,6 +38,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
 * [Company](https://developers.freshdesk.com/api/#companies)
     - [Get](http://developer.freshdesk.com/api/#view_company)
     - [List](http://developer.freshdesk.com/api/#list_all_companies) (from 1.2.8)
+    - [Filter](https://developers.freshdesk.com/api/#filter_companies)
 * [Roles](https://developers.freshdesk.com/api/#roles) (from 1.1.1)
     - [Get](http://developer.freshdesk.com/api/#view_role)
     - [List](http://developer.freshdesk.com/api/#list_role)
@@ -342,6 +343,11 @@ To get a company, use:
 >>> repr(a.companies.get_company(1))
 "<Company 'Super Nova'>"
 ``` 
+
+[Filtering is also supported](https://developers.freshdesk.com/api/#filter_companies):
+```python
+a.companies.filter_companies(query="updated_at:>'2020-07-12'")
+```
 
 ## Credits
 
