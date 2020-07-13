@@ -197,7 +197,7 @@ class CommentAPI(object):
                 break
             page += 1
 
-        return [Comments(**c) for c in comments]
+        return [Comment(**c) for c in comments]
 
     def create_note(self, ticket_id, body, **kwargs):
         url = "tickets/%d/notes" % ticket_id
