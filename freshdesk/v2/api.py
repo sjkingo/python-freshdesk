@@ -183,8 +183,8 @@ class CommentAPI(object):
 
     def list_comments(self, ticket_id, **kwargs):
         url = "tickets/%d/conversations?" % ticket_id
-        page = 1 if not "page" in kwargs else kwargs["page"]
-        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         comments = []
 
