@@ -181,12 +181,23 @@ class CommentAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def list_comments(self, ticket_id):
-        url = "tickets/%d/conversations" % ticket_id
+    def list_comments(self, ticket_id, **kwargs):
+        url = "tickets/%d/conversations?" % ticket_id
+        page = 1 if not "page" in kwargs else kwargs["page"]
+        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+
         comments = []
-        for c in self._api._get(url):
-            comments.append(Comment(**c))
-        return comments
+
+        # Skip pagination by looping over each page and adding comments if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
+        while True:
+            this_page = self._api._get(url + "page=%d&per_page=%d" % (page, per_page), kwargs)
+            comments += this_page
+            if len(this_page) < per_page or "page" in kwargs:
+                break
+            page += 1
+
+        return [Comments(**c) for c in comments]
 
     def create_note(self, ticket_id, body, **kwargs):
         url = "tickets/%d/notes" % ticket_id
