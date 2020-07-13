@@ -369,6 +369,31 @@ class CompanyAPI(object):
 
         return [Company(**c) for c in companies]
 
+    def filter_companies(self, query, **kwargs):
+        """Filter companies by a given query string. The query string must be in
+        the format specified in the API documentation at:
+          https://developers.freshdesk.com/api/#filter_companies
+
+        query = "(company_field:integer OR company_field:'string') AND company_field:boolean"
+        """
+        if len(query) > 512:
+            raise AttributeError("Query string can have up to 512 characters")
+
+        url = "search/companies?"
+        page = 1 if "page" not in kwargs else kwargs["page"]
+        per_page = 30
+
+        companies = []
+        while True:
+            this_page = self._api._get(url + 'page={}&query="{}"'.format(page, query), kwargs)
+            this_page = this_page["results"]
+            companies += this_page
+            if len(this_page) < per_page or page == 10 or "page" in kwargs:
+                break
+            page += 1
+
+        return [Company(**c) for c in companies]
+
 
 class RoleAPI(object):
     def __init__(self, api):
