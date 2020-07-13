@@ -218,6 +218,8 @@ To view comments on a ticket (note or reply), pass the ticket number to `list_co
 'We could use Travis CI'
 ```
 
+Pagination is supported. If `page` option is not specified, then all the pages are fetched, else specified page is returned. 
+
 The original comment (called "description" in Freshdesk) is available on the `Ticket` instance:
 
 ```python
