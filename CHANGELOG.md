@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.2 - 2020-07-15
+
+ * #55: Added filtering of companies (@RyanOM)
+
 v1.3.1 - 2020-07-13
 
  * #54: Added pagination support for comments (@jatzz10)
