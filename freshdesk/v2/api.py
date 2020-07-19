@@ -124,6 +124,10 @@ class TicketAPI(object):
             url += "?filter=%s&" % filter_name
         else:
             url += "?"
+
+        if "updated_since" in kwargs:
+            url += "updated_since=%s&" % kwargs["updated_since"]
+
         page = 1 if not "page" in kwargs else kwargs["page"]
         per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
         tickets = []
