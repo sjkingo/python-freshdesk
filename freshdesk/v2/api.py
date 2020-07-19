@@ -12,7 +12,18 @@ from freshdesk.v2.errors import (
     FreshdeskServerError,
     FreshdeskUnauthorized,
 )
-from freshdesk.v2.models import Agent, Comment, Company, Contact, Customer, Group, Role, Ticket, TicketField, TimeEntry
+from freshdesk.v2.models import (
+    Agent,
+    Comment,
+    Company,
+    Contact,
+    Customer,
+    Group,
+    Role,
+    Ticket,
+    TicketField,
+    TimeEntry,
+)
 
 
 class TicketAPI(object):
@@ -130,6 +141,7 @@ class TicketAPI(object):
 
         page = 1 if not "page" in kwargs else kwargs["page"]
         per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+
         tickets = []
 
         # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
@@ -166,7 +178,7 @@ class TicketAPI(object):
             raise AttributeError("Query string can have up to 512 characters")
 
         url = "search/tickets?"
-        page = 1 if not "page" in kwargs else kwargs["page"]
+        page = kwargs.get("page", 1)
         per_page = 30
 
         tickets = []
@@ -185,12 +197,23 @@ class CommentAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def list_comments(self, ticket_id):
-        url = "tickets/%d/conversations" % ticket_id
+    def list_comments(self, ticket_id, **kwargs):
+        url = "tickets/%d/conversations?" % ticket_id
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+
         comments = []
-        for c in self._api._get(url):
-            comments.append(Comment(**c))
-        return comments
+
+        # Skip pagination by looping over each page and adding comments if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
+        while True:
+            this_page = self._api._get(url + "page=%d&per_page=%d" % (page, per_page), kwargs)
+            comments += this_page
+            if len(this_page) < per_page or "page" in kwargs:
+                break
+            page += 1
+
+        return [Comment(**c) for c in comments]
 
     def create_note(self, ticket_id, body, **kwargs):
         url = "tickets/%d/notes" % ticket_id
@@ -211,8 +234,8 @@ class GroupAPI(object):
 
     def list_groups(self, **kwargs):
         url = "groups?"
-        page = 1 if not "page" in kwargs else kwargs["page"]
-        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         groups = []
         while True:
@@ -257,8 +280,8 @@ class ContactAPI(object):
         """
 
         url = "contacts?"
-        page = 1 if not "page" in kwargs else kwargs["page"]
-        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         contacts = []
 
@@ -334,12 +357,12 @@ class CompanyAPI(object):
 
     def list_companies(self, **kwargs):
         url = "companies?"
-        page = 1 if not "page" in kwargs else kwargs["page"]
-        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         companies = []
 
-        # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
+        # Skip pagination by looping over each page and adding companies if 'page' key is not in kwargs.
         # else return the requested page and break the loop
         while True:
             this_page = self._api._get(url + "page=%d&per_page=%d" % (page, per_page), kwargs)
@@ -347,6 +370,31 @@ class CompanyAPI(object):
             if len(this_page) < per_page or "page" in kwargs:
                 break
 
+            page += 1
+
+        return [Company(**c) for c in companies]
+
+    def filter_companies(self, query, **kwargs):
+        """Filter companies by a given query string. The query string must be in
+        the format specified in the API documentation at:
+          https://developers.freshdesk.com/api/#filter_companies
+
+        query = "(company_field:integer OR company_field:'string') AND company_field:boolean"
+        """
+        if len(query) > 512:
+            raise AttributeError("Query string can have up to 512 characters")
+
+        url = "search/companies?"
+        page = kwargs.get("page", 1)
+        per_page = 30
+
+        companies = []
+        while True:
+            this_page = self._api._get(url + 'page={}&query="{}"'.format(page, query), kwargs)
+            this_page = this_page["results"]
+            companies += this_page
+            if len(this_page) < per_page or page == 10 or "page" in kwargs:
+                break
             page += 1
 
         return [Company(**c) for c in companies]
@@ -376,10 +424,10 @@ class TimeEntryAPI(object):
         url = "tickets/time_entries"
         if ticket_id is not None:
             url = "tickets/%d/time_entries" % ticket_id
-        timeEntries = []
+        time_entries = []
         for r in self._api._get(url):
-            timeEntries.append(TimeEntry(**r))
-        return timeEntries
+            time_entries.append(TimeEntry(**r))
+        return time_entries
 
     def get_role(self, role_id):
         url = "roles/%s" % role_id
@@ -424,8 +472,8 @@ class AgentAPI(object):
         """
 
         url = "agents?"
-        page = 1 if not "page" in kwargs else kwargs["page"]
-        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
 
         agents = []
 
