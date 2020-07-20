@@ -128,8 +128,9 @@ class TicketAPI(object):
         if "updated_since" in kwargs:
             url += "updated_since=%s&" % kwargs["updated_since"]
 
-        page = 1 if not "page" in kwargs else kwargs["page"]
-        per_page = 100 if not "per_page" in kwargs else kwargs["per_page"]
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+        
         tickets = []
 
         # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
