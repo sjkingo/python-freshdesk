@@ -38,3 +38,11 @@ def test_list_companies(api, company):
     assert isinstance(companies[0], Company)
     assert len(companies) == 2
     assert companies[0].__dict__ == company.__dict__
+
+
+def test_filter_query(api):
+    companies = api.companies.filter_companies(query="updated_at:>'2020-07-12'")
+    assert isinstance(companies, list)
+    assert isinstance(companies[0], Company)
+    assert len(companies) == 2
+    assert "lexcorp.org" in companies[0].domains

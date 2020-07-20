@@ -1,7 +1,16 @@
 Changelog
 =========
 
-v1.3.0 - 2020-07-20
+v1.3.2 - 2020-07-15
+
+ * #55: Added filtering of companies (@RyanOM)
+
+v1.3.1 - 2020-07-13
+
+ * #54: Added pagination support for comments (@jatzz10)
+ * Fixed date in changelog for v1.3.0 (@sjkingo)
+
+v1.3.0 - 2020-07-10
 
  * Return v2 of the Freshdesk API by default (@sjkingo)
  * Reformat codebase with black (@sjkingo)
