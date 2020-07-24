@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.3 - 2020-07-24
+
+ * #58: Add "updated_since" argument to list tickets (@jatzz10)
+
 v1.3.2 - 2020-07-15
 
  * #55: Added filtering of companies (@RyanOM)
