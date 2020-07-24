@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.4 - 2020-07-24
+
+ * Fix versioning issue. No code changes (@sjkingo)
+
 v1.3.3 - 2020-07-24
 
  * #58: Add "updated_since" argument to list tickets (@jatzz10)
