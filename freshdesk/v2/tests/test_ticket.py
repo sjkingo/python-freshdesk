@@ -206,3 +206,8 @@ def test_filter_query(api, ticket):
     assert isinstance(tickets, list)
     assert len(tickets) == 2
     assert "mytag" in tickets[0].tags
+
+def test_updated_since_filter(api):
+    tickets = api.tickets.list_tickets(updated_since="2014-01-01")
+    assert isinstance(tickets, list)
+    assert len(tickets) == 1

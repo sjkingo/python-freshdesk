@@ -135,9 +135,13 @@ class TicketAPI(object):
             url += "?filter=%s&" % filter_name
         else:
             url += "?"
+
+        if "updated_since" in kwargs:
+            url += "updated_since=%s&" % kwargs["updated_since"]
+
         page = kwargs.get("page", 1)
         per_page = kwargs.get("per_page", 100)
-
+        
         tickets = []
 
         # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
