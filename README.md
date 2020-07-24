@@ -175,11 +175,15 @@ You can get the list of tickets by calling `list_tickets()`:
 ticket = a.tickets.list_tickets(filter_name=None, updated_since='2014-01-01T00:00:00.000Z', page=1, per_page=10)
 ``` 
 
+All arguments given above are optional.
+
 By default the `new_and_my_open` filter is used. If you want to list all the tickets without any filter, pass
-`filter_name=None`. Only the tickets that have been created within the past 30 days will be returned. 
-For fetching older tickets, use the `updated_since` argument to pass the date-time in isoformat.
-Pagination is supported. If `page` argument is not passed, all pages are fetched, else specified
-page is returned.
+`filter_name=None`.
+
+Only the tickets that have been created within the past 30 days will be returned by default.
+For fetching older tickets, use the `updated_since` argument to pass a datetime in isoformat (from 1.3.3).
+
+Pagination is supported. If `page` argument is not passed, all pages are fetched, else the specified page is returned.
 
 Updating a ticket is similar to creating a ticket. The only differences are that the ticket ID becomes the first
 positional argument, and subject becomes an optional named argument.
