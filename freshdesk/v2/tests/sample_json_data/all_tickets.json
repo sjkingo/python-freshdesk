@@ -38,6 +38,7 @@
         "responder_name": "Sam Kingston",
         "to_emails": null,
         "product_id": null,
+        "tags": ["mytag"],
         "custom_field": {}
     }
 ]

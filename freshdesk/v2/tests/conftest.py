@@ -6,22 +6,26 @@ import pytest
 
 from freshdesk.v2.api import API
 
-DOMAIN = 'pythonfreshdesk.freshdesk.com'
-API_KEY = 'MX4CEAw4FogInimEdRW2'
+DOMAIN = "pythonfreshdesk.freshdesk.com"
+API_KEY = "MX4CEAw4FogInimEdRW2"
 
 
 class MockedAPI(API):
     def __init__(self, *args):
         self.resolver = {
             'get': {
-                re.compile(r'tickets\?filter=new_and_my_open&page=1&per_page=100'): self.read_test_file(
-                    'all_tickets.json'),
-                re.compile(r'tickets\?filter=deleted&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-                re.compile(r'tickets\?filter=spam&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-                re.compile(r'tickets\?filter=watching&page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-                re.compile(r'tickets\?page=1&per_page=100'): self.read_test_file('all_tickets.json'),
-                re.compile(r'tickets/1$'): self.read_test_file('ticket_1.json'),
-                re.compile(r'tickets/1/conversations'): self.read_test_file('conversations.json'),
+                re.compile(r"tickets\?filter=new_and_my_open&page=1&per_page=100"): self.read_test_file(
+                    "all_tickets.json"
+                ),
+                re.compile(r"tickets\?filter=deleted&page=1&per_page=100"): self.read_test_file("all_tickets.json"),
+                re.compile(r"tickets\?filter=spam&page=1&per_page=100"): self.read_test_file("all_tickets.json"),
+                re.compile(r"tickets\?filter=watching&page=1&per_page=100"): self.read_test_file("all_tickets.json"),
+                re.compile(r"tickets\?filter=new_and_my_open&updated_since=2014-01-01&page=1&per_page=100"): self.read_test_file("all_tickets.json"),
+                re.compile(r"tickets\?page=1&per_page=100"): self.read_test_file("all_tickets.json"),
+                re.compile(r"tickets/1$"): self.read_test_file("ticket_1.json"),
+                re.compile(r"tickets/1/conversations"): self.read_test_file("conversations.json"),
+                re.compile(r"companies\?page=1&per_page=100$"): self.read_test_file("companies.json"),
+                re.compile(r"companies/1$"): self.read_test_file("company.json"),
                 re.compile(r'contacts\?page=1&per_page=100$'): self.read_test_file('contacts.json'),
                 re.compile(r'contacts/1$'): self.read_test_file('contact.json'),
                 re.compile(r'customers/1$'): self.read_test_file('customer.json'),
@@ -38,6 +42,8 @@ class MockedAPI(API):
                 re.compile(r'solutions/categories$'): self.read_test_file('categories.json'),
                 re.compile(r'solutions/categories/1$'): self.read_test_file('categories_1.json'),
                 re.compile(r'solutions/categories/1$/folders'): self.read_test_file('folders.json'),
+                re.compile(r'search/companies\?page=1&query="updated_at:>\'2020-07-12\'"'): self.read_test_file("search_companies.json"),
+                re.compile(r'search/tickets\?page=1&query="tag:\'mytag\'"'): self.read_test_file("search_tickets.json"),
                 re.compile(r'solutions/folders/1$'): self.read_test_file('folders_1.json'),
                 re.compile(r'solutions/folders/1/articles'): self.read_test_file('articles.json'),
                 re.compile(r'solutions/articles/1$'): self.read_test_file('article_1.json'),
@@ -77,44 +83,48 @@ class MockedAPI(API):
         super(MockedAPI, self).__init__(*args)
 
     def read_test_file(self, filename):
-        path = os.path.join(os.path.dirname(__file__), 'sample_json_data', filename)
-        return json.loads(open(path, 'r').read())
+        path = os.path.join(os.path.dirname(__file__), "sample_json_data", filename)
+        return json.loads(open(path, "r").read())
 
     def _get(self, url, *args, **kwargs):
-        for pattern, data in self.resolver['get'].items():
+        for pattern, data in self.resolver["get"].items():
             if pattern.match(url):
                 return data
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
-        raise HTTPError('404: mocked_api_get() has no pattern for \'{}\''.format(url))
+
+        raise HTTPError("404: mocked_api_get() has no pattern for '{}'".format(url))
 
     def _post(self, url, *args, **kwargs):
-        for pattern, data in self.resolver['post'].items():
+        for pattern, data in self.resolver["post"].items():
             if pattern.match(url):
                 return data
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
-        raise HTTPError('404: mocked_api_post() has no pattern for \'{}\''.format(url))
+
+        raise HTTPError("404: mocked_api_post() has no pattern for '{}'".format(url))
 
     def _put(self, url, *args, **kwargs):
-        for pattern, data in self.resolver['put'].items():
+        for pattern, data in self.resolver["put"].items():
             if pattern.match(url):
                 return data
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
-        raise HTTPError('404: mocked_api_put() has no pattern for \'{}\''.format(url))
+
+        raise HTTPError("404: mocked_api_put() has no pattern for '{}'".format(url))
 
     def _delete(self, url, *args, **kwargs):
-        for pattern, data in self.resolver['delete'].items():
+        for pattern, data in self.resolver["delete"].items():
             if pattern.match(url):
                 return data
 
         # No match found, raise 404
         from requests.exceptions import HTTPError
-        raise HTTPError('404: mocked_api_delete() has no pattern for \'{}\''.format(url))
+
+        raise HTTPError("404: mocked_api_delete() has no pattern for '{}'".format(url))
 
 
 @pytest.fixture()

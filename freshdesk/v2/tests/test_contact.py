@@ -12,8 +12,8 @@ def contact(api):
 
 def test_get_contact(contact):
     assert isinstance(contact, Contact)
-    assert contact.name == 'Rachel'
-    assert contact.email == 'rachel@freshdesk.com'
+    assert contact.name == "Rachel"
+    assert contact.email == "rachel@freshdesk.com"
     assert contact.helpdesk_agent is False
     assert contact.customer_id == 1
 
@@ -27,10 +27,7 @@ def test_list_contact(api, contact):
 
 
 def test_create_contact(api):
-    contact_data = {
-        'name': 'Rachel',
-        'email': 'rachel@freshdesk.com'
-    }
+    contact_data = {"name": "Rachel", "email": "rachel@freshdesk.com"}
     contact = api.contacts.create_contact(contact_data)
     assert isinstance(contact, Contact)
     assert contact.email == contact.email
@@ -38,12 +35,10 @@ def test_create_contact(api):
 
 
 def test_update_contact(api):
-    contact_data = {
-        'name': 'New Name'
-    }
+    contact_data = {"name": "New Name"}
     contact = api.contacts.update_contact(1, **contact_data)
     assert isinstance(contact, Contact)
-    assert contact.name == 'New Name'
+    assert contact.name == "New Name"
 
 
 def test_soft_delete_contact(api):
@@ -66,8 +61,8 @@ def test_make_agent(api, contact):
     assert isinstance(agent, Agent)
     assert agent.available is True
     assert agent.occasional is False
-    assert agent.contact['email'] == contact.email
-    assert agent.contact['name'] == contact.name
+    assert agent.contact["email"] == contact.email
+    assert agent.contact["name"] == contact.name
 
 
 def test_contact_datetime(contact):
@@ -76,8 +71,8 @@ def test_contact_datetime(contact):
 
 
 def test_contact_str(contact):
-    assert str(contact) == 'Rachel'
+    assert str(contact) == "Rachel"
 
 
 def test_contact_repr(contact):
-    assert repr(contact) == '<Contact \'Rachel\'>'
+    assert repr(contact) == "<Contact 'Rachel'>"

@@ -15,22 +15,22 @@ def test_comments_list(comments):
 
 
 def test_comment_str(comments):
-    assert str(comments[0]) == 'This is a private note'
+    assert str(comments[0]) == "This is a private note"
 
 
 def test_comment_repr(comments):
-    assert repr(comments[0]) == '<Comment for Ticket #1>'
+    assert repr(comments[0]) == "<Comment for Ticket #1>"
 
 
 def test_create_note(api):
-    comment = api.comments.create_note(1, 'This is a private note')
+    comment = api.comments.create_note(1, "This is a private note")
     assert isinstance(comment, Comment)
-    assert comment.body_text == 'This is a private note'
-    assert comment.source == 'note'
+    assert comment.body_text == "This is a private note"
+    assert comment.source == "note"
 
 
 def test_create_reply(api):
-    comment = api.comments.create_reply(1, 'This is a reply')
+    comment = api.comments.create_reply(1, "This is a reply")
     assert isinstance(comment, Comment)
-    assert comment.body_text == 'This is a reply'
-    assert comment.source == 'reply'
+    assert comment.body_text == "This is a reply"
+    assert comment.source == "reply"

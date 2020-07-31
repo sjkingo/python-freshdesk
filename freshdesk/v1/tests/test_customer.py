@@ -17,9 +17,9 @@ def contact(api):
 
 def test_customer(customer):
     assert isinstance(customer, Customer)
-    assert customer.name == 'ACME Corp.'
-    assert customer.domains == 'acme.com'
-    assert customer.cf_custom_key == 'custom_value'
+    assert customer.name == "ACME Corp."
+    assert customer.domains == "acme.com"
+    assert customer.cf_custom_key == "custom_value"
 
 
 def test_contact_datetime(customer):
@@ -28,11 +28,11 @@ def test_contact_datetime(customer):
 
 
 def test_contact_str(customer):
-    assert str(customer) == 'ACME Corp.'
+    assert str(customer) == "ACME Corp."
 
 
 def test_contact_repr(customer):
-    assert repr(customer) == '<Customer \'ACME Corp.\'>'
+    assert repr(customer) == "<Customer 'ACME Corp.'>"
 
 
 def test_get_customer_from_contact(api, contact):

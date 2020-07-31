@@ -19,8 +19,8 @@ def test_list_groups(api, group):
 
 def test_group(group):
     assert isinstance(group, Group)
-    assert group.name == 'Entertainers'
-    assert group.description == 'Singers dancers and stand up comedians'
+    assert group.name == "Entertainers"
+    assert group.description == "Singers dancers and stand up comedians"
 
 
 def test_group_datetime(group):
@@ -29,8 +29,8 @@ def test_group_datetime(group):
 
 
 def test_group_str(group):
-    assert str(group) == 'Entertainers'
+    assert str(group) == "Entertainers"
 
 
 def test_group_repr(group):
-    assert repr(group) == '<Group \'Entertainers\'>'
+    assert repr(group) == "<Group 'Entertainers'>"

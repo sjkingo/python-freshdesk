@@ -1,6 +1,45 @@
 Changelog
 =========
 
+v1.3.4 - 2020-07-24
+
+ * Fix versioning issue. No code changes (@sjkingo)
+
+v1.3.3 - 2020-07-24
+
+ * #58: Add "updated_since" argument to list tickets (@jatzz10)
+
+v1.3.2 - 2020-07-15
+
+ * #55: Added filtering of companies (@RyanOM)
+
+v1.3.1 - 2020-07-13
+
+ * #54: Added pagination support for comments (@jatzz10)
+ * Fixed date in changelog for v1.3.0 (@sjkingo)
+
+v1.3.0 - 2020-07-10
+
+ * Return v2 of the Freshdesk API by default (@sjkingo)
+ * Reformat codebase with black (@sjkingo)
+ * Tidied README (@sjkingo)
+
+v1.2.8 - 2020-07-10
+
+ * #52: Add list companies (@RyanOM)
+
+v1.2.7 - 2020-05-22
+
+ * #50: Fix quoting in ticket query filter (@FellipeMendonca)
+
+v1.2.6 - 2020-01-31
+
+ * #47: Remove obsolete code (@maqquettex)
+ * #45: Add support for ticket filtering (@andybotting)
+ * #43: Fix Python3 incompatibility in dict test (@hakib)
+ * #42: Fix encoding and content-type when creating tickets with attachments (@ArtemGordinsky)
+ * Add test environments for Python 3.7 and 3.8 (@sjkingo)
+
 v1.2.5 - 2019-10-23
 
  * #41: Refactor tests and switch to pytest (@ArtemGordinsky)
