@@ -8,6 +8,13 @@ This is a library for the [Freshdesk](http://freshdesk.com/) helpdesk system for
 
 It includes the following features from the [Freshdesk v2 API](https://developers.freshdesk.com/api/):
 
+<<<<<<< HEAD
+=======
+After the deprecation of Freshdesk V1 API, library uses V2 API only.
+
+Support for the v2 API includes the following features:
+
+>>>>>>> 807b2f119cb532b523dd974de46a3d0d0eb91c0f
 * [Tickets](http://developer.freshdesk.com/api/#tickets)
   - [Get](http://developer.freshdesk.com/api/#view_a_ticket)
   - [Create](http://developer.freshdesk.com/api/#create_ticket)
@@ -47,7 +54,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [List](http://developer.freshdesk.com/api/#list_all_agents)
     - [Update](http://developer.freshdesk.com/api/#update_agent)
     - [Delete](http://developer.freshdesk.com/api/#delete_agent)
-* [Solutions](https://developers.freshdesk.com/api/#solutions) - from 1.1.1
+* [Solutions](https://developers.freshdesk.com/api/#solutions) - from 1.2.6
     - [Get](http://developer.freshdesk.com/api/#view_agent)
     - [List](http://developer.freshdesk.com/api/#list_all_agents)
     - [Update](http://developer.freshdesk.com/api/#update_agent)
