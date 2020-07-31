@@ -139,11 +139,6 @@ class Folder(FreshdeskModel):
     def __repr__(self):
         return '<Folder \'{}\'>'.format(self.name)
 
-    #@property
-    #def visibility(self):
-    #    _s = {1: 'note', 2: 'twitter', 3: 'survey', 4: 'facebook'}
-    #    return _s[self._visibility]
-
  
 
 class Article(FreshdeskModel):
@@ -153,7 +148,7 @@ class Article(FreshdeskModel):
     def __repr__(self):
         return '<Article \'{}\'>'.format(self.title)
 
-    #@property
-    #def status(self):
-    #    _s = {1: 'draft', 2: 'published'}
-    #    return _s[self._status]    
+    @property
+    def status(self):
+        _s = {1: 'draft', 2: 'published'}
+        return _s[self._status]    

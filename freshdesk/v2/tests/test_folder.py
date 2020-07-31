@@ -9,8 +9,6 @@ from freshdesk.v2.models import Folder
 def folder(api):
     return api.folders.get_folder(1)
 
-
-
 def test_folder(folder):
     assert isinstance(folder, Folder)
     assert folder.name == 'Folder 1'

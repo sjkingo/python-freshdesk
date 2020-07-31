@@ -514,11 +514,15 @@ class ArticleAPI(object):
         return articles
 
     def create_article(self, folder_id, **kwargs):
-        url = 'solutions/folders/%s/articles' %folder_id
+        url = 'solutions/folders/%s/articles' %( folder_id )
         data = {}
         data.update(kwargs)
-
-        print(url)
+        return Article(**self._api._post(url, data=json.dumps(data)))
+    
+    def create_article_translation(self, article_id, lang, **kwargs):
+        url = 'solutions/articles/%s/%s' %( article_id, lang )
+        data = {}
+        data.update(kwargs)
         return Article(**self._api._post(url, data=json.dumps(data)))
 
 
@@ -526,9 +530,17 @@ class ArticleAPI(object):
         url = 'solutions/articles/%s' % article_id
         return Article(**self._api._get(url))
 
-    def update_article(self, article_id):
+    def update_article(self, article_id, **kwargs):
         url = 'solutions/articles/%s' % article_id
-        return Article(**self._api._get(url))
+        data = {}
+        data.update(kwargs)
+        return Article(**self._api._put(url, data=json.dumps(data)))
+
+    def update_article_translation(self, article_id, lang, **kwargs):
+        url = 'solutions/articles/%s/%s' % ( article_id, lang )
+        data = {}
+        data.update(kwargs)
+        return Article(**self._api._put(url, data=json.dumps(data)))
 
     def delete_article(self, article_id):
         url = 'solutions/articles/%s' % article_id

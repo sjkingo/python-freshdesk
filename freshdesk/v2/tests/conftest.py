@@ -35,10 +35,12 @@ class MockedAPI(API):
                 re.compile(r'agents\?state=fulltime&page=1&per_page=100'): self.read_test_file('agent_1.json'),
                 re.compile(r'agents\?page=1&per_page=100'): self.read_test_file('agents.json'),
                 re.compile(r'agents/1$'): self.read_test_file('agent_1.json'),
+                re.compile(r'solutions/categories$'): self.read_test_file('categories.json'),
                 re.compile(r'solutions/categories/1$'): self.read_test_file('categories_1.json'),
-                re.compile(r'solutions/categories'): self.read_test_file('categories.json'),
                 re.compile(r'solutions/categories/1$/folders'): self.read_test_file('folders.json'),
                 re.compile(r'solutions/folders/1$'): self.read_test_file('folders_1.json'),
+                re.compile(r'solutions/folders/1/articles'): self.read_test_file('articles.json'),
+                re.compile(r'solutions/articles/1$'): self.read_test_file('article_1.json'),
             },
             'post': {
                 re.compile(r'tickets$'): self.read_test_file('ticket_1.json'),
@@ -48,6 +50,8 @@ class MockedAPI(API):
                 re.compile(r'contacts$'): self.read_test_file('contact.json'),
                 re.compile(r'solutions/categories$'): self.read_test_file('categories_1.json'),
                 re.compile(r'solutions/categories/1/folders'): self.read_test_file('folders_1.json'),
+                re.compile(r'solutions/categories/1/folders'): self.read_test_file('folders_1.json'),
+                re.compile(r'solutions/folders/1/articles'): self.read_test_file('article_1.json'),
             },
             'put': {
                 re.compile(r'tickets/1$'): self.read_test_file('ticket_1_updated.json'),
@@ -57,6 +61,7 @@ class MockedAPI(API):
                 re.compile(r'agents/1$'): self.read_test_file('agent_1_updated.json'),
                 re.compile(r'solutions/categories/1$'): self.read_test_file('categories_1_updated.json'),
                 re.compile(r'solutions/folders/1$'): self.read_test_file('folders_1_updated.json'),
+                re.compile(r'solutions/folders/1$/articles'): self.read_test_file('article_1_updated.json'),
             },
             'delete': {
                 re.compile(r'tickets/1$'): None,
@@ -65,6 +70,7 @@ class MockedAPI(API):
                 re.compile(r'solutions/categories/1$'): None,
                 re.compile(r'solutions/folders/1$'): None,
                 re.compile(r'contacts/1/hard_delete\?force=True$'): None,
+                re.compile(r'solutions/articles/1$'): None,
             }
         }
 
