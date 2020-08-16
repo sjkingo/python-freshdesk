@@ -14,6 +14,11 @@ def ticket(api):
 
 
 @pytest.fixture
+def ticket_include(api):
+    return api.tickets.get_ticket(1,"stats","requester")
+
+
+@pytest.fixture
 def ticket_json():
     return json.loads(open(os.path.join(os.path.dirname(__file__), "sample_json_data", "ticket_1.json")).read())
 

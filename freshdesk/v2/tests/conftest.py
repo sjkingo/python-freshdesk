@@ -23,6 +23,7 @@ class MockedAPI(API):
                 re.compile(r"tickets\?filter=new_and_my_open&updated_since=2014-01-01&page=1&per_page=100"): self.read_test_file("all_tickets.json"),
                 re.compile(r"tickets\?page=1&per_page=100"): self.read_test_file("all_tickets.json"),
                 re.compile(r"tickets/1$"): self.read_test_file("ticket_1.json"),
+                re.compile(r"tickets/1?include=stats,requester$"): self.read_test_file("ticket_1.json"),
                 re.compile(r"tickets/1/conversations"): self.read_test_file("conversations.json"),
                 re.compile(r"companies\?page=1&per_page=100$"): self.read_test_file("companies.json"),
                 re.compile(r"companies/1$"): self.read_test_file("company.json"),
