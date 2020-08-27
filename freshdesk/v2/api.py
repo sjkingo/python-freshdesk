@@ -30,9 +30,14 @@ class TicketAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def get_ticket(self, ticket_id):
-        """Fetches the ticket for the given ticket ID"""
-        url = "tickets/%d" % ticket_id
+    def get_ticket(self, ticket_id, *include):
+        """
+            Fetches the ticket for the given ticket ID
+            You can pass strings for the include parameter and they'll be included as include params to the request
+            ex: get_ticket(some_id, "stats", "conversations", "requester", "company") will result in the following request:
+            tickets/[some_id]?include=stats,conversations,requester,company
+        """
+        url = "tickets/%d%s" % (ticket_id, "?include=%s" % ",".join(include) if include else "")
         ticket = self._api._get(url)
         return Ticket(**ticket)
 
