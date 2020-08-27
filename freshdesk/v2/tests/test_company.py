@@ -46,3 +46,6 @@ def test_filter_query(api):
     assert isinstance(companies[0], Company)
     assert len(companies) == 2
     assert "lexcorp.org" in companies[0].domains
+
+def test_delete_company(api):
+    assert api.companies.delete_company(1) is None

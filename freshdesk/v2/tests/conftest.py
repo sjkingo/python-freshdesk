@@ -62,6 +62,7 @@ class MockedAPI(API):
                 re.compile(r"agents/1$"): None,
                 re.compile(r"contacts/1$"): None,
                 re.compile(r"contacts/1/hard_delete\?force=True$"): None,
+                re.compile(r"companies/1$"): None
             },
         }
 

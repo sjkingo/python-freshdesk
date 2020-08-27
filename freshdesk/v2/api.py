@@ -403,6 +403,11 @@ class CompanyAPI(object):
             page += 1
 
         return [Company(**c) for c in companies]
+    
+    def delete_company(self, company_id):
+        """Delete the company for the given company ID"""
+        url = "companies/%d" % company_id
+        self._api._delete(url)
 
 
 class RoleAPI(object):
