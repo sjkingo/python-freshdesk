@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.3.5 - 2020-09-01
+
+ * #59: Optionally include extra stats in get_ticket (@jstitch)
+ * #60: Add delete company (@aharabedian)
+
 v1.3.4 - 2020-07-24
 
  * Fix versioning issue. No code changes (@sjkingo)

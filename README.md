@@ -39,7 +39,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [Get](http://developer.freshdesk.com/api/#view_company)
     - [List](http://developer.freshdesk.com/api/#list_all_companies) (from 1.2.8)
     - [Filter](https://developers.freshdesk.com/api/#filter_companies) (from 1.3.2)
-    - [Delete](https://developers.freshdesk.com/api/#delete_company)
+    - [Delete](https://developers.freshdesk.com/api/#delete_company) (from 1.3.5)
 * [Roles](https://developers.freshdesk.com/api/#roles) (from 1.1.1)
     - [Get](http://developer.freshdesk.com/api/#view_role)
     - [List](http://developer.freshdesk.com/api/#list_role)
@@ -143,7 +143,7 @@ Or converted from indexes to their descriptions:
 'phone'
 ```
 
-You can get additional details of the ticket in the response using extra arguments.
+You can get additional details of the ticket in the response using extra arguments (from 1.3.5).
 
 Please take a look at the FreshDesk documentation for more details: [View a Ticket](http://developer.freshdesk.com/api/#view_a_ticket)
 
@@ -372,6 +372,8 @@ To get a company, use:
 ```python
 a.companies.filter_companies(query="updated_at:>'2020-07-12'")
 ```
+
+To delete a company (from 1.3.5), call `delete_company()` and pass the Freshdesk company ID.
 
 ## Credits
 
