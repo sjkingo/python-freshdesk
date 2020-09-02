@@ -414,6 +414,10 @@ class CompanyAPI(object):
         url = "companies"
         return Company(**self._api._post(url, data=json.dumps(kwargs)))
 
+    def update_company(self, company_id, **data):
+        url = "companies/%d" % company_id
+        return Company(**self._api._put(url, data=json.dumps(data)))
+
 class RoleAPI(object):
     def __init__(self, api):
         self._api = api
