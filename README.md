@@ -40,6 +40,8 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [List](http://developer.freshdesk.com/api/#list_all_companies) (from 1.2.8)
     - [Filter](https://developers.freshdesk.com/api/#filter_companies) (from 1.3.2)
     - [Delete](https://developers.freshdesk.com/api/#delete_company) (from 1.3.5)
+    - [Create](https://developers.freshdesk.com/api/#create_company)
+    - [Update](https://developers.freshdesk.com/api/#update_company)
 * [Roles](https://developers.freshdesk.com/api/#roles) (from 1.1.1)
     - [Get](http://developer.freshdesk.com/api/#view_role)
     - [List](http://developer.freshdesk.com/api/#list_role)
