@@ -49,6 +49,7 @@ class MockedAPI(API):
                 re.compile(r"tickets/1/notes$"): self.read_test_file("note_1.json"),
                 re.compile(r"tickets/1/reply$"): self.read_test_file("reply_1.json"),
                 re.compile(r"contacts$"): self.read_test_file("contact.json"),
+                re.compile(r"companies$"): self.read_test_file("company.json"),
             },
             "put": {
                 re.compile(r"tickets/1$"): self.read_test_file("ticket_1_updated.json"),
@@ -56,6 +57,7 @@ class MockedAPI(API):
                 re.compile(r"contacts/1/restore$"): self.read_test_file("contact.json"),
                 re.compile(r"contacts/1/make_agent$"): self.read_test_file("contact_1_agent.json"),
                 re.compile(r"agents/1$"): self.read_test_file("agent_1_updated.json"),
+                re.compile(r"companies/1$"): self.read_test_file("company_updated.json"),
             },
             "delete": {
                 re.compile(r"tickets/1$"): None,
