@@ -49,3 +49,16 @@ def test_filter_query(api):
 
 def test_delete_company(api):
     assert api.companies.delete_company(1) is None
+
+def test_create_company(api):
+    company_data = {"name": "Super Nova", "description": "Space Shuttle Manufacturing"}
+    company = api.companies.create_company(company_data)
+    assert isinstance(company, Company)
+    assert company.name == "Super Nova"
+    assert company.description == "Space Shuttle Manufacturing"
+
+def test_update_company(api):
+    company_data = {"description": "Rocket Manufacturing"}
+    company = api.companies.update_company(1, **company_data)
+    assert isinstance(company, Company)
+    assert company.description == "Rocket Manufacturing"

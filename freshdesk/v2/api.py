@@ -408,7 +408,15 @@ class CompanyAPI(object):
         """Delete the company for the given company ID"""
         url = "companies/%d" % company_id
         self._api._delete(url)
+    
+    def create_company(self, *args, **kwargs):
+        """Creates a company"""
+        url = "companies"
+        return Company(**self._api._post(url, data=json.dumps(kwargs)))
 
+    def update_company(self, company_id, **data):
+        url = "companies/%d" % company_id
+        return Company(**self._api._put(url, data=json.dumps(data)))
 
 class RoleAPI(object):
     def __init__(self, api):
