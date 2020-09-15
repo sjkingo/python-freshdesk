@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.6 - 2020-09-15
+
+ * #62: Add create & update company (@aharabedian)
+
 v1.3.5 - 2020-09-01
 
  * #59: Optionally include extra stats in get_ticket (@jstitch)
