@@ -556,6 +556,7 @@ class API(object):
         self.agents = AgentAPI(self)
         self.roles = RoleAPI(self)
         self.ticket_fields = TicketFieldAPI(self)
+        self.time_entry = TimeEntryAPI(self)
 
         if domain.find("freshdesk.com") < 0:
             raise AttributeError("Freshdesk v2 API works only via Freshdesk" "domains and not via custom CNAMEs")
