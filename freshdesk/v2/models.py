@@ -99,10 +99,10 @@ class Contact(FreshdeskModel):
 
 class TimeEntry(FreshdeskModel):
     def __str__(self):
-        return str(self.id)
+        return "{} ({})".format(self.note, self.time_spent)
 
     def __repr__(self):
-        return "<Timesheet Entry {}>".format(self.id)
+        return "<Timesheet entry for Ticket #{}>".format(self.ticket_id)
 
 
 class Customer(FreshdeskModel):
