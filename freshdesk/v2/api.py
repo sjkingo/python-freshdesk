@@ -452,7 +452,7 @@ class TimeEntryAPI(object):
         # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
         # else return the requested page and break the loop
         while True:
-            this_page = self._api._get(url + "page=%d&per_page=%d" % (page, per_page), kwargs)
+            this_page = self._api._get(url + 'page={}&per_page={}'.format(page, per_page), kwargs)
             time_entries += this_page
             if len(this_page) < per_page or "page" in kwargs:
                 break
