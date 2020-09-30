@@ -25,6 +25,8 @@ class MockedAPI(API):
                 re.compile(r"tickets/1$"): self.read_test_file("ticket_1.json"),
                 re.compile(r"tickets/1?include=stats,requester$"): self.read_test_file("ticket_1.json"),
                 re.compile(r"tickets/1/conversations"): self.read_test_file("conversations.json"),
+                re.compile(r"tickets/1/time_entries"): self.read_test_file("time_entry_1.json"),
+                re.compile(r"time_entries"): self.read_test_file("time_entries.json"),
                 re.compile(r"companies\?page=1&per_page=100$"): self.read_test_file("companies.json"),
                 re.compile(r"companies/1$"): self.read_test_file("company.json"),
                 re.compile(r"contacts\?page=1&per_page=100$"): self.read_test_file("contacts.json"),
