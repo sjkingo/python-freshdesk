@@ -438,18 +438,28 @@ class TimeEntryAPI(object):
     def __init__(self, api):
         self._api = api
 
-    def list_time_entries(self, ticket_id=None):
-        url = "tickets/time_entries"
-        if ticket_id is not None:
-            url = "tickets/%d/time_entries" % ticket_id
-        time_entries = []
-        for r in self._api._get(url):
-            time_entries.append(TimeEntry(**r))
-        return time_entries
+    def list_time_entries(self, ticket_id=None, **kwargs):
+        url = "time_entries?"
 
-    def get_role(self, role_id):
-        url = "roles/%s" % role_id
-        return Role(**self._api._get(url))
+        if ticket_id is not None:
+            url = "tickets/%d/time_entries?" % ticket_id
+
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+
+        time_entries = []
+
+        # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
+        while True:
+            this_page = self._api._get(url + 'page={}&per_page={}'.format(page, per_page), kwargs)
+            time_entries += this_page
+            if len(this_page) < per_page or "page" in kwargs:
+                break
+
+            page += 1
+
+        return [TimeEntry(**c) for c in time_entries]
 
 
 class TicketFieldAPI(object):
@@ -556,7 +566,7 @@ class API(object):
         self.agents = AgentAPI(self)
         self.roles = RoleAPI(self)
         self.ticket_fields = TicketFieldAPI(self)
-        self.time_entry = TimeEntryAPI(self)
+        self.time_entries = TimeEntryAPI(self)
 
         if domain.find("freshdesk.com") < 0:
             raise AttributeError("Freshdesk v2 API works only via Freshdesk" "domains and not via custom CNAMEs")
