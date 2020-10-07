@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.7 - 2020-10-07
+
+ * #64 & #65: Add completed support for time entries in API (@majorcs)
+
 v1.3.6 - 2020-09-15
 
  * #62: Add create & update company (@aharabedian)
