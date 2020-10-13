@@ -537,6 +537,52 @@ class AgentAPI(object):
         url = "agents/me"
         return Agent(**self._api._get(url))
 
+class SolutionCategoryAPI(object):
+    def __init__(self, api):
+      self._api = api
+
+    def list_all(self):
+      url = "solutions/categories"
+      categories = self._api._get(url)
+      return [SolutionCategory(**r) for r in categories]
+
+class SolutionFolderAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def list_from_category(self, category_id):
+      url = "solutions/categories/%s/folders" % category_id
+      folders = self._api._get(url)
+      return [SolutionFolder(**r) for r in folders]
+
+class SolutionArticleAPI(object):
+    def __init__(self, api):
+        self._api = api
+
+    def get_article(self, article_id):
+        url = "solutions/articles/%s" % article_id
+        return SolutionArticle(**self._api._get(url))
+
+    def get_article_translated(self, article_id, language_code):
+        url = "solutions/articles/%s/%s" % (article_id,language_code)
+        return SolutionArticle(**self._api._get(url))
+
+    def list_from_folder(self, id):
+        url = "solutions/folders/%s/articles" % id
+        articles = self._api._get(url)
+        return [SolutionArticle(**a) for a in articles]
+
+    def list_from_folder_translated(self, id, language_code):
+        url = "solutions/folders/%s/articles/%s" % (id, language_code)
+        articles = self._api._get(url)
+        return [SolutionArticle(**a) for a in articles]
+
+class SolutionAPI(object):
+    def __init__(self, api):
+      self._api = api
+      self.categories = SolutionCategoryAPI(api)
+      self.folders = SolutionFolderAPI(api)
+      self.articles = SolutionArticleAPI(api)
 
 class API(object):
     def __init__(self, domain, api_key, verify=True, proxies=None):
@@ -567,6 +613,7 @@ class API(object):
         self.roles = RoleAPI(self)
         self.ticket_fields = TicketFieldAPI(self)
         self.time_entries = TimeEntryAPI(self)
+        self.solutions = SolutionAPI(self)
 
         if domain.find("freshdesk.com") < 0:
             raise AttributeError("Freshdesk v2 API works only via Freshdesk" "domains and not via custom CNAMEs")
