@@ -57,7 +57,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
       - List
       - List Translated
     - [Solution Folder](https://developer.freshdesk.com/api/#solution_folder_attributes) (from master)
-      - Get 
+      - Get
       - Get Translated
       - List
       - List Translated
@@ -424,7 +424,7 @@ To get the list of folders from a solution category, use:
 To get the list of translated folders from a solution category, use:
 
 ```python
->>> repr(a.solutions.folders.list_from_category_translated(2))
+>>> repr(a.solutions.folders.list_from_category_translated(2, 'fr'))
 ["<SolutionFolder 'Commencer' #3>"]
 ```
 ### Solution Articles
@@ -439,7 +439,7 @@ To get list of solution articles within a folder, use:
 To get list of solution translatied articles within a folder, use:
 
 ```python
->>> repr(a.solutions.articles.list_from_foldery_translated(3,'fr'))
+>>> repr(a.solutions.articles.list_from_foldery_translated(3, 'fr'))
 ["<SolutionArticle 'Modifier les détails du compte' #4>"]
 ```
 
@@ -453,7 +453,7 @@ To get a specific article by number, use:
 To get a translated solution article, use:
 
 ```python
->>> repr(a.solutions.articles.get_article_translated(5))
+>>> repr(a.solutions.articles.get_article_translated(5, 'fr'))
 ["<SolutionArticle 'Ajouter un moyen de paiement' #5>"]
 ```
 
