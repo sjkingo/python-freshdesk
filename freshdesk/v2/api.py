@@ -23,6 +23,9 @@ from freshdesk.v2.models import (
     Ticket,
     TicketField,
     TimeEntry,
+    SolutionCategory,
+    SolutionFolder,
+    SolutionArticle,
 )
 
 
@@ -537,43 +540,67 @@ class AgentAPI(object):
         url = "agents/me"
         return Agent(**self._api._get(url))
 
+
 class SolutionCategoryAPI(object):
     def __init__(self, api):
-      self._api = api
+        self._api = api
 
-    def list_all(self):
-      url = "solutions/categories"
-      categories = self._api._get(url)
-      return [SolutionCategory(**r) for r in categories]
+    def list_categories(self):
+        url = "solutions/categories"
+        categories = self._api._get(url)
+        return [SolutionCategory(**r) for r in categories]
+
+    def get_category(self, category_id):
+        url = "solutions/categories/%d" % category_id
+        return SolutionCategory(**self._api._get(url))
+
+    def get_category_translated(self, category_id, lang_code):
+        url = "solutions/categories/%d/%s" % (category_id,lang_code)
+        return SolutionCategory(**self._api._get(url))
+
 
 class SolutionFolderAPI(object):
     def __init__(self, api):
         self._api = api
 
     def list_from_category(self, category_id):
-      url = "solutions/categories/%s/folders" % category_id
-      folders = self._api._get(url)
-      return [SolutionFolder(**r) for r in folders]
+        url = "solutions/categories/%d/folders" % category_id
+        folders = self._api._get(url)
+        return [SolutionFolder(**r) for r in folders]
+
+    def list_from_category_translated(self, category_id, lang_code):
+        url = "solutions/categories/%d/folders/%s" % (category_id, lang_code)
+        folders = self._api._get(url)
+        return [SolutionFolder(**r) for r in folders]
+
+    def get_folder(self, folder_id):
+        url = "solutions/folders/%d" % folder_id
+        return SolutionFolder(**self._api._get(url))
+
+    def get_folder_translated(self, folder_id, lang_code):
+        url = "solutions/folders/%d/%s" % (folder_id, lang_code)
+        return SolutionFolder(**self._api._get(url))
+
 
 class SolutionArticleAPI(object):
     def __init__(self, api):
         self._api = api
 
     def get_article(self, article_id):
-        url = "solutions/articles/%s" % article_id
+        url = "solutions/articles/%d" % article_id
         return SolutionArticle(**self._api._get(url))
 
     def get_article_translated(self, article_id, language_code):
-        url = "solutions/articles/%s/%s" % (article_id,language_code)
+        url = "solutions/articles/%d/%s" % (article_id,language_code)
         return SolutionArticle(**self._api._get(url))
 
     def list_from_folder(self, id):
-        url = "solutions/folders/%s/articles" % id
+        url = "solutions/folders/%d/articles" % id
         articles = self._api._get(url)
         return [SolutionArticle(**a) for a in articles]
 
     def list_from_folder_translated(self, id, language_code):
-        url = "solutions/folders/%s/articles/%s" % (id, language_code)
+        url = "solutions/folders/%d/articles/%s" % (id, language_code)
         articles = self._api._get(url)
         return [SolutionArticle(**a) for a in articles]
 

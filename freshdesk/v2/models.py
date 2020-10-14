@@ -142,7 +142,7 @@ class SolutionCategory(FreshdeskModel):
         return self.name
 
     def __repr__(self):
-        return "<SolutionCategory '{}'>".format(self.name)
+        return "<SolutionCategory '{}' #{}>".format(self.name, self.id)
 
 
 class SolutionFolder(FreshdeskModel):
@@ -150,7 +150,7 @@ class SolutionFolder(FreshdeskModel):
        return self.name
 
     def __repr__(self):
-       return "<SolutionFolder '{}'>".format(self.name)
+       return "<SolutionFolder '{}' #{}>".format(self.name, self.id)
 
 
 class SolutionArticle(FreshdeskModel):
@@ -158,7 +158,7 @@ class SolutionArticle(FreshdeskModel):
         return self.title
 
     def __repr__(self):
-        return "<SolutionArticle '{}'>".format(self.title)
+        return "<SolutionArticle '{}' #{}>".format(self.title, self.id)
 
     @property
     def status(self):

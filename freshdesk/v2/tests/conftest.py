@@ -44,6 +44,17 @@ class MockedAPI(API):
                 re.compile(r"agents/1$"): self.read_test_file("agent_1.json"),
                 re.compile(r'search/companies\?page=1&query="updated_at:>\'2020-07-12\'"'): self.read_test_file("search_companies.json"),
                 re.compile(r'search/tickets\?page=1&query="tag:\'mytag\'"'): self.read_test_file("search_tickets.json"),
+                re.compile(r'solutions/categories$'): self.read_test_file("solution_categories.json"),
+                re.compile(r'solutions/categories/2$'): self.read_first_from_test_file("solution_categories.json"),
+                re.compile(r'solutions/categories/2/fr$'): self.read_first_from_test_file("solution_categories_fr.json"),
+                re.compile(r'solutions/categories/2/folders$'): self.read_test_file("solution_folders.json"),
+                re.compile(r'solutions/categories/2/folders/fr$'): self.read_test_file("solution_folders_fr.json"),
+                re.compile(r'solutions/folders/3$'): self.read_first_from_test_file("solution_folders.json"),
+                re.compile(r'solutions/folders/3/fr$'): self.read_first_from_test_file("solution_folders_fr.json"),
+                re.compile(r'solutions/folders/3/articles$'): self.read_test_file("solution_articles.json"),
+                re.compile(r'solutions/folders/3/articles/fr$'): self.read_test_file("solution_articles_fr.json"),
+                re.compile(r'solutions/articles/4$'): self.read_first_from_test_file("solution_articles.json"),
+                re.compile(r'solutions/articles/4/fr$'): self.read_first_from_test_file("solution_articles_fr.json"),
             },
             "post": {
                 re.compile(r"tickets$"): self.read_test_file("ticket_1.json"),
@@ -75,6 +86,11 @@ class MockedAPI(API):
     def read_test_file(self, filename):
         path = os.path.join(os.path.dirname(__file__), "sample_json_data", filename)
         return json.loads(open(path, "r").read())
+
+    def read_first_from_test_file(self, filename):
+        path = os.path.join(os.path.dirname(__file__), "sample_json_data", filename)
+        all_objs = json.loads(open(path, "r").read())
+        return all_objs[0]
 
     def _get(self, url, *args, **kwargs):
         for pattern, data in self.resolver["get"].items():

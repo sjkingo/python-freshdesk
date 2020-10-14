@@ -1,0 +1,55 @@
+[
+    {
+        "id": 4,
+        "type": 1,
+        "status": 2,
+        "agent_id": 432,
+        "created_at": "2020-10-06T11:05:53Z",
+        "category_id": 2,
+        "folder_id": 3,
+        "title": "Changing account details",
+        "updated_at": "2020-10-06T11:05:53Z",
+        "description": "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br> <ol><li>Select <b>account details</b> from the menu bar.</li> <li>Click <b>edit icon</b> on the field you'd like to change.</li> <li>After you’ve added the updated details, click <b>save changes</b>.</li> <li>Click <b>done</b> after completing all the updates.</li> <li>You will receive an email from us to verify the changes.</li></ol><br> In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br> Note: Once you verify the updated email details, you can resume your activities on your account.",
+        "description_text": "Update your account details like name, email address, phone number or address, anytime by following these steps:      Select account details from the menu bar.   Click edit icon on the field you'd like to change.   After you’ve added the updated details, click save changes.   Click done after completing all the updates.   You will receive an email from us to verify the changes.    In case you have forgotten your password, click on the forgot password button and follow the instructions there.    Note: Once you verify the updated email details, you can resume your activities on your account.",
+        "seo_data": {
+            "meta_title": "seo_account",
+            "meta_description": "seo_account_description"
+        },
+        "tags": [
+            "foo",
+            "bar"
+        ],
+        "attachments": [],
+        "cloud_files": [],
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "hits": 0,
+        "suggested": 0,
+        "feedback_count": 0
+    },
+    {
+        "id": 5,
+        "type": 1,
+        "status": 1,
+        "agent_id": 432,
+        "created_at": "2020-10-06T11:05:53Z",
+        "category_id": 2,
+        "folder_id": 3,
+        "title": "Adding a payment method",
+        "updated_at": "2020-10-06T11:05:53Z",
+        "description": "To set up payment channels on your account, <br><br> <ol><li>Select <b>payment options</b> from the menu bar.</li> <li>Click the <b>add payment</b> method option. </li> <li>Pick the options from the checklist and fill in the required details. </li> <li>After you’ve added the details, click <b>save</b>.</li> <li>Click <b>done</b> once you’ve finished.</li></ol><br> Tip: You can always come back and add or delete more options, by following the same steps.<br><br> The different payment channels supported at Saul’s are - <br> <ul><li>Google Pay</li> <li>PayPal<br></li> <li>WePay</li></ul><br> Note: We also offer cash on delivery.",
+        "description_text": "To set up payment channels on your account,      Select payment options from the menu bar.   Click the add payment method option.    Pick the options from the checklist and fill in the required details.    After you’ve added the details, click save.   Click done once you’ve finished.    Tip: You can always come back and add or delete more options, by following the same steps.   The different payment channels supported at Saul’s are -     Google Pay   PayPal    WePay    Note: We also offer cash on delivery.",
+        "seo_data": {
+            "meta_title": "",
+            "meta_description": ""
+        },
+        "tags": [],
+        "attachments": [],
+        "cloud_files": [],
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "hits": 0,
+        "suggested": 0,
+        "feedback_count": 0
+    }
+]
