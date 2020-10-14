@@ -50,6 +50,23 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [List](http://developer.freshdesk.com/api/#list_all_agents)
     - [Update](http://developer.freshdesk.com/api/#update_agent)
     - [Delete](http://developer.freshdesk.com/api/#delete_agent)
+* [Solutions](http://developer.freshdesk.com/api/#solutions) (from master)
+    - [Solution Category](https://developer.freshdesk.com/api/#solution_category_attributes) (from master)
+      - Get
+      - Get Translated
+      - List
+      - List Translated
+    - [Solution Folder](https://developer.freshdesk.com/api/#solution_folder_attributes) (from master)
+      - Get 
+      - Get Translated
+      - List
+      - List Translated
+    - [Solution Article](https://developer.freshdesk.com/api/#solution_article_attributes) (from master)
+      - Get
+      - Get Translated
+      - List
+      - List Translated
+
 
 From version 1.3.0, this library uses the Freshdesk v2 API by default.
 
@@ -376,6 +393,69 @@ a.companies.filter_companies(query="updated_at:>'2020-07-12'")
 ```
 
 To delete a company (from 1.3.5), call `delete_company()` and pass the Freshdesk company ID.
+
+## Solutions
+
+### Solution Categories
+
+To get the list of solution categories, use:
+
+```python
+>>> repr(a.solutions.categories.list_categories())
+["<SolutionCategory 'General Category' #2>"]
+```
+
+To get the translated solution categories, use:
+
+```python
+>>> repr(a.solutions.categories.list_categories_translated('fr'))
+["<SolutionCategory 'Catégorie générale' #2>"]
+```
+
+### Solution Folders
+
+To get the list of folders from a solution category, use:
+
+```python
+>>> repr(a.solutions.folders.list_from_category(2))
+["<SolutionFolder 'Getting Started' #3>"]
+```
+
+To get the list of translated folders from a solution category, use:
+
+```python
+>>> repr(a.solutions.folders.list_from_category_translated(2))
+["<SolutionFolder 'Commencer' #3>"]
+```
+### Solution Articles
+
+To get list of solution articles within a folder, use:
+
+```python
+>>> repr(a.solutions.articles.list_from_foldery(3))
+["<SolutionArticle 'Changing account details' #4>"]
+```
+
+To get list of solution translatied articles within a folder, use:
+
+```python
+>>> repr(a.solutions.articles.list_from_foldery_translated(3,'fr'))
+["<SolutionArticle 'Modifier les détails du compte' #4>"]
+```
+
+To get a specific article by number, use:
+
+```python
+>>> repr(a.solutions.articles.get_article(5))
+["<SolutionArticle 'Adding a payment method' #5>"]
+```
+
+To get a translated solution article, use:
+
+```python
+>>> repr(a.solutions.articles.get_article_translated(5))
+["<SolutionArticle 'Ajouter un moyen de paiement' #5>"]
+```
 
 ## Credits
 
