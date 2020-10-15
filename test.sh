@@ -1,2 +1,2 @@
 #!/bin/sh
-pytest --cov=freshdesk
+PYTHONIOENCODING='utf-8' pytest --cov=freshdesk

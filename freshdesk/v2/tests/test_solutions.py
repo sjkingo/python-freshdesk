@@ -2,6 +2,7 @@
 import datetime
 import json
 import os.path
+import sys
 from mock import patch, ANY
 
 import pytest
@@ -37,6 +38,9 @@ def test_get_solution_category(solution_category):
     assert isinstance(solution_category.updated_at, datetime.datetime)
 
 
+def test_encoding():
+    assert sys.getdefaultencoding() == 'utf-8'
+
 def test_get_solution_category_translated(api, solution_category):
     category_fr = api.solutions.categories.get_category_translated(TEST_CATEGORY, 'fr')
     assert isinstance(category_fr, SolutionCategory)
@@ -54,7 +58,6 @@ def test_list_solutions_categories(api, solution_category):
     assert isinstance(categories[0], SolutionCategory)
     assert categories[0].id == TEST_CATEGORY
     assert categories[0].id == solution_category.id
-
 
 @pytest.fixture
 def solution_folder(api):
