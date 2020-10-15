@@ -23,23 +23,23 @@ def solution_category(api):
 
 
 def test_solution_category_str(solution_category):
-    assert str(solution_category) == "General Category"
+    assert str(solution_category) == u"General Category"
 
 
 def test_solution_category_repr(solution_category):
-    assert repr(solution_category) == "<SolutionCategory 'General Category' #%d>" % TEST_CATEGORY
+    assert repr(solution_category) == u"<SolutionCategory 'General Category' #%d>" % TEST_CATEGORY
 
 
 def test_get_solution_category(solution_category):
     assert isinstance(solution_category, SolutionCategory)
     assert solution_category.id == TEST_CATEGORY 
-    assert solution_category.name == 'General Category'
+    assert solution_category.name == u'General Category'
     assert isinstance(solution_category.created_at, datetime.datetime)
     assert isinstance(solution_category.updated_at, datetime.datetime)
 
 
 def test_encoding():
-    assert sys.getdefaultencoding() == 'utf-8'
+    assert sys.getdefaultencoding() in ('ascii', 'utf-8')
 
 def test_get_solution_category_translated(api, solution_category):
     category_fr = api.solutions.categories.get_category_translated(TEST_CATEGORY, 'fr')
@@ -65,17 +65,17 @@ def solution_folder(api):
 
 
 def test_solution_folder_str(solution_folder):
-    assert str(solution_folder) == "Getting Started"
+    assert str(solution_folder) == u'Getting Started'
 
 
 def test_solution_folder_repr(solution_folder):
-    assert repr(solution_folder) == "<SolutionFolder 'Getting Started' #%d>" % TEST_FOLDER
+    assert repr(solution_folder) == u"<SolutionFolder 'Getting Started' #%d>" % TEST_FOLDER
 
 
 def test_get_solution_folder(solution_folder):
     assert isinstance(solution_folder, SolutionFolder)
     assert solution_folder.id == TEST_FOLDER
-    assert solution_folder.name == "Getting Started"
+    assert solution_folder.name == u'Getting Started'
     assert isinstance(solution_folder.created_at, datetime.datetime)
     assert isinstance(solution_folder.updated_at, datetime.datetime)
 
@@ -84,7 +84,7 @@ def test_get_solution_folder_translated(api, solution_folder):
     folder_fr = api.solutions.folders.get_folder_translated(TEST_FOLDER, 'fr')
     assert isinstance(folder_fr, SolutionFolder)
     assert folder_fr.id == solution_folder.id
-    assert folder_fr.name == 'Commencer'
+    assert folder_fr.name == u'Commencer'
     # we want to test whether the translated folder was made after the original
     assert isinstance(folder_fr.created_at, datetime.datetime)
     assert folder_fr.created_at > solution_folder.created_at
@@ -105,7 +105,7 @@ def test_list_solution_folders_translated(api, solution_folder):
     assert len(folders) == 1
     assert isinstance(folders[0], SolutionFolder)
     assert folders[0].id == TEST_FOLDER
-    assert folders[0].name == 'Commencer'
+    assert folders[0].name == u'Commencer'
 
 @pytest.fixture
 def solution_article(api):
@@ -113,25 +113,25 @@ def solution_article(api):
 
 
 def test_solution_article_str(solution_article):
-    assert str(solution_article) == "Changing account details"
+    assert str(solution_article) == u'Changing account details'
 
 
 def test_solution_folder_repr(solution_article):
-    assert repr(solution_article) == "<SolutionArticle 'Changing account details' #%d>" % TEST_ARTICLE
+    assert repr(solution_article) == u"<SolutionArticle 'Changing account details' #%d>" % TEST_ARTICLE
 
 
 def test_get_solution_article(solution_article):
     assert isinstance(solution_article, SolutionArticle)
     assert solution_article.id == TEST_ARTICLE
-    assert solution_article.title == "Changing account details"
-    assert solution_article.status == 'published'
+    assert solution_article.title == u'Changing account details'
+    assert solution_article.status == u'published'
     assert solution_article.agent_id == 432
     assert solution_article.folder_id == TEST_FOLDER
     assert solution_article.category_id == TEST_CATEGORY
     assert isinstance(solution_article.created_at, datetime.datetime)
     assert isinstance(solution_article.updated_at, datetime.datetime)
-    assert "foo" in solution_article.tags
-    assert "bar" in solution_article.tags
+    assert u'foo' in solution_article.tags
+    assert u'bar' in solution_article.tags
     assert solution_article.seo_data['meta_title'] == 'seo_account'
     assert solution_article.seo_data['meta_description'] == 'seo_account_description'
 
@@ -162,4 +162,4 @@ def test_list_solution_articles_translated(api, solution_article):
     assert isinstance(articles_fr[0], SolutionArticle)
     assert articles_fr[0].id == TEST_ARTICLE
     assert articles_fr[0].id == solution_article.id
-    assert articles_fr[0].title == 'Modifier les détails du compte'
+    assert articles_fr[0].title == u'Modifier les détails du compte'
