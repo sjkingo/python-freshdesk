@@ -45,7 +45,7 @@ def test_get_solution_category_translated(api, solution_category):
     category_fr = api.solutions.categories.get_category_translated(TEST_CATEGORY, 'fr')
     assert isinstance(category_fr, SolutionCategory)
     assert category_fr.id == solution_category.id
-    assert category_fr.name == 'Catégorie générale'
+    assert category_fr.name == u'Catégorie générale'
     # we want to test whether the translated category was made after the original
     assert isinstance(category_fr.created_at, datetime.datetime)
     assert category_fr.created_at > solution_category.created_at
@@ -140,7 +140,7 @@ def test_get_solution_article_translated(api, solution_article):
     article_fr = api.solutions.articles.get_article_translated(TEST_ARTICLE, 'fr')
     assert isinstance(article_fr, SolutionArticle)
     assert article_fr.id == solution_article.id
-    assert article_fr.title == 'Modifier les détails du compte'
+    assert article_fr.title == u'Modifier les détails du compte'
     # we want to test whether the translated solution article was made after the original
     assert isinstance(article_fr.created_at, datetime.datetime)
     assert article_fr.created_at > solution_article.created_at
