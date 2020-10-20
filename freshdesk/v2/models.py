@@ -135,3 +135,34 @@ class Role(FreshdeskModel):
 
     def __repr__(self):
         return "<Role '{}'>".format(self.name)
+
+
+class SolutionCategory(FreshdeskModel):
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return "<SolutionCategory '{}' #{}>".format(self.name, self.id)
+
+
+class SolutionFolder(FreshdeskModel):
+    def __str__(self):
+       return self.name
+
+    def __repr__(self):
+       return "<SolutionFolder '{}' #{}>".format(self.name, self.id)
+
+
+class SolutionArticle(FreshdeskModel):
+    def __str__(self):
+        return self.title
+
+    def __repr__(self):
+        return "<SolutionArticle '{}' #{}>".format(self.title, self.id)
+
+    @property
+    def status(self):
+        _p = {1: "draft", 2: "published"}
+        return _p[self._status]
+
+
