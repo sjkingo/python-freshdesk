@@ -594,14 +594,36 @@ class SolutionArticleAPI(object):
         url = "solutions/articles/%d/%s" % (article_id,language_code)
         return SolutionArticle(**self._api._get(url))
 
-    def list_from_folder(self, id):
+    def list_from_folder(self, id, **kwargs):
         url = "solutions/folders/%d/articles" % id
-        articles = self._api._get(url)
+        articles = []
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+        #Skip pagination by looping over each page and adding solutions articles if 'page' key is not in kwargs
+        #else return the requested page and break the loop
+        while True:
+        	this_page = self._api._get(url + "?page=%d&per_page=%d" % (page, per_page))
+        	articles += this_page
+        	if len(this_page) < per_page or "page" in kwargs:
+        		break
+        	page+=1
         return [SolutionArticle(**a) for a in articles]
 
-    def list_from_folder_translated(self, id, language_code):
-        url = "solutions/folders/%d/articles/%s" % (id, language_code)
-        articles = self._api._get(url)
+    def list_from_folder_translated(self, id, language_code, **kwargs):
+    	url = "solutions/folders/%d/articles/%s" % (id, language_code)
+        articles = []
+
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+        
+        #Skip pagination by looping over each page and adding solutions articles if 'page' key is not in kwargs
+        #else return the requested page and break the loop
+        while True:
+        	this_page = self._api._get(url + "?page=%d&per_page=%d" % (page, per_page))
+        	articles += this_page
+        	if len(this_page) < per_page or "page" in kwargs:
+        		break
+        	page+=1
         return [SolutionArticle(**a) for a in articles]
 
 class SolutionAPI(object):
