@@ -560,6 +560,7 @@ class SolutionCategoryAPI(object):
             'name': name,
             'description': description
         }
+        print(json.dumps(data))
         return SolutionCategory(**self._api._post(url, data=json.dumps(data)))
     
     def create_category_translation(self, category_id, lang_code, name, description):
@@ -588,8 +589,7 @@ class SolutionCategoryAPI(object):
     
     def delete_category(self, category_id):
         url = 'solutions/categories/%s' % category_id
-        print(url)
-        return self._api._delete(url)
+        self._api._delete(url)
 
     def get_category_translated(self, category_id, lang_code):
         url = "solutions/categories/%d/%s" % (category_id,lang_code)
@@ -645,7 +645,7 @@ class SolutionFolderAPI(object):
     
     def delete_folder(self, folder_id):
         url = "solutions/folders/%s" % (folder_id)
-        return SolutionFolder(**self._api._delete(url))
+        self._api._delete(url)
 
 
 class SolutionArticleAPI(object):
@@ -697,7 +697,7 @@ class SolutionArticleAPI(object):
 
     def delete_article(self, article_id):
         url = 'solutions/articles/%s' % article_id
-        return self._api._delete(url)
+        self._api._delete(url)
 
     def search(self, keyword):
         url = 'search/solutions?term=%s' % keyword

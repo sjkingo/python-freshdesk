@@ -88,6 +88,7 @@ class MockedAPI(API):
                 re.compile(r"companies/1$"): None,
                 re.compile(r"solutions/categories/2$"): None,
                 re.compile(r"solutions/articles/2$"): None,
+                re.compile(r"solutions/folders/2$"): None
             },
         }
 

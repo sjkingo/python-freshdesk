@@ -61,12 +61,7 @@ def test_list_solutions_categories(api, solution_category):
     assert categories[0].id == solution_category.id
 
 def test_create_solutions_category(api, solution_category):
-    category_data = {
-        'name':  'Category',
-        'description': 'Description'
-    }
-    cat = solution_category.create_category(name=category_data.name, description=category_data.description)
-    print(type(cat))
+   
     pass
    
 
@@ -80,7 +75,7 @@ def test_update_solutions_category_translated(api, solution_category):
     pass
 
 def test_delete_solutions_category(api, solution_category):
-    pass
+    assert api.solutions.categories.delete_category(2) is None
 
 @pytest.fixture
 def solution_folder(api):
@@ -143,7 +138,7 @@ def test_update_solutions_folder_translated(api, solution_folder):
     pass
 
 def test_delete_solutions_folder(api, solution_folder):
-    pass
+    assert api.solutions.folders.delete_folder(2) is None
 
 @pytest.fixture
 def solution_article(api):
@@ -215,4 +210,4 @@ def test_update_solutions_article_translated(api, solution_article):
     pass
 
 def test_delete_solutions_article(api, solution_article):
-    pass
+    assert api.solutions.articles.delete_article(2) is None
