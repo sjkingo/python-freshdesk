@@ -60,6 +60,28 @@ def test_list_solutions_categories(api, solution_category):
     assert categories[0].id == TEST_CATEGORY
     assert categories[0].id == solution_category.id
 
+def test_create_solutions_category(api, solution_category):
+    category_data = {
+        'name':  'Category',
+        'description': 'Description'
+    }
+    cat = solution_category.create_category(name=category_data.name, description=category_data.description)
+    print(type(cat))
+    pass
+   
+
+def test_create_solutions_category_translate(api, solution_category):
+    pass
+
+def test_update_solutions_category(api, solution_category):
+    pass
+
+def test_update_solutions_category_translated(api, solution_category):
+    pass
+
+def test_delete_solutions_category(api, solution_category):
+    pass
+
 @pytest.fixture
 def solution_folder(api):
     return api.solutions.folders.get_folder(TEST_FOLDER)
@@ -107,6 +129,21 @@ def test_list_solution_folders_translated(api, solution_folder):
     assert isinstance(folders[0], SolutionFolder)
     assert folders[0].id == TEST_FOLDER
     assert folders[0].name == 'Commencer'
+
+def test_create_solutions_folder(api, solution_folder):
+    pass
+
+def test_create_solutions_folder_translate(api, solution_folder):
+    pass
+
+def test_update_solutions_folder(api, solution_folder):
+    pass
+
+def test_update_solutions_folder_translated(api, solution_folder):
+    pass
+
+def test_delete_solutions_folder(api, solution_folder):
+    pass
 
 @pytest.fixture
 def solution_article(api):
@@ -164,3 +201,18 @@ def test_list_solution_articles_translated(api, solution_article):
     assert articles_fr[0].id == TEST_ARTICLE
     assert articles_fr[0].id == solution_article.id
     assert articles_fr[0].title == 'Modifier les détails du compte'
+
+def test_create_solutions_article(api, solution_article):
+    pass
+
+def test_create_solutions_article_translate(api, solution_article):
+    pass
+
+def test_update_solutions_article(api, solution_article):
+    pass
+
+def test_update_solutions_article_translated(api, solution_article):
+    pass
+
+def test_delete_solutions_article(api, solution_article):
+    pass
