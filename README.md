@@ -51,7 +51,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [Update](http://developer.freshdesk.com/api/#update_agent)
     - [Delete](http://developer.freshdesk.com/api/#delete_agent)
 * [Solutions](http://developer.freshdesk.com/api/#solutions) (from master)
-    - [Solution Category](https://developer.freshdesk.com/api/#solution_category_attributes) (from master)
+    - [Solution Category](https://developer.freshdesk.com/api/#solution_category_attributes) (from 1.3.8)
       - Get
       - Get Translated
       - List
@@ -61,7 +61,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
       - Update
       - Update Translated
       - Delete
-    - [Solution Folder](https://developer.freshdesk.com/api/#solution_folder_attributes) (from master)
+    - [Solution Folder](https://developer.freshdesk.com/api/#solution_folder_attributes) (from 1.3.8)
       - Get
       - Get Translated
       - List
@@ -71,7 +71,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
       - Update
       - Update Translated
       - Delete
-    - [Solution Article](https://developer.freshdesk.com/api/#solution_article_attributes) (from master)
+    - [Solution Article](https://developer.freshdesk.com/api/#solution_article_attributes) (from 1.3.8)
       - Get
       - Get Translated
       - List

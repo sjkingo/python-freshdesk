@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.8 - 2021-04-21
+
+ * #70: Add methods to create, update and delete Solutions (@Pr0teus)
+
 v1.3.7 - 2020-10-07
 
  * #64 & #65: Add completed support for time entries in API (@majorcs)
