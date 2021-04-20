@@ -63,6 +63,13 @@ class MockedAPI(API):
                 re.compile(r"tickets/1/reply$"): self.read_test_file("reply_1.json"),
                 re.compile(r"contacts$"): self.read_test_file("contact.json"),
                 re.compile(r"companies$"): self.read_test_file("company.json"),
+                re.compile(r"solutions/categories$"): self.read_first_from_test_file("solution_categories.json"),
+                re.compile(r"solutions/categories/2/fr$"): self.read_first_from_test_file("solution_categories_fr.json"),
+                re.compile(r"solutions/categories/2/folders$"): self.read_first_from_test_file("solution_folders.json"),
+                re.compile(r"solutions/folders/3/fr$"): self.read_first_from_test_file("solution_folders_fr.json"),
+                re.compile(r"solutions/folders/2/articles$"): self.read_first_from_test_file("solution_articles.json"),
+                re.compile(r"solutions/articles$"): self.read_first_from_test_file("solution_articles.json"),
+                re.compile(r"solutions/articles/4/fr$"): self.read_first_from_test_file("solution_articles_fr.json"),
             },
             "put": {
                 re.compile(r"tickets/1$"): self.read_test_file("ticket_1_updated.json"),
@@ -71,13 +78,22 @@ class MockedAPI(API):
                 re.compile(r"contacts/1/make_agent$"): self.read_test_file("contact_1_agent.json"),
                 re.compile(r"agents/1$"): self.read_test_file("agent_1_updated.json"),
                 re.compile(r"companies/1$"): self.read_test_file("company_updated.json"),
+                re.compile(r"solutions/categories/2$"): self.read_first_from_test_file("solution_categories.json"),
+                re.compile(r"solutions/categories/2/fr$"): self.read_first_from_test_file("solution_categories_fr.json"),
+                re.compile(r"solutions/articles/4$"): self.read_first_from_test_file("solution_articles.json"),
+                re.compile(r"solutions/articles/4/fr$"): self.read_first_from_test_file("solution_articles_fr.json"),
+                re.compile(r"solutions/folders/3$"): self.read_first_from_test_file("solution_folders.json"),
+                re.compile(r"solutions/folders/3/fr$"): self.read_first_from_test_file("solution_folders_fr.json"),
             },
             "delete": {
                 re.compile(r"tickets/1$"): None,
                 re.compile(r"agents/1$"): None,
                 re.compile(r"contacts/1$"): None,
                 re.compile(r"contacts/1/hard_delete\?force=True$"): None,
-                re.compile(r"companies/1$"): None
+                re.compile(r"companies/1$"): None,
+                re.compile(r"solutions/categories/2$"): None,
+                re.compile(r"solutions/articles/2$"): None,
+                re.compile(r"solutions/folders/2$"): None
             },
         }
 

@@ -60,6 +60,51 @@ def test_list_solutions_categories(api, solution_category):
     assert categories[0].id == TEST_CATEGORY
     assert categories[0].id == solution_category.id
 
+def test_create_solutions_category(api):
+    category_data = { 
+        "name": "General Category",
+        "description": "Default solution category, feel free to edit or delete it."
+    }
+    new_category = api.solutions.categories.create_category(category_data)
+    assert isinstance(new_category, SolutionCategory)
+    assert new_category.name == category_data['name']
+    assert new_category.description == category_data['description']
+    
+   
+
+def test_create_solutions_category_translate(api, solution_category):
+    category_data = { 
+        "name": "Catégorie générale",
+        "description": "French translation of Category General"
+    }
+    new_category = api.solutions.categories.create_category_translation(2, 'fr', category_data)
+    assert isinstance(new_category, SolutionCategory)
+    assert new_category.name == category_data['name']
+    assert new_category.description == category_data['description']
+
+def test_update_solutions_category(api, solution_category):
+    category_data = { 
+        "name": "General Category",
+        "description": "Default solution category, feel free to edit or delete it."
+    }
+    new_category = api.solutions.categories.update_category(2, category_data)
+    assert isinstance(new_category, SolutionCategory)
+    assert new_category.name == category_data['name']
+    assert new_category.description == category_data['description']
+
+def test_update_solutions_category_translated(api, solution_category):
+    category_data = { 
+        "name": "Catégorie générale",
+        "description": "French translation of Category General"
+    }
+    new_category = api.solutions.categories.update_category_translation(2, 'fr', category_data)
+    assert isinstance(new_category, SolutionCategory)
+    assert new_category.name == category_data['name']
+    assert new_category.description == category_data['description']
+
+def test_delete_solutions_category(api, solution_category):
+    assert api.solutions.categories.delete_category(2) is None
+
 @pytest.fixture
 def solution_folder(api):
     return api.solutions.folders.get_folder(TEST_FOLDER)
@@ -107,6 +152,53 @@ def test_list_solution_folders_translated(api, solution_folder):
     assert isinstance(folders[0], SolutionFolder)
     assert folders[0].id == TEST_FOLDER
     assert folders[0].name == 'Commencer'
+
+def test_create_solutions_folder(api):
+    folder_data = { 
+        "name": "Getting Started",
+        "description": "Default solution folder, feel free to edit or delete it.",
+        "visibility": 2
+    }
+    new_folder = api.solutions.folders.create_folder(2,folder_data)
+    assert isinstance(new_folder, SolutionFolder)
+    assert new_folder.name == "Getting Started"
+    assert new_folder.description == "Default solution folder, feel free to edit or delete it."
+
+def test_create_solutions_folder_translate(api, solution_folder):
+    folder_data = { 
+        "name": "Commencer",
+        "description": "Default solution folder in french.",
+        "visibility": 2
+    }
+    new_folder = api.solutions.folders.create_folder_translation(3,'fr', folder_data)
+    assert isinstance(new_folder, SolutionFolder)
+    assert new_folder.name == "Commencer"
+    assert new_folder.description == "Default solution folder in french."
+
+def test_update_solutions_folder(api, solution_folder):
+    folder_data = { 
+        "name": "Getting Started",
+        "description": "Default solution folder, feel free to edit or delete it.",
+        "visibility": 2
+    }
+    new_folder = api.solutions.folders.update_folder(3,folder_data)
+    assert isinstance(new_folder, SolutionFolder)
+    assert new_folder.name == "Getting Started"
+    assert new_folder.description == "Default solution folder, feel free to edit or delete it."
+
+def test_update_solutions_folder_translated(api, solution_folder):
+    folder_data = { 
+        "name": "Commencer",
+        "description": "Default solution folder in french.",
+        "visibility": 2
+    }
+    new_folder = api.solutions.folders.update_folder_translation(3,'fr', folder_data)
+    assert isinstance(new_folder, SolutionFolder)
+    assert new_folder.name == "Commencer"
+    assert new_folder.description == "Default solution folder in french."
+
+def test_delete_solutions_folder(api, solution_folder):
+    assert api.solutions.folders.delete_folder(2) is None
 
 @pytest.fixture
 def solution_article(api):
@@ -164,3 +256,50 @@ def test_list_solution_articles_translated(api, solution_article):
     assert articles_fr[0].id == TEST_ARTICLE
     assert articles_fr[0].id == solution_article.id
     assert articles_fr[0].title == 'Modifier les détails du compte'
+
+def test_create_solutions_article(api):
+    article_data = {
+        "title": "Changing account details",
+        "description": "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br> <ol><li>Select <b>account details</b> from the menu bar.</li> <li>Click <b>edit icon</b> on the field you'd like to change.</li> <li>After you’ve added the updated details, click <b>save changes</b>.</li> <li>Click <b>done</b> after completing all the updates.</li> <li>You will receive an email from us to verify the changes.</li></ol><br> In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br> Note: Once you verify the updated email details, you can resume your activities on your account.",
+        "status": 2
+    }
+    new_article =  api.solutions.articles.create_article(2, article_data)
+    assert isinstance(new_article, SolutionArticle)
+    assert new_article.title == article_data['title']
+    assert new_article.description == article_data['description']
+
+def test_create_solutions_article_translate(api, solution_article):
+    article_data = {
+        "title": "Modifier les détails du compte",
+        "description": "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br> <ol><li>Select <b>account details</b> from the menu bar.</li> <li>Click <b>edit icon</b> on the field you'd like to change.</li> <li>After you’ve added the updated details, click <b>save changes</b>.</li> <li>Click <b>done</b> after completing all the updates.</li> <li>You will receive an email from us to verify the changes.</li></ol><br> In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br> Note: Once you verify the updated email details, you can resume your activities on your account.",
+        "status": 2
+    }
+    new_article =  api.solutions.articles.create_article_translation(4, 'fr', article_data)
+    assert isinstance(new_article, SolutionArticle)
+    assert new_article.title == article_data['title']
+    assert new_article.description == article_data['description']
+
+def test_update_solutions_article(api, solution_article):
+    article_data = {
+        "title": "Changing account details",
+        "description": "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br> <ol><li>Select <b>account details</b> from the menu bar.</li> <li>Click <b>edit icon</b> on the field you'd like to change.</li> <li>After you’ve added the updated details, click <b>save changes</b>.</li> <li>Click <b>done</b> after completing all the updates.</li> <li>You will receive an email from us to verify the changes.</li></ol><br> In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br> Note: Once you verify the updated email details, you can resume your activities on your account.",
+        "status": 2
+    }
+    new_article =  api.solutions.articles.update_article(4, article_data)
+    assert isinstance(new_article, SolutionArticle)
+    assert new_article.title == article_data['title']
+    assert new_article.description == article_data['description']
+
+def test_update_solutions_article_translated(api, solution_article):
+    article_data = {
+        "title": "Modifier les détails du compte",
+        "description": "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br> <ol><li>Select <b>account details</b> from the menu bar.</li> <li>Click <b>edit icon</b> on the field you'd like to change.</li> <li>After you’ve added the updated details, click <b>save changes</b>.</li> <li>Click <b>done</b> after completing all the updates.</li> <li>You will receive an email from us to verify the changes.</li></ol><br> In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br> Note: Once you verify the updated email details, you can resume your activities on your account.",
+        "status": 2
+    }
+    new_article =  api.solutions.articles.update_article_translation(4, 'fr', article_data)
+    assert isinstance(new_article, SolutionArticle)
+    assert new_article.title == article_data['title']
+    assert new_article.description == article_data['description']
+
+def test_delete_solutions_article(api, solution_article):
+    assert api.solutions.articles.delete_article(2) is None

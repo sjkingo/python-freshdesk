@@ -56,16 +56,31 @@ It includes the following features from the [Freshdesk v2 API](https://developer
       - Get Translated
       - List
       - List Translated
+      - Create
+      - Create Translated
+      - Update
+      - Update Translated
+      - Delete
     - [Solution Folder](https://developer.freshdesk.com/api/#solution_folder_attributes) (from master)
       - Get
       - Get Translated
       - List
       - List Translated
+      - Create
+      - Create Translated
+      - Update
+      - Update Translated
+      - Delete
     - [Solution Article](https://developer.freshdesk.com/api/#solution_article_attributes) (from master)
       - Get
       - Get Translated
       - List
       - List Translated
+      - Create
+      - Create Translated
+      - Update
+      - Update Translated
+      - Delete
 
 
 From version 1.3.0, this library uses the Freshdesk v2 API by default.

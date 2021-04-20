@@ -553,6 +553,26 @@ class SolutionCategoryAPI(object):
     def get_category(self, category_id):
         url = "solutions/categories/%d" % category_id
         return SolutionCategory(**self._api._get(url))
+    
+    def create_category(self, *args, **kwargs):
+        url = "solutions/categories"
+        return SolutionCategory(**self._api._post(url, data=json.dumps(kwargs)))
+    
+    def create_category_translation(self, category_id, lang_code, *args, **kwargs):
+        url = "solutions/categories/%d/%s" %(category_id, lang_code)
+        return SolutionCategory(**self._api._post(url, data=json.dumps(kwargs)))
+    
+    def update_category(self, category_id, *args, **kwargs):
+        url = "solutions/categories/%d" % category_id
+        return SolutionCategory(**self._api._put(url, data=json.dumps(kwargs)))
+    
+    def update_category_translation(self, category_id, lang_code, *args, **kwargs):
+        url = "solutions/categories/%d/%s" %(category_id, lang_code)
+        return SolutionCategory(**self._api._put(url, data=json.dumps(kwargs)))
+    
+    def delete_category(self, category_id):
+        url = 'solutions/categories/%s' % category_id
+        self._api._delete(url)
 
     def get_category_translated(self, category_id, lang_code):
         url = "solutions/categories/%d/%s" % (category_id,lang_code)
@@ -580,6 +600,31 @@ class SolutionFolderAPI(object):
     def get_folder_translated(self, folder_id, lang_code):
         url = "solutions/folders/%d/%s" % (folder_id, lang_code)
         return SolutionFolder(**self._api._get(url))
+    
+    def create_folder(self, category_id, *args, **kwargs):
+        url = "solutions/categories/%s/folders" % category_id
+        return SolutionFolder(**self._api._post(url, data=json.dumps(kwargs)))
+    
+    def create_folder_translation(self, folder_id, lang_code, *args, **kwargs):
+        url = "solutions/folders/%s/%s" % ( folder_id, lang_code)
+        return SolutionFolder(**self._api._post(url, data=json.dumps(kwargs)))
+    
+    def update_folder(self, folder_id, *args, **kwargs):
+        url = "solutions/folders/%s" % (folder_id)
+        data = {}
+        data.update(kwargs)
+        return SolutionFolder(**self._api._put(url, data=json.dumps(data)))
+    
+    def update_folder_translation(self, folder_id, lang_code, *args, **kwargs):
+        url = "solutions/folders/%s/%s" % (folder_id, lang_code)
+        print(url)
+        data = {}
+        data.update(kwargs)
+        return SolutionFolder(**self._api._put(url, data=json.dumps(data)))
+    
+    def delete_folder(self, folder_id):
+        url = "solutions/folders/%s" % (folder_id)
+        self._api._delete(url)
 
 
 class SolutionArticleAPI(object):
@@ -603,6 +648,33 @@ class SolutionArticleAPI(object):
         url = "solutions/folders/%d/articles/%s" % (id, language_code)
         articles = self._api._get(url)
         return [SolutionArticle(**a) for a in articles]
+    
+    def create_article(self, folder_id, *args, **kwargs):
+        url = 'solutions/folders/%s/articles' % folder_id
+        return SolutionArticle(**self._api._post(url, data=json.dumps(kwargs)))
+
+    def create_article_translation(self, article_id, lang, *args, **kwargs):
+        url = 'solutions/articles/%s/%s' %( article_id, lang )
+        return SolutionArticle(**self._api._post(url, data=json.dumps(kwargs)))
+
+    def update_article(self, article_id, *args, **kwargs):
+        url = 'solutions/articles/%s' % article_id
+        return SolutionArticle(**self._api._put(url, data=json.dumps(kwargs)))
+
+    def update_article_translation(self, article_id, lang, *args, **kwargs):
+        url = 'solutions/articles/%s/%s' % ( article_id, lang )
+        return SolutionArticle(**self._api._put(url, data=json.dumps(kwargs)))
+
+    def delete_article(self, article_id):
+        url = 'solutions/articles/%s' % article_id
+        self._api._delete(url)
+
+    def search(self, keyword):
+        url = 'search/solutions?term=%s' % keyword
+        articles = []
+        for r in self._api._get(url):
+            articles.append(SolutionArticle(**r))
+        return articles
 
 class SolutionAPI(object):
     def __init__(self, api):
@@ -700,4 +772,5 @@ class API(object):
     def _delete(self, url):
         """Wrapper around request.delete() to use the API prefix. Returns a JSON response."""
         req = self._session.delete(self._api_prefix + url)
+        print(req)
         return self._action(req)
