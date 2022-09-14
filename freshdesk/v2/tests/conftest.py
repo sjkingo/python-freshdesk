@@ -30,6 +30,7 @@ class MockedAPI(API):
                 re.compile(r"companies\?page=1&per_page=100$"): self.read_test_file("companies.json"),
                 re.compile(r"companies/1$"): self.read_test_file("company.json"),
                 re.compile(r"contacts\?page=1&per_page=100$"): self.read_test_file("contacts.json"),
+                re.compile(r"search/contacts\?page=1&query=\"time_zone:Brisbane\""): self.read_test_file("search_contacts.json"),
                 re.compile(r"contacts/1$"): self.read_test_file("contact.json"),
                 re.compile(r"customers/1$"): self.read_test_file("customer.json"),
                 re.compile(r"groups\?page=1&per_page=100$"): self.read_test_file("groups.json"),

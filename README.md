@@ -32,6 +32,7 @@ It includes the following features from the [Freshdesk v2 API](https://developer
     - [List](http://developer.freshdesk.com/api/#list_all_contacts)
     - [Create](http://developer.freshdesk.com/api/#create_contact)
     - [Update](http://developer.freshdesk.com/api/#update_contact) (from 1.2.3)
+    - [Filter](https://developers.freshdesk.com/api/#filter_contacts) (from 1.3.9)
     - [Delete](http://developer.freshdesk.com/api/#delete_contact)
     - [Restore](http://developer.freshdesk.com/api/#restore_contact) (from 1.2.3)
     - [Make agent](http://developer.freshdesk.com/api/#make_agent)
