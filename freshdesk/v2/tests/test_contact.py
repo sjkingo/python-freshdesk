@@ -34,6 +34,14 @@ def test_create_contact(api):
     assert contact.name == contact.name
 
 
+def test_filter_query(api):
+    contacts = api.contacts.filter_contacts(query="time_zone:Brisbane")
+    assert isinstance(contacts, list)
+    assert isinstance(contacts[0], Contact)
+    assert len(contacts) == 2
+    assert contacts[0].name == "Rachel"
+
+
 def test_update_contact(api):
     contact_data = {"name": "New Name"}
     contact = api.contacts.update_contact(1, **contact_data)

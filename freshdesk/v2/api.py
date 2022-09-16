@@ -35,10 +35,10 @@ class TicketAPI(object):
 
     def get_ticket(self, ticket_id, *include):
         """
-            Fetches the ticket for the given ticket ID
-            You can pass strings for the include parameter and they'll be included as include params to the request
-            ex: get_ticket(some_id, "stats", "conversations", "requester", "company") will result in the following request:
-            tickets/[some_id]?include=stats,conversations,requester,company
+        Fetches the ticket for the given ticket ID
+        You can pass strings for the include parameter and they'll be included as include params to the request
+        ex: get_ticket(some_id, "stats", "conversations", "requester", "company") will result in the following request:
+        tickets/[some_id]?include=stats,conversations,requester,company
         """
         url = "tickets/%d%s" % (ticket_id, "?include=%s" % ",".join(include) if include else "")
         ticket = self._api._get(url)
@@ -46,10 +46,10 @@ class TicketAPI(object):
 
     def create_ticket(self, subject, **kwargs):
         """
-            Creates a ticket
-            To create ticket with attachments,
-            pass a key 'attachments' with value as list of fully qualified file paths in string format.
-            ex: attachments = ('/path/to/attachment1', '/path/to/attachment2')
+        Creates a ticket
+        To create ticket with attachments,
+        pass a key 'attachments' with value as list of fully qualified file paths in string format.
+        ex: attachments = ('/path/to/attachment1', '/path/to/attachment2')
         """
 
         url = "tickets"
@@ -149,7 +149,7 @@ class TicketAPI(object):
 
         page = kwargs.get("page", 1)
         per_page = kwargs.get("per_page", 100)
-        
+
         tickets = []
 
         # Skip pagination by looping over each page and adding tickets if 'page' key is not in kwargs.
@@ -305,6 +305,33 @@ class ContactAPI(object):
 
         return [Contact(**c) for c in contacts]
 
+    def filter_contacts(self, query, **kwargs):
+        """Filter contacts by a given query string. The query string must be in
+        the format specified in the API documentation at:
+          https://developers.freshdesk.com/api/#filter_contacts
+
+        query = "(contact_field:integer OR contact_field:'string') AND contact_field:boolean"
+        """
+        if len(query) > 512:
+            raise AttributeError("Query string can have up to 512 characters")
+
+        url = "search/contacts?"
+        page = kwargs.get("page", 1)
+        per_page = 30
+
+        contacts = []
+        while True:
+            this_page = self._api._get(
+                url + 'page={}&query="{}"'.format(page, query), kwargs
+            )
+            this_page = this_page["results"]
+            contacts += this_page
+            if len(this_page) < per_page or page == 10 or "page" in kwargs:
+                break
+            page += 1
+
+        return [Contact(**c) for c in contacts]
+
     def create_contact(self, *args, **kwargs):
         """Creates a contact"""
         url = "contacts"
@@ -406,12 +433,12 @@ class CompanyAPI(object):
             page += 1
 
         return [Company(**c) for c in companies]
-    
+
     def delete_company(self, company_id):
         """Delete the company for the given company ID"""
         url = "companies/%d" % company_id
         self._api._delete(url)
-    
+
     def create_company(self, *args, **kwargs):
         """Creates a company"""
         url = "companies"
@@ -553,23 +580,23 @@ class SolutionCategoryAPI(object):
     def get_category(self, category_id):
         url = "solutions/categories/%d" % category_id
         return SolutionCategory(**self._api._get(url))
-    
+
     def create_category(self, *args, **kwargs):
         url = "solutions/categories"
         return SolutionCategory(**self._api._post(url, data=json.dumps(kwargs)))
-    
+
     def create_category_translation(self, category_id, lang_code, *args, **kwargs):
         url = "solutions/categories/%d/%s" %(category_id, lang_code)
         return SolutionCategory(**self._api._post(url, data=json.dumps(kwargs)))
-    
+
     def update_category(self, category_id, *args, **kwargs):
         url = "solutions/categories/%d" % category_id
         return SolutionCategory(**self._api._put(url, data=json.dumps(kwargs)))
-    
+
     def update_category_translation(self, category_id, lang_code, *args, **kwargs):
         url = "solutions/categories/%d/%s" %(category_id, lang_code)
         return SolutionCategory(**self._api._put(url, data=json.dumps(kwargs)))
-    
+
     def delete_category(self, category_id):
         url = 'solutions/categories/%s' % category_id
         self._api._delete(url)
@@ -600,28 +627,28 @@ class SolutionFolderAPI(object):
     def get_folder_translated(self, folder_id, lang_code):
         url = "solutions/folders/%d/%s" % (folder_id, lang_code)
         return SolutionFolder(**self._api._get(url))
-    
+
     def create_folder(self, category_id, *args, **kwargs):
         url = "solutions/categories/%s/folders" % category_id
         return SolutionFolder(**self._api._post(url, data=json.dumps(kwargs)))
-    
+
     def create_folder_translation(self, folder_id, lang_code, *args, **kwargs):
         url = "solutions/folders/%s/%s" % ( folder_id, lang_code)
         return SolutionFolder(**self._api._post(url, data=json.dumps(kwargs)))
-    
+
     def update_folder(self, folder_id, *args, **kwargs):
         url = "solutions/folders/%s" % (folder_id)
         data = {}
         data.update(kwargs)
         return SolutionFolder(**self._api._put(url, data=json.dumps(data)))
-    
+
     def update_folder_translation(self, folder_id, lang_code, *args, **kwargs):
         url = "solutions/folders/%s/%s" % (folder_id, lang_code)
         print(url)
         data = {}
         data.update(kwargs)
         return SolutionFolder(**self._api._put(url, data=json.dumps(data)))
-    
+
     def delete_folder(self, folder_id):
         url = "solutions/folders/%s" % (folder_id)
         self._api._delete(url)
@@ -648,7 +675,7 @@ class SolutionArticleAPI(object):
         url = "solutions/folders/%d/articles/%s" % (id, language_code)
         articles = self._api._get(url)
         return [SolutionArticle(**a) for a in articles]
-    
+
     def create_article(self, folder_id, *args, **kwargs):
         url = 'solutions/folders/%s/articles' % folder_id
         return SolutionArticle(**self._api._post(url, data=json.dumps(kwargs)))
@@ -678,10 +705,10 @@ class SolutionArticleAPI(object):
 
 class SolutionAPI(object):
     def __init__(self, api):
-      self._api = api
-      self.categories = SolutionCategoryAPI(api)
-      self.folders = SolutionFolderAPI(api)
-      self.articles = SolutionArticleAPI(api)
+        self._api = api
+        self.categories = SolutionCategoryAPI(api)
+        self.folders = SolutionFolderAPI(api)
+        self.articles = SolutionArticleAPI(api)
 
 class API(object):
     def __init__(self, domain, api_key, verify=True, proxies=None):

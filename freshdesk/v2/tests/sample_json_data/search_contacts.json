@@ -1,0 +1,51 @@
+{
+    "total": 2,
+    "results": [
+        {
+            "active": false,
+            "address": null,
+            "created_at": "2014-12-31T12:27:09+10:00",
+            "customer_id": 1,
+            "deleted": false,
+            "description": null,
+            "email": "rachel@freshdesk.com",
+            "external_id": null,
+            "fb_profile_id": null,
+            "helpdesk_agent": false,
+            "id": 1,
+            "job_title": null,
+            "language": "en",
+            "mobile": null,
+            "name": "Rachel",
+            "phone": null,
+            "time_zone": "Brisbane",
+            "twitter_id": null,
+            "updated_at": "2014-12-31T12:27:09+10:00",
+            "company_id": null,
+            "custom_field": {}
+        },
+        {
+            "active": false,
+            "address": null,
+            "created_at": "2014-12-31T12:27:09+10:00",
+            "customer_id": 1,
+            "deleted": false,
+            "description": null,
+            "email": "rachel@freshdesk.com",
+            "external_id": null,
+            "fb_profile_id": null,
+            "helpdesk_agent": false,
+            "id": 1,
+            "job_title": null,
+            "language": "en",
+            "mobile": null,
+            "name": "Rachel",
+            "phone": null,
+            "time_zone": "Brisbane",
+            "twitter_id": null,
+            "updated_at": "2014-12-31T12:27:09+10:00",
+            "company_id": null,
+            "custom_field": {}
+        }
+    ]
+}
