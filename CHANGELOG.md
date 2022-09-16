@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.9 - 2022-09-16
+
+ * #80: Add support for Contacts (@mmahacek)
+
 v1.3.8 - 2021-04-21
 
  * #70: Add methods to create, update and delete Solutions (@Pr0teus)
