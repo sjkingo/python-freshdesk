@@ -227,13 +227,48 @@ class CommentAPI(object):
         url = "tickets/%d/notes" % ticket_id
         data = {"body": body}
         data.update(kwargs)
-        return Comment(**self._api._post(url, data=json.dumps(data)))
+        if "attachments" in data:
+            comment = self._create_with_attachment(url, data)
+            return Comment(**comment)
+
+        comment = self._api._post(url, data=json.dumps(data))
+        return Comment(**comment)
 
     def create_reply(self, ticket_id, body, **kwargs):
         url = "tickets/%d/reply" % ticket_id
         data = {"body": body}
         data.update(kwargs)
-        return Comment(**self._api._post(url, data=json.dumps(data)))
+        if "attachments" in data:
+            comment = self._create_with_attachment(url, data)
+            return Comment(**comment)
+
+        comment = self._api._post(url, data=json.dumps(data))
+        return Comment(**comment)
+
+    def _create_with_attachment(self, url, data):
+        attachments = data["attachments"]
+        del data["attachments"]
+        multipart_data = []
+
+        for attachment in attachments:
+            file_name = attachment.split("/")[-1:][0]
+            multipart_data.append(("attachments[]", (file_name, open(attachment, "rb"), None)))
+
+        for key, value in data.copy().items():
+            # Reformat ticket properties to work with the multipart/form-data encoding.
+            if isinstance(value, list) and not key.endswith("[]"):
+                data[key + "[]"] = value
+                del data[key]
+
+        if "custom_fields" in data and isinstance(data["custom_fields"], dict):
+            # Reformat custom fields to work with the multipart/form-data encoding.
+            for field, value in data["custom_fields"].items():
+                data["custom_fields[{}]".format(field)] = value
+            del data["custom_fields"]
+
+        # Override the content type so that `requests` correctly sets it to multipart/form-data instead of JSON.
+        comment = self._api._post(url, data=data, files=multipart_data, headers={"Content-Type": None})
+        return comment
 
 
 class GroupAPI(object):
@@ -448,6 +483,7 @@ class CompanyAPI(object):
         url = "companies/%d" % company_id
         return Company(**self._api._put(url, data=json.dumps(data)))
 
+
 class RoleAPI(object):
     def __init__(self, api):
         self._api = api
@@ -586,7 +622,7 @@ class SolutionCategoryAPI(object):
         return SolutionCategory(**self._api._post(url, data=json.dumps(kwargs)))
 
     def create_category_translation(self, category_id, lang_code, *args, **kwargs):
-        url = "solutions/categories/%d/%s" %(category_id, lang_code)
+        url = "solutions/categories/%d/%s" % (category_id, lang_code)
         return SolutionCategory(**self._api._post(url, data=json.dumps(kwargs)))
 
     def update_category(self, category_id, *args, **kwargs):
@@ -594,7 +630,7 @@ class SolutionCategoryAPI(object):
         return SolutionCategory(**self._api._put(url, data=json.dumps(kwargs)))
 
     def update_category_translation(self, category_id, lang_code, *args, **kwargs):
-        url = "solutions/categories/%d/%s" %(category_id, lang_code)
+        url = "solutions/categories/%d/%s" % (category_id, lang_code)
         return SolutionCategory(**self._api._put(url, data=json.dumps(kwargs)))
 
     def delete_category(self, category_id):
@@ -602,7 +638,7 @@ class SolutionCategoryAPI(object):
         self._api._delete(url)
 
     def get_category_translated(self, category_id, lang_code):
-        url = "solutions/categories/%d/%s" % (category_id,lang_code)
+        url = "solutions/categories/%d/%s" % (category_id, lang_code)
         return SolutionCategory(**self._api._get(url))
 
 
@@ -633,7 +669,7 @@ class SolutionFolderAPI(object):
         return SolutionFolder(**self._api._post(url, data=json.dumps(kwargs)))
 
     def create_folder_translation(self, folder_id, lang_code, *args, **kwargs):
-        url = "solutions/folders/%s/%s" % ( folder_id, lang_code)
+        url = "solutions/folders/%s/%s" % (folder_id, lang_code)
         return SolutionFolder(**self._api._post(url, data=json.dumps(kwargs)))
 
     def update_folder(self, folder_id, *args, **kwargs):
@@ -663,7 +699,7 @@ class SolutionArticleAPI(object):
         return SolutionArticle(**self._api._get(url))
 
     def get_article_translated(self, article_id, language_code):
-        url = "solutions/articles/%d/%s" % (article_id,language_code)
+        url = "solutions/articles/%d/%s" % (article_id, language_code)
         return SolutionArticle(**self._api._get(url))
 
     def list_from_folder(self, id):
@@ -681,7 +717,7 @@ class SolutionArticleAPI(object):
         return SolutionArticle(**self._api._post(url, data=json.dumps(kwargs)))
 
     def create_article_translation(self, article_id, lang, *args, **kwargs):
-        url = 'solutions/articles/%s/%s' %( article_id, lang )
+        url = 'solutions/articles/%s/%s' % (article_id, lang)
         return SolutionArticle(**self._api._post(url, data=json.dumps(kwargs)))
 
     def update_article(self, article_id, *args, **kwargs):
@@ -689,7 +725,7 @@ class SolutionArticleAPI(object):
         return SolutionArticle(**self._api._put(url, data=json.dumps(kwargs)))
 
     def update_article_translation(self, article_id, lang, *args, **kwargs):
-        url = 'solutions/articles/%s/%s' % ( article_id, lang )
+        url = 'solutions/articles/%s/%s' % (article_id, lang)
         return SolutionArticle(**self._api._put(url, data=json.dumps(kwargs)))
 
     def delete_article(self, article_id):
@@ -703,12 +739,14 @@ class SolutionArticleAPI(object):
             articles.append(SolutionArticle(**r))
         return articles
 
+
 class SolutionAPI(object):
     def __init__(self, api):
         self._api = api
         self.categories = SolutionCategoryAPI(api)
         self.folders = SolutionFolderAPI(api)
         self.articles = SolutionArticleAPI(api)
+
 
 class API(object):
     def __init__(self, domain, api_key, verify=True, proxies=None):
