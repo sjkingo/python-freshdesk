@@ -233,7 +233,6 @@ class CommentAPI(object):
 
         comment = self._api._post(url, data=json.dumps(data))
         return Comment(**comment)
-        # return Comment(**self._api._post(url, data=json.dumps(data)))
 
     def create_reply(self, ticket_id, body, **kwargs):
         url = "tickets/%d/reply" % ticket_id
