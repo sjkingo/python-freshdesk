@@ -43,6 +43,17 @@ class TicketAPI(object):
         url = "tickets/%d%s" % (ticket_id, "?include=%s" % ",".join(include) if include else "")
         ticket = self._api._get(url)
         return Ticket(**ticket)
+    
+    def get_ticket_archived(self, ticket_id, *include):
+        """
+            Fetches the ticket for the given ticket ID
+            You can pass strings for the include parameter and they'll be included as include params to the request
+            ex: get_ticket(some_id, "stats", "conversations", "requester", "company") will result in the following request:
+            tickets/[some_id]?include=stats,conversations,requester,company
+        """
+        url = "tickets/archived/%d%s" % (ticket_id, "?include=%s" % ",".join(include) if include else "")
+        ticket = self._api._get(url)
+        return Ticket(**ticket)
 
     def create_ticket(self, subject, **kwargs):
         """
@@ -207,6 +218,24 @@ class CommentAPI(object):
 
     def list_comments(self, ticket_id, **kwargs):
         url = "tickets/%d/conversations?" % ticket_id
+        page = kwargs.get("page", 1)
+        per_page = kwargs.get("per_page", 100)
+
+        comments = []
+
+        # Skip pagination by looping over each page and adding comments if 'page' key is not in kwargs.
+        # else return the requested page and break the loop
+        while True:
+            this_page = self._api._get(url + "page=%d&per_page=%d" % (page, per_page), kwargs)
+            comments += this_page
+            if len(this_page) < per_page or "page" in kwargs:
+                break
+            page += 1
+
+        return [Comment(**c) for c in comments]
+    
+    def list_comments_archived(self, ticket_id, **kwargs):
+        url = "tickets/archived/%d/conversations?" % ticket_id
         page = kwargs.get("page", 1)
         per_page = kwargs.get("per_page", 100)
 
