@@ -183,7 +183,7 @@ You can get additional details of the ticket in the response using extra argumen
 Please take a look at the FreshDesk documentation for more details: [View a Ticket](http://developer.freshdesk.com/api/#view_a_ticket)
 
 ```python
->>> ticket = a.tickets.get_ticket(4, "conversation", "requester", "company", "stats")
+>>> ticket = a.tickets.get_ticket(4, "conversations", "requester", "company", "stats")
 >>> ticket.stats
 {'agent_responded_at': '2020-06-26T01:23:39Z',
  'requester_responded_at': '2020-06-25T23:10:15Z',
