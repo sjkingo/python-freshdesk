@@ -40,6 +40,10 @@ class Ticket(FreshdeskModel):
         return "<Ticket '{}' #{}>".format(self.subject, self.id)
 
     @property
+    def comments(self):
+        return [Comment(ticket=self, **c) for c in self.conversations]
+
+    @property
     def priority(self):
         _p = {1: "low", 2: "medium", 3: "high", 4: "urgent"}
         return _p[self._priority]
