@@ -200,6 +200,40 @@ class TicketAPI(object):
 
         return [Ticket(**t) for t in tickets]
 
+    def merge_ticket(
+        self,
+        primary_id: int,
+        ticket_ids: list,
+        note_in_primary=None,
+        note_in_secondary=None,
+    ):
+        """
+        Merge tickets. https://developers.freshdesk.com/api/#ticket_merge
+
+        Args:
+            primary_id (int): Ticket to which conversations from secondary tickets will be merged
+            ticket_ids (list[int]): IDs of tickets to be merged
+            note_in_primary (dict): This contains the note added to the primary ticket along with 
+                the type of the note (public/private). A default note gets added if 
+                this is not specified in the request
+            note_in_secondary (dict): This contains the note added to the secondary tickets along 
+                with the type of the note (public/private). A default note gets added if 
+                this is not specified in the request
+        """
+        note_in_primary = note_in_primary or {}
+        note_in_secondary = note_in_secondary or {}
+        url = "tickets/merge"
+        data = {
+            "primary_id": primary_id,
+            "ticket_ids": ticket_ids,
+        }
+        if note_in_primary and isinstance(dict, note_in_primary):
+            data.update({"note_in_primary": note_in_primary})
+        if note_in_secondary and isinstance(dict, note_in_secondary):
+            data.update({"note_in_secondary": note_in_secondary})
+        ticket = self._api._put(url, data=json.dumps(data))
+        return Ticket(**ticket)
+
 
 class CommentAPI(object):
     def __init__(self, api):
