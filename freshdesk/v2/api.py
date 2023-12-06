@@ -227,9 +227,9 @@ class TicketAPI(object):
             "primary_id": primary_id,
             "ticket_ids": ticket_ids,
         }
-        if note_in_primary and isinstance(dict, note_in_primary):
+        if note_in_primary and isinstance(note_in_primary, dict):
             data.update({"note_in_primary": note_in_primary})
-        if note_in_secondary and isinstance(dict, note_in_secondary):
+        if note_in_secondary and isinstance(note_in_secondary, dict):
             data.update({"note_in_secondary": note_in_secondary})
         ticket = self._api._put(url, data=json.dumps(data))
         return Ticket(**ticket)
